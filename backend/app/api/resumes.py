@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.resume import Resume
-from app.schemas.resume import ResumeUploadResponse
+from app.schemas.resume import ResumeResponse, ResumeUploadResponse
 from app.services.resume_parser import extract_resume_text
 
 router = APIRouter(
@@ -64,4 +64,25 @@ async def upload_resume(
         filename=resume.filename,
         status="uploaded",
         parsed_text_preview=parsed_text[:500],
+    )
+
+
+@router.get("/{resume_id}", response_model=ResumeResponse)
+def get_resume(
+    resume_id: int,
+    db: Session = Depends(get_db),
+):
+    resume = db.query(Resume).filter(Resume.id == resume_id).first()
+
+    if not resume:
+        raise HTTPException(
+            status_code=404,
+            detail="Resume not found.",
+        )
+
+    return ResumeResponse(
+        resume_id=resume.id,
+        filename=resume.filename,
+        parsed_text=resume.parsed_text,
+        created_at=resume.created_at,
     )
