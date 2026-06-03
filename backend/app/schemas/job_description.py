@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -12,3 +14,11 @@ class JobDescriptionResponse(BaseModel):
     title: str
     company: str | None
     status: str
+
+
+class JobDescriptionDetailResponse(BaseModel):
+    job_id: int
+    title: str
+    company: str | None
+    description: str | None
+    created_at: datetime

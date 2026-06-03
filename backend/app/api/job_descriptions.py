@@ -6,7 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.job_description import JobDescription
-from app.schemas.job_description import JobDescriptionCreate, JobDescriptionResponse
+from app.schemas.job_description import (
+    JobDescriptionCreate,
+    JobDescriptionDetailResponse,
+    JobDescriptionResponse,
+)
 from app.services.job_description_parser import extract_job_description_text
 
 router = APIRouter(
@@ -100,4 +104,30 @@ async def upload_job_description(
         title=job_description.title,
         company=job_description.company,
         status="uploaded",
+    )
+
+
+@router.get("/{job_id}", response_model=JobDescriptionDetailResponse)
+def get_job_description(
+    job_id: int,
+    db: Session = Depends(get_db),
+):
+    job_description = (
+        db.query(JobDescription)
+        .filter(JobDescription.id == job_id)
+        .first()
+    )
+
+    if not job_description:
+        raise HTTPException(
+            status_code=404,
+            detail="Job description not found.",
+        )
+
+    return JobDescriptionDetailResponse(
+        job_id=job_description.id,
+        title=job_description.title,
+        company=job_description.company,
+        description=job_description.description,
+        created_at=job_description.created_at,
     )
