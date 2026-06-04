@@ -160,3 +160,15 @@ class AIFullResumeGenerateResponse(BaseModel):
     generated_skills: list[str]
     suggestions: list[str]
     final_warning: str
+
+
+class ResumePreviewRequest(BaseModel):
+    resume_markdown: str
+    design_style: str = "ats_simple"
+
+
+class ResumePreviewResponse(BaseModel):
+    design_style: str
+    resume_markdown: str
+    resume_html: str
+    preview_notes: list[str]

@@ -7,6 +7,8 @@ from app.schemas.resume_builder import (
     AIResumeEnhanceResponse,
     ResumeCreateRequest,
     ResumeCreateResponse,
+    ResumePreviewRequest,
+    ResumePreviewResponse,
     ResumeSuggestionRequest,
     ResumeSuggestionResponse,
     ResumeTemplate,
@@ -18,6 +20,7 @@ from app.services.resume_builder import (
     generate_resume_suggestions,
     generate_template_suggestions,
 )
+from app.services.resume_html_preview import build_resume_html
 from app.services.resume_templates import get_templates
 
 router = APIRouter(
@@ -120,4 +123,21 @@ def ai_generate_resume(
         generated_skills=result["generated_skills"],
         suggestions=result["suggestions"],
         final_warning=result["final_warning"],
+    )
+
+
+@router.post("/preview", response_model=ResumePreviewResponse)
+def preview_resume(
+    request: ResumePreviewRequest,
+):
+    result = build_resume_html(
+        resume_markdown=request.resume_markdown,
+        design_style=request.design_style,
+    )
+
+    return ResumePreviewResponse(
+        design_style=request.design_style,
+        resume_markdown=request.resume_markdown,
+        resume_html=result["resume_html"],
+        preview_notes=result["preview_notes"],
     )
