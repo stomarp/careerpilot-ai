@@ -51,3 +51,43 @@ class ResumeATSResponse(BaseModel):
     strengths: list[str]
     issues: list[str]
     recommendations: list[str]
+
+
+class ResumeOptimizerRequest(BaseModel):
+    resume_id: int
+    job_id: int
+    industry: str = "general"
+
+
+class SuggestedBullet(BaseModel):
+    section: str
+    skill: str
+    bullet: str
+    why: str
+
+
+class ProjectEnhancement(BaseModel):
+    project: str
+    enhancement: str
+    resume_bullet_after_building: str
+
+
+class SectionSuggestion(BaseModel):
+    section: str
+    priority: str
+    issue: str
+    suggestion: str
+    example: str
+    truthfulness_note: str
+
+
+class ResumeOptimizerResponse(BaseModel):
+    resume_id: int
+    job_id: int
+    industry: str
+    overall_strategy: str
+    section_suggestions: list[SectionSuggestion]
+    suggested_bullets: list[SuggestedBullet]
+    project_enhancements: list[ProjectEnhancement]
+    skills_to_learn: list[str]
+    truthfulness_warning: str
