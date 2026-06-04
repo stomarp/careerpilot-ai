@@ -119,6 +119,8 @@ class AIResumeOptimizerResponse(BaseModel):
     job_id: int
     industry: str
     ats_score: int
+    provider_used: str
+    fallback_used: bool
     ai_overall_feedback: str
     section_feedback: list[AISectionFeedback]
     improved_bullets: list[AIResumeBullet]

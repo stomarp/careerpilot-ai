@@ -146,23 +146,19 @@ def generate_ai_resume_optimizer(
     if not job_description:
         raise HTTPException(status_code=404, detail="Job description not found.")
 
-    try:
-        result = optimize_resume_with_ai(
-            resume_text=resume.parsed_text or "",
-            job_description_text=job_description.description or "",
-            industry=request.industry,
-        )
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"AI resume optimizer failed: {str(exc)}",
-        ) from exc
+    result = optimize_resume_with_ai(
+        resume_text=resume.parsed_text or "",
+        job_description_text=job_description.description or "",
+        industry=request.industry,
+    )
 
     return AIResumeOptimizerResponse(
         resume_id=resume.id,
         job_id=job_description.id,
         industry=request.industry,
         ats_score=result["ats_score"],
+        provider_used=result["provider_used"],
+        fallback_used=result["fallback_used"],
         ai_overall_feedback=result["ai_overall_feedback"],
         section_feedback=result["section_feedback"],
         improved_bullets=result["improved_bullets"],
