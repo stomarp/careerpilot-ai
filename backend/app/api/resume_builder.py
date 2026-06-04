@@ -1,12 +1,15 @@
 from fastapi import APIRouter
 
 from app.schemas.resume_builder import (
+    AIResumeEnhanceRequest,
+    AIResumeEnhanceResponse,
     ResumeCreateRequest,
     ResumeCreateResponse,
     ResumeSuggestionRequest,
     ResumeSuggestionResponse,
     ResumeTemplate,
 )
+from app.services.ai_resume_builder import enhance_resume_with_ai
 from app.services.resume_builder import (
     build_resume_markdown,
     generate_resume_suggestions,
@@ -64,4 +67,32 @@ def get_resume_builder_suggestions(
         suggested_keywords=result["suggested_keywords"],
         design_guidance=result["design_guidance"],
         suggestions=result["suggestions"],
+    )
+
+
+@router.post("/ai-enhance", response_model=AIResumeEnhanceResponse)
+def ai_enhance_resume(
+    request: AIResumeEnhanceRequest,
+):
+    result = enhance_resume_with_ai(
+        target_role=request.target_role,
+        experience_level=request.experience_level,
+        role_type=request.role_type,
+        rough_summary=request.rough_summary,
+        rough_skills=request.rough_skills,
+        rough_experience=request.rough_experience,
+        rough_projects=request.rough_projects,
+    )
+
+    return AIResumeEnhanceResponse(
+        target_role=request.target_role,
+        experience_level=request.experience_level,
+        role_type=request.role_type,
+        provider_used=result["provider_used"],
+        fallback_used=result["fallback_used"],
+        enhanced_summary=result["enhanced_summary"],
+        enhanced_skills=result["enhanced_skills"],
+        enhanced_bullets=result["enhanced_bullets"],
+        section_suggestions=result["section_suggestions"],
+        final_notes=result["final_notes"],
     )
