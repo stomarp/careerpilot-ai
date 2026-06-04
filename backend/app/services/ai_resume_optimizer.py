@@ -4,9 +4,7 @@ from google import genai
 
 from app.core.config import settings
 from app.services.ats_scoring import calculate_ats_score
-
-
-client = genai.Client(api_key=settings.GEMINI_API_KEY)
+from app.services.resume_optimizer import optimize_resume_for_job
 
 
 def clean_json_response(raw_text: str) -> str:
@@ -30,14 +28,94 @@ def safe_json_loads(raw_text: str) -> dict:
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError as exc:
-        raise ValueError(f"Gemini response was not valid JSON: {cleaned[:500]}") from exc
+        raise ValueError(
+            f"Gemini response was not valid JSON: {cleaned[:500]}"
+        ) from exc
 
 
-def optimize_resume_with_ai(
+def build_rule_based_fallback_response(
+    resume_text: str,
+    job_description_text: str,
+    industry: str,
+    failure_reason: str,
+) -> dict:
+    ats_result = calculate_ats_score(
+        resume_text=resume_text,
+        job_description_text=job_description_text,
+        industry=industry,
+    )
+
+    fallback_result = optimize_resume_for_job(
+        resume_text=resume_text,
+        job_description_text=job_description_text,
+        industry=industry,
+    )
+
+    section_feedback = []
+
+    for suggestion in fallback_result["section_suggestions"]:
+        section_feedback.append(
+            {
+                "section": suggestion["section"],
+                "score": 70 if suggestion["priority"] in {"High", "Medium"} else 60,
+                "feedback": suggestion["issue"] + " " + suggestion["suggestion"],
+                "improved_version": suggestion["example"],
+            }
+        )
+
+    improved_bullets = []
+
+    for bullet in fallback_result["suggested_bullets"]:
+        improved_bullets.append(
+            {
+                "current_or_target_section": bullet["section"],
+                "improved_bullet": bullet["bullet"],
+                "why_it_helps": bullet["why"],
+                "truthfulness_note": "Only use this bullet if it truthfully reflects your real work.",
+            }
+        )
+
+    project_enhancements = []
+
+    for enhancement in fallback_result["project_enhancements"]:
+        project_enhancements.append(
+            {
+                "project": enhancement["project"],
+                "enhancement_to_build": enhancement["enhancement"],
+                "resume_bullet_after_building": enhancement[
+                    "resume_bullet_after_building"
+                ],
+                "difficulty": "Medium",
+            }
+        )
+
+    return {
+        "ats_score": ats_result["ats_score"],
+        "provider_used": "rule_based_fallback",
+        "fallback_used": True,
+        "ai_overall_feedback": (
+            "AI provider was unavailable, so CareerCopilot returned a "
+            f"rule-based optimization report instead. Reason: {failure_reason}"
+        ),
+        "section_feedback": section_feedback,
+        "improved_bullets": improved_bullets,
+        "missing_keywords_to_add_truthfully": ats_result["missing_keywords"][:10],
+        "project_enhancements": project_enhancements,
+        "certifications_or_learning": fallback_result["skills_to_learn"],
+        "final_warning": fallback_result["truthfulness_warning"],
+    }
+
+
+def optimize_resume_with_gemini(
     resume_text: str,
     job_description_text: str,
     industry: str,
 ) -> dict:
+    if not settings.GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY is missing.")
+
+    client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
     ats_result = calculate_ats_score(
         resume_text=resume_text,
         job_description_text=job_description_text,
@@ -50,12 +128,6 @@ You are an expert resume optimizer similar to Teal, Jobscan, and Rezi.
 Analyze the resume against the job description and generate detailed, truthful resume improvement feedback.
 
 Important rules:
-- Do not use the word “critical” unless there is a security, legal, or factual issue.
-- For date issues, use soft language: “Verify date accuracy” or “Mark as Expected/In Progress if applicable.”
-- Do not use “microservices” unless the resume clearly says microservices.
-- Prefer “backend services” instead of “microservices” when architecture is unclear.
-- For every bullet with a placeholder metric, also provide a no-metric version.
-- Avoid words like “misrepresent” or “red flag”; use professional coaching language.
 - Do NOT suggest fake experience.
 - Do NOT invent dates, graduation years, job dates, project dates, company names, titles, metrics, percentages, latency numbers, user counts, throughput numbers, or time savings.
 - Preserve the candidate's original dates exactly. If dates look future-dated or unclear, say "Verify date accuracy" instead of changing the dates.
@@ -64,6 +136,12 @@ Important rules:
 - Do NOT present planned future work as completed work.
 - Do NOT say "misrepresentation", "immediate disqualification", or use harsh language. Be professional and helpful.
 - Do NOT use vague standalone skills like "code", "frameworks", "designers", "developing", "features", "inquisitive", or "well-rounded" as resume keywords.
+- Do not use the word “critical” unless there is a security, legal, or factual issue.
+- For date issues, use soft language: “Verify date accuracy” or “Mark as Expected/In Progress if applicable.”
+- Do not use “microservices” unless the resume clearly says microservices.
+- Prefer “backend services” instead of “microservices” when architecture is unclear.
+- For every bullet with a placeholder metric, also provide a no-metric version.
+- Avoid words like “misrepresent” or “red flag”; use professional coaching language.
 - Give section-level feedback for Summary, Skills, Experience, Projects, Education, and Certifications.
 - Rewrite bullets in an ATS-friendly, recruiter-friendly way.
 - Focus on truthful alignment, measurable impact, backend systems, APIs, scalability, testing, cloud, and collaboration.
@@ -83,12 +161,13 @@ Job Description:
 {job_description_text[:6000]}
 
 When writing improved versions:
-- If the original resume does not prove a claim, phrase it as a suggestion or project enhancement, not as completed experience.
 - Keep existing dates unchanged unless the resume explicitly says "Expected".
 - If dates may be incorrect, add a note in feedback only: "Verify date accuracy."
 - Do not move Education content into Experience.
 - Do not invent metrics. Use "improved reliability", "reduced manual effort", or "after measuring" unless exact numbers are already present in the resume.
 - For certifications, say "Consider" unless the certification is already listed.
+- If the original resume does not prove a claim, phrase it as a suggestion or project enhancement, not as completed experience.
+
 Return JSON with this exact structure:
 {{
   "ai_overall_feedback": "string",
@@ -161,6 +240,8 @@ Return JSON with this exact structure:
 
     return {
         "ats_score": ats_result["ats_score"],
+        "provider_used": "gemini",
+        "fallback_used": False,
         "ai_overall_feedback": ai_result.get("ai_overall_feedback", ""),
         "section_feedback": ai_result.get("section_feedback", []),
         "improved_bullets": ai_result.get("improved_bullets", []),
@@ -178,3 +259,23 @@ Return JSON with this exact structure:
             "Only add truthful skills and experience.",
         ),
     }
+
+
+def optimize_resume_with_ai(
+    resume_text: str,
+    job_description_text: str,
+    industry: str,
+) -> dict:
+    try:
+        return optimize_resume_with_gemini(
+            resume_text=resume_text,
+            job_description_text=job_description_text,
+            industry=industry,
+        )
+    except Exception as exc:
+        return build_rule_based_fallback_response(
+            resume_text=resume_text,
+            job_description_text=job_description_text,
+            industry=industry,
+            failure_reason=str(exc),
+        )
