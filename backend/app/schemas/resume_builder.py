@@ -86,3 +86,38 @@ class ResumeSuggestionResponse(BaseModel):
     suggested_keywords: list[str]
     design_guidance: list[str]
     suggestions: list[str]
+
+
+class AIResumeEnhanceRequest(BaseModel):
+    target_role: str
+    experience_level: str = "new_grad"
+    role_type: str = "software_engineer"
+    rough_summary: str | None = None
+    rough_skills: list[str] = []
+    rough_experience: list[str] = []
+    rough_projects: list[str] = []
+
+
+class EnhancedResumeSection(BaseModel):
+    section: str
+    content: str
+
+
+class EnhancedResumeBullet(BaseModel):
+    section: str
+    original: str
+    improved: str
+    why_it_is_better: str
+
+
+class AIResumeEnhanceResponse(BaseModel):
+    target_role: str
+    experience_level: str
+    role_type: str
+    provider_used: str
+    fallback_used: bool
+    enhanced_summary: str
+    enhanced_skills: list[str]
+    enhanced_bullets: list[EnhancedResumeBullet]
+    section_suggestions: list[EnhancedResumeSection]
+    final_notes: list[str]
