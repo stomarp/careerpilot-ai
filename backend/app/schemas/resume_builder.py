@@ -1,0 +1,88 @@
+from pydantic import BaseModel
+
+
+class ResumeTemplate(BaseModel):
+    template_id: str
+    name: str
+    best_for: str
+    description: str
+    experience_level: str
+    role_type: str
+    design_style: str
+    section_order: list[str]
+
+
+class EducationItem(BaseModel):
+    school: str
+    degree: str
+    location: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    details: list[str] = []
+
+
+class ExperienceItem(BaseModel):
+    title: str
+    company: str
+    location: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    bullets: list[str] = []
+
+
+class ProjectItem(BaseModel):
+    name: str
+    tech_stack: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    bullets: list[str] = []
+
+
+class ResumeCreateRequest(BaseModel):
+    template_id: str = "ats_simple"
+    experience_level: str = "new_grad"
+    role_type: str = "software_engineer"
+    design_style: str = "ats_simple"
+
+    full_name: str
+    email: str
+    phone: str | None = None
+    location: str | None = None
+    linkedin: str | None = None
+    github: str | None = None
+
+    target_role: str | None = None
+    summary: str | None = None
+    skills: list[str] = []
+    education: list[EducationItem] = []
+    experience: list[ExperienceItem] = []
+    projects: list[ProjectItem] = []
+
+
+class ResumeCreateResponse(BaseModel):
+    template_id: str
+    experience_level: str
+    role_type: str
+    design_style: str
+    section_order: list[str]
+    resume_markdown: str
+    suggestions: list[str]
+
+
+class ResumeSuggestionRequest(BaseModel):
+    target_role: str
+    industry: str = "general"
+    experience_level: str = "new_grad"
+    role_type: str = "software_engineer"
+    design_style: str = "ats_simple"
+
+
+class ResumeSuggestionResponse(BaseModel):
+    recommended_template: str
+    experience_level: str
+    role_type: str
+    design_style: str
+    suggested_sections: list[str]
+    suggested_keywords: list[str]
+    design_guidance: list[str]
+    suggestions: list[str]
