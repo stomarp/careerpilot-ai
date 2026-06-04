@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 
 from app.schemas.resume_builder import (
+    AIFullResumeGenerateRequest,
+    AIFullResumeGenerateResponse,
     AIResumeEnhanceRequest,
     AIResumeEnhanceResponse,
     ResumeCreateRequest,
@@ -9,6 +11,7 @@ from app.schemas.resume_builder import (
     ResumeSuggestionResponse,
     ResumeTemplate,
 )
+from app.services.ai_full_resume_generator import generate_full_resume_with_ai
 from app.services.ai_resume_builder import enhance_resume_with_ai
 from app.services.resume_builder import (
     build_resume_markdown,
@@ -95,4 +98,26 @@ def ai_enhance_resume(
         enhanced_bullets=result["enhanced_bullets"],
         section_suggestions=result["section_suggestions"],
         final_notes=result["final_notes"],
+    )
+
+
+@router.post("/ai-generate", response_model=AIFullResumeGenerateResponse)
+def ai_generate_resume(
+    request: AIFullResumeGenerateRequest,
+):
+    result = generate_full_resume_with_ai(request)
+
+    return AIFullResumeGenerateResponse(
+        target_role=request.target_role,
+        experience_level=request.experience_level,
+        role_type=request.role_type,
+        template_id=request.template_id,
+        design_style=request.design_style,
+        provider_used=result["provider_used"],
+        fallback_used=result["fallback_used"],
+        resume_markdown=result["resume_markdown"],
+        generated_summary=result["generated_summary"],
+        generated_skills=result["generated_skills"],
+        suggestions=result["suggestions"],
+        final_warning=result["final_warning"],
     )

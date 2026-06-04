@@ -121,3 +121,42 @@ class AIResumeEnhanceResponse(BaseModel):
     enhanced_bullets: list[EnhancedResumeBullet]
     section_suggestions: list[EnhancedResumeSection]
     final_notes: list[str]
+
+
+class ResumeProfile(BaseModel):
+    full_name: str
+    email: str
+    phone: str | None = None
+    location: str | None = None
+    linkedin: str | None = None
+    github: str | None = None
+
+
+class AIFullResumeGenerateRequest(BaseModel):
+    target_role: str
+    experience_level: str = "new_grad"
+    role_type: str = "software_engineer"
+    template_id: str = "ats_simple"
+    design_style: str = "ats_simple"
+
+    profile: ResumeProfile
+    summary_notes: str | None = None
+    skills: list[str] = []
+    education: list[EducationItem] = []
+    experience: list[ExperienceItem] = []
+    projects: list[ProjectItem] = []
+
+
+class AIFullResumeGenerateResponse(BaseModel):
+    target_role: str
+    experience_level: str
+    role_type: str
+    template_id: str
+    design_style: str
+    provider_used: str
+    fallback_used: bool
+    resume_markdown: str
+    generated_summary: str
+    generated_skills: list[str]
+    suggestions: list[str]
+    final_warning: str
