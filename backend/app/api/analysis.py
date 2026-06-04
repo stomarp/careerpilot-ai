@@ -9,9 +9,12 @@ from app.schemas.analysis import (
     ATSScoreResponse,
     ResumeATSRequest,
     ResumeATSResponse,
+    ResumeOptimizerRequest,
+    ResumeOptimizerResponse,
 )
 from app.services.ats_scoring import calculate_ats_score
 from app.services.resume_ats_checker import calculate_general_resume_ats_score
+from app.services.resume_optimizer import optimize_resume_for_job
 
 router = APIRouter(
     prefix="/analysis",
@@ -81,4 +84,42 @@ def generate_resume_ats_score(
         strengths=result["strengths"],
         issues=result["issues"],
         recommendations=result["recommendations"],
+    )
+
+
+@router.post("/resume-optimizer", response_model=ResumeOptimizerResponse)
+def generate_resume_optimizer(
+    request: ResumeOptimizerRequest,
+    db: Session = Depends(get_db),
+):
+    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
+
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+
+    job_description = (
+        db.query(JobDescription)
+        .filter(JobDescription.id == request.job_id)
+        .first()
+    )
+
+    if not job_description:
+        raise HTTPException(status_code=404, detail="Job description not found.")
+
+    result = optimize_resume_for_job(
+        resume_text=resume.parsed_text or "",
+        job_description_text=job_description.description or "",
+        industry=request.industry,
+    )
+
+    return ResumeOptimizerResponse(
+        resume_id=resume.id,
+        job_id=job_description.id,
+        industry=request.industry,
+        overall_strategy=result["overall_strategy"],
+        section_suggestions=result["section_suggestions"],
+        suggested_bullets=result["suggested_bullets"],
+        project_enhancements=result["project_enhancements"],
+        skills_to_learn=result["skills_to_learn"],
+        truthfulness_warning=result["truthfulness_warning"],
     )
