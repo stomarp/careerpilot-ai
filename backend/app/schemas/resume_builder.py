@@ -172,3 +172,24 @@ class ResumePreviewResponse(BaseModel):
     resume_markdown: str
     resume_html: str
     preview_notes: list[str]
+
+
+class ResumeFromUploadRequest(BaseModel):
+    resume_id: int
+    template_id: str = "ats_simple"
+    experience_level: str = "new_grad"
+    role_type: str = "software_engineer"
+    design_style: str = "ats_simple"
+
+
+class ResumeFromUploadResponse(BaseModel):
+    resume_id: int
+    template_id: str
+    experience_level: str
+    role_type: str
+    design_style: str
+    provider_used: str
+    fallback_used: bool
+    resume_markdown: str
+    resume_html: str
+    suggestions: list[str]
