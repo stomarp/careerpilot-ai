@@ -91,3 +91,38 @@ class ResumeOptimizerResponse(BaseModel):
     project_enhancements: list[ProjectEnhancement]
     skills_to_learn: list[str]
     truthfulness_warning: str
+
+
+class AISectionFeedback(BaseModel):
+    section: str
+    score: int
+    feedback: str
+    improved_version: str
+
+
+class AIResumeBullet(BaseModel):
+    current_or_target_section: str
+    improved_bullet: str
+    why_it_helps: str
+    truthfulness_note: str
+
+
+class AIProjectEnhancement(BaseModel):
+    project: str
+    enhancement_to_build: str
+    resume_bullet_after_building: str
+    difficulty: str
+
+
+class AIResumeOptimizerResponse(BaseModel):
+    resume_id: int
+    job_id: int
+    industry: str
+    ats_score: int
+    ai_overall_feedback: str
+    section_feedback: list[AISectionFeedback]
+    improved_bullets: list[AIResumeBullet]
+    missing_keywords_to_add_truthfully: list[str]
+    project_enhancements: list[AIProjectEnhancement]
+    certifications_or_learning: list[str]
+    final_warning: str
