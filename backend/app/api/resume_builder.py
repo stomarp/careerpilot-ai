@@ -1,5 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
+from app.core.database import get_db
+from app.models.resume import Resume
 from app.schemas.resume_builder import (
     AIFullResumeGenerateRequest,
     AIFullResumeGenerateResponse,
@@ -7,6 +10,8 @@ from app.schemas.resume_builder import (
     AIResumeEnhanceResponse,
     ResumeCreateRequest,
     ResumeCreateResponse,
+    ResumeFromUploadRequest,
+    ResumeFromUploadResponse,
     ResumePreviewRequest,
     ResumePreviewResponse,
     ResumeSuggestionRequest,
@@ -22,6 +27,7 @@ from app.services.resume_builder import (
 )
 from app.services.resume_html_preview import build_resume_html
 from app.services.resume_templates import get_templates
+from app.services.resume_upload_to_builder import build_resume_from_uploaded_text
 
 router = APIRouter(
     prefix="/resume-builder",
@@ -140,4 +146,42 @@ def preview_resume(
         resume_markdown=request.resume_markdown,
         resume_html=result["resume_html"],
         preview_notes=result["preview_notes"],
+    )
+
+
+@router.post("/from-uploaded-resume", response_model=ResumeFromUploadResponse)
+def build_from_uploaded_resume(
+    request: ResumeFromUploadRequest,
+    db: Session = Depends(get_db),
+):
+    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
+
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+
+    if not resume.parsed_text:
+        raise HTTPException(
+            status_code=400,
+            detail="Uploaded resume does not have parsed text.",
+        )
+
+    result = build_resume_from_uploaded_text(
+        parsed_text=resume.parsed_text,
+        template_id=request.template_id,
+        experience_level=request.experience_level,
+        role_type=request.role_type,
+        design_style=request.design_style,
+    )
+
+    return ResumeFromUploadResponse(
+        resume_id=resume.id,
+        template_id=request.template_id,
+        experience_level=request.experience_level,
+        role_type=request.role_type,
+        design_style=request.design_style,
+        provider_used=result["provider_used"],
+        fallback_used=result["fallback_used"],
+        resume_markdown=result["resume_markdown"],
+        resume_html=result["resume_html"],
+        suggestions=result["suggestions"],
     )
