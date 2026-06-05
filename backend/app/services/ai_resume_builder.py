@@ -3,6 +3,7 @@ import json
 from google import genai
 
 from app.core.config import settings
+from app.services.text_cleaner import clean_list, clean_text
 
 
 def clean_json_response(raw_text: str) -> str:
@@ -190,15 +191,15 @@ Return JSON with this exact structure:
         ai_result = safe_json_loads(response.text)
 
         return {
-            "provider_used": "gemini",
-            "fallback_used": False,
-            "enhanced_summary": ai_result.get("enhanced_summary", ""),
-            "enhanced_skills": ai_result.get("enhanced_skills", []),
+            "enhanced_summary": clean_text(ai_result.get("enhanced_summary", "")),
+            "enhanced_skills": clean_list(ai_result.get("enhanced_skills", [])),
             "enhanced_bullets": ai_result.get("enhanced_bullets", []),
             "section_suggestions": ai_result.get("section_suggestions", []),
-            "final_notes": ai_result.get(
-                "final_notes",
-                ["Only include truthful and verifiable experience."],
+            "final_notes": clean_list(
+                ai_result.get(
+                    "final_notes",
+                    ["Only include truthful and verifiable experience."],
+                )
             ),
         }
 
