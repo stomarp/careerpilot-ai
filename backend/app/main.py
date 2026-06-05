@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.api import analysis, job_descriptions, resume_builder, resumes
+from app.api import analysis, applications, job_descriptions, resume_builder, resumes
+
 from app.core.database import engine
 
 app = FastAPI(
@@ -14,6 +15,7 @@ app.include_router(resumes.router)
 app.include_router(job_descriptions.router)
 app.include_router(analysis.router)
 app.include_router(resume_builder.router)
+app.include_router(applications.router)
 
 
 @app.get("/health")
