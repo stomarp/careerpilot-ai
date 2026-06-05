@@ -193,3 +193,18 @@ class ResumeFromUploadResponse(BaseModel):
     resume_markdown: str
     resume_html: str
     suggestions: list[str]
+
+
+class ResumeExportRequest(BaseModel):
+    filename: str
+    resume_markdown: str
+
+
+class ResumeExportResponse(BaseModel):
+    filename: str
+    file_path: str
+    message: str
+
+class ResumePDFExportRequest(BaseModel):
+    filename: str
+    resume_html: str

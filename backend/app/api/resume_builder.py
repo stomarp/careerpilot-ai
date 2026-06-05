@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -10,8 +13,11 @@ from app.schemas.resume_builder import (
     AIResumeEnhanceResponse,
     ResumeCreateRequest,
     ResumeCreateResponse,
+    ResumeExportRequest,
+    ResumeExportResponse,
     ResumeFromUploadRequest,
     ResumeFromUploadResponse,
+    ResumePDFExportRequest,
     ResumePreviewRequest,
     ResumePreviewResponse,
     ResumeSuggestionRequest,
@@ -24,6 +30,12 @@ from app.services.resume_builder import (
     build_resume_markdown,
     generate_resume_suggestions,
     generate_template_suggestions,
+)
+from app.services.resume_export import (
+    export_docx_resume,
+    export_html_resume,
+    export_markdown_resume,
+    export_pdf_resume,
 )
 from app.services.resume_html_preview import build_resume_html
 from app.services.resume_templates import get_templates
@@ -184,4 +196,97 @@ def build_from_uploaded_resume(
         resume_markdown=result["resume_markdown"],
         resume_html=result["resume_html"],
         suggestions=result["suggestions"],
+    )
+
+
+@router.post("/export/markdown", response_model=ResumeExportResponse)
+def export_resume_markdown(
+    request: ResumeExportRequest,
+):
+    result = export_markdown_resume(
+        filename=request.filename,
+        resume_markdown=request.resume_markdown,
+    )
+
+    return ResumeExportResponse(
+        filename=result["filename"],
+        file_path=result["file_path"],
+        message=result["message"],
+    )
+
+
+@router.post("/export/html", response_model=ResumeExportResponse)
+def export_resume_html(
+    request: ResumeExportRequest,
+):
+    result = export_html_resume(
+        filename=request.filename,
+        resume_html=request.resume_markdown,
+    )
+
+    return ResumeExportResponse(
+        filename=result["filename"],
+        file_path=result["file_path"],
+        message=result["message"],
+    )
+
+
+@router.post("/export/docx", response_model=ResumeExportResponse)
+def export_resume_docx(
+    request: ResumeExportRequest,
+):
+    result = export_docx_resume(
+        filename=request.filename,
+        resume_markdown=request.resume_markdown,
+    )
+
+    return ResumeExportResponse(
+        filename=result["filename"],
+        file_path=result["file_path"],
+        message=result["message"],
+    )
+
+
+@router.post("/export/pdf", response_model=ResumeExportResponse)
+def export_resume_pdf(
+    request: ResumePDFExportRequest,
+):
+    result = export_pdf_resume(
+        filename=request.filename,
+        resume_html=request.resume_html,
+    )
+
+    return ResumeExportResponse(
+        filename=result["filename"],
+        file_path=result["file_path"],
+        message=result["message"],
+    )
+
+
+@router.get("/export/download/{filename}")
+def download_exported_resume(
+    filename: str,
+):
+    export_dir = Path("exports")
+    file_path = export_dir / filename
+
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Exported file not found.")
+
+    allowed_extensions = {
+        ".md": "text/markdown",
+        ".html": "text/html",
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".pdf": "application/pdf",
+    }
+
+    file_extension = file_path.suffix.lower()
+
+    if file_extension not in allowed_extensions:
+        raise HTTPException(status_code=400, detail="Unsupported file type.")
+
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type=allowed_extensions[file_extension],
     )
