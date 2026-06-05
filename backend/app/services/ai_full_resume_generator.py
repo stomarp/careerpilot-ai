@@ -1,7 +1,7 @@
 import json
 
 from google import genai
-
+from app.services.text_cleaner import clean_list, clean_text
 from app.core.config import settings
 from app.schemas.resume_builder import AIFullResumeGenerateRequest
 from app.services.resume_builder import build_resume_markdown
@@ -235,13 +235,15 @@ Return JSON with this exact structure:
         return {
             "provider_used": "gemini",
             "fallback_used": False,
-            "resume_markdown": ai_result.get("resume_markdown", ""),
-            "generated_summary": ai_result.get("generated_summary", ""),
-            "generated_skills": ai_result.get("generated_skills", []),
-            "suggestions": ai_result.get("suggestions", []) + date_warnings,
-            "final_warning": ai_result.get(
-                "final_warning",
-                "Only include truthful, verifiable experience and skills.",
+            "resume_markdown": clean_text(ai_result.get("resume_markdown", "")),
+            "generated_summary": clean_text(ai_result.get("generated_summary", "")),
+            "generated_skills": clean_list(ai_result.get("generated_skills", [])),
+            "suggestions": clean_list(ai_result.get("suggestions", []) + date_warnings),
+            "final_warning": clean_text(
+                ai_result.get(
+                    "final_warning",
+                    "Only include truthful, verifiable experience and skills.",
+                )    
             ),
         }
 

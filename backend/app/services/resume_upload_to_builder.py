@@ -1,6 +1,7 @@
 import json
 
 from google import genai
+from app.services.text_cleaner import clean_resume_sections
 
 from app.core.config import settings
 from app.schemas.resume_builder import (
@@ -588,8 +589,9 @@ def build_resume_from_uploaded_text(
             f"Reason: {str(exc)}"
         )
 
+    cleaned_sections = clean_resume_sections(sections)
     resume_request = create_resume_request_from_sections(
-        sections=sections,
+        sections=cleaned_sections,
         template_id=template_id,
         experience_level=experience_level,
         role_type=role_type,
