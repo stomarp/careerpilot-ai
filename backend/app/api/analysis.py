@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.schemas.advanced_ats import AdvancedATSRequest, AdvancedATSResponse
+from app.services.advanced_ats_analyzer import analyze_advanced_ats
+
 from app.core.database import get_db
 from app.models.job_description import JobDescription
 from app.models.resume import Resume
@@ -168,4 +171,52 @@ def generate_ai_resume_optimizer(
         project_enhancements=result["project_enhancements"],
         certifications_or_learning=result["certifications_or_learning"],
         final_warning=result["final_warning"],
+    )
+
+@router.post("/advanced-ats-score", response_model=AdvancedATSResponse)
+def generate_advanced_ats_score(
+    request: AdvancedATSRequest,
+    db: Session = Depends(get_db),
+):
+    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
+
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+
+    job = db.query(JobDescription).filter(JobDescription.id == request.job_id).first()
+
+    if not job:
+        raise HTTPException(status_code=404, detail="Job description not found.")
+
+    if not resume.parsed_text:
+        raise HTTPException(
+            status_code=400,
+            detail="Resume does not have parsed text.",
+        )
+
+    if not job.description:
+        raise HTTPException(
+            status_code=400,
+            detail="Job description does not have parsed text.",
+        )
+
+    result = analyze_advanced_ats(
+        resume_text=resume.parsed_text,
+        job_text=job.description,
+        industry=request.industry,
+        role_type=request.role_type,
+    )
+
+    return AdvancedATSResponse(
+        resume_id=request.resume_id,
+        job_id=request.job_id,
+        industry=request.industry,
+        role_type=request.role_type,
+        overall_score=result["overall_score"],
+        score_breakdown=result["score_breakdown"],
+        keyword_analysis=result["keyword_analysis"],
+        skills_analysis=result["skills_analysis"],
+        formatting_checks=result["formatting_checks"],
+        section_feedback=result["section_feedback"],
+        recommendations=result["recommendations"],
     )
