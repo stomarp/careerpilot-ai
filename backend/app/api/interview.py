@@ -91,6 +91,14 @@ def generate_interview_questions(
         if not job_description:
             raise HTTPException(status_code=404, detail="Job description not found.")
 
+    company_name = request.company_name
+
+    if not company_name and application:
+        company_name = application.company_name
+
+    if not company_name and job_description:
+        company_name = job_description.company
+
     context_text = build_context_text(
         application=application,
         analysis_report=analysis_report,
@@ -100,21 +108,27 @@ def generate_interview_questions(
 
     result = generate_interview_questions_with_ai(
         target_role=request.target_role,
+        company_name=company_name,
         role_type=request.role_type,
         industry=request.industry,
         experience_level=request.experience_level,
         question_count=request.question_count,
+        question_style=request.question_style,
+        include_company_prep=request.include_company_prep,
+        include_platform_patterns=request.include_platform_patterns,
         context_text=context_text,
     )
 
     return InterviewQuestionResponse(
         target_role=request.target_role,
+        company_name=company_name,
         role_type=request.role_type,
         industry=request.industry,
         experience_level=request.experience_level,
         provider_used=result["provider_used"],
         fallback_used=result["fallback_used"],
         question_sets=result["question_sets"],
+        company_prep=result["company_prep"],
         preparation_tips=result["preparation_tips"],
         focus_areas=result["focus_areas"],
     )

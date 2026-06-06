@@ -79,6 +79,84 @@ ROLE_INTERVIEW_CATEGORIES = {
 }
 
 
+COMPANY_DOMAIN_PATTERNS = {
+    "visa": {
+        "domain": "payments, transaction reliability, risk, security, scale, and global financial infrastructure",
+        "prep": [
+            {
+                "area": "Company/domain focus",
+                "guidance": "Expect questions that connect backend engineering to reliability, transaction processing, security, APIs, and scalable payment systems.",
+            },
+            {
+                "area": "New grad signal",
+                "guidance": "Show strong fundamentals, clear communication, project ownership, testing discipline, and ability to learn quickly.",
+            },
+        ],
+    },
+    "amazon": {
+        "domain": "customer obsession, scalable services, ownership, operational excellence, and distributed systems",
+        "prep": [
+            {
+                "area": "Company/domain focus",
+                "guidance": "Expect questions around scalable services, ownership, tradeoffs, operational thinking, and customer impact.",
+            },
+            {
+                "area": "Behavioral focus",
+                "guidance": "Prepare STAR stories aligned with ownership, learning, conflict handling, and delivering results.",
+            },
+        ],
+    },
+    "google": {
+        "domain": "large-scale systems, algorithms, data-driven engineering, reliability, and clean design",
+        "prep": [
+            {
+                "area": "Company/domain focus",
+                "guidance": "Expect strong problem solving, clean technical explanations, system tradeoffs, and scalable design thinking.",
+            },
+            {
+                "area": "Interview focus",
+                "guidance": "Practice algorithms, data structures, clear reasoning, and structured system design explanations.",
+            },
+        ],
+    },
+    "meta": {
+        "domain": "product engineering, experimentation, scale, social systems, metrics, and impact",
+        "prep": [
+            {
+                "area": "Company/domain focus",
+                "guidance": "Expect product-aware engineering questions involving scale, metrics, experimentation, and user impact.",
+            },
+            {
+                "area": "Execution focus",
+                "guidance": "Show ability to move fast while discussing correctness, reliability, and measurable impact.",
+            },
+        ],
+    },
+    "microsoft": {
+        "domain": "cloud platforms, enterprise software, collaboration, reliability, and customer impact",
+        "prep": [
+            {
+                "area": "Company/domain focus",
+                "guidance": "Expect questions around collaboration, cloud services, software quality, and customer-focused engineering.",
+            },
+            {
+                "area": "Behavioral focus",
+                "guidance": "Prepare examples around teamwork, growth mindset, problem solving, and technical ownership.",
+            },
+        ],
+    },
+}
+
+
+EXPERIENCE_LEVEL_GUIDANCE = {
+    "internship": "Keep questions foundational and project/coursework-focused. Emphasize learning ability, communication, and basic role skills.",
+    "new_grad": "Use foundational to medium difficulty questions. Emphasize fundamentals, projects, internships/volunteer work, problem solving, and growth potential.",
+    "entry_level": "Use foundational to medium difficulty questions. Emphasize practical execution, role basics, and clear examples.",
+    "experienced": "Use medium to hard questions. Emphasize ownership, impact, tradeoffs, production experience, and cross-functional collaboration.",
+    "senior": "Use hard questions. Emphasize leadership, architecture, strategy, mentoring, tradeoffs, and business impact.",
+}
+
+
 def clean_json_response(raw_text: str) -> str:
     cleaned = raw_text.strip()
 
@@ -109,6 +187,33 @@ def get_categories_for_role(role_type: str) -> list[str]:
     return ROLE_INTERVIEW_CATEGORIES.get(
         role_type,
         ROLE_INTERVIEW_CATEGORIES["general"],
+    )
+
+
+def get_company_pattern(company_name: str | None) -> dict:
+    if not company_name:
+        return {
+            "domain": "the target company's role, industry, product context, and team expectations",
+            "prep": [],
+        }
+
+    key = company_name.strip().lower()
+
+    return COMPANY_DOMAIN_PATTERNS.get(
+        key,
+        {
+            "domain": f"{company_name}'s business domain, role expectations, product context, and company values",
+            "prep": [
+                {
+                    "area": "Company research",
+                    "guidance": f"Research {company_name}'s products, customers, mission, recent updates, and how this role contributes to the company.",
+                },
+                {
+                    "area": "Role alignment",
+                    "guidance": f"Prepare examples that connect your experience to {company_name}'s target role and business problems.",
+                },
+            ],
+        },
     )
 
 
@@ -204,6 +309,15 @@ def get_answer_hint(category: str, target_role: str) -> str:
     )
 
 
+def get_category_reason(category: str, role_type: str, company_name: str | None) -> str:
+    company_part = f" for {company_name}" if company_name else ""
+
+    return (
+        f"This category is commonly important for {role_type.replace('_', ' ')} "
+        f"interviews{company_part} and helps prepare role-specific examples."
+    )
+
+
 def build_context_text(
     application,
     analysis_report,
@@ -264,14 +378,20 @@ Description:
 
 def build_rule_based_questions(
     target_role: str,
+    company_name: str | None,
     role_type: str,
     industry: str,
     experience_level: str,
     question_count: int,
+    question_style: str,
+    include_company_prep: bool,
+    include_platform_patterns: bool,
     context_text: str,
     failure_reason: str,
 ) -> dict:
     categories = get_categories_for_role(role_type)
+    company_pattern = get_company_pattern(company_name)
+
     question_sets = []
 
     base_questions_by_category = {
@@ -307,118 +427,6 @@ def build_rule_based_questions(
             "Explain object-oriented programming in simple terms.",
             "How do you write maintainable code?",
         ],
-        "Machine Learning & LLMs": [
-            "How would you explain the difference between a traditional ML model and an LLM?",
-            "How would you evaluate whether an AI feature is working well?",
-        ],
-        "RAG / Embeddings / Vector Search": [
-            "How would you design a RAG pipeline for searching company documents?",
-            "What are embeddings and why are they useful for semantic search?",
-        ],
-        "AI System Design": [
-            "How would you design an AI-powered resume optimizer?",
-            "How would you handle AI provider failures or unreliable model responses?",
-        ],
-        "Evaluation & Safety": [
-            "How would you reduce hallucinations in an AI-generated answer?",
-            "What safety checks would you add before showing AI output to users?",
-        ],
-        "SQL & Data Analysis": [
-            "How would you write a SQL query to calculate monthly user growth?",
-            "How do you validate that a dataset is accurate before analysis?",
-        ],
-        "Dashboards & Metrics": [
-            "How would you decide which KPIs to show on a business dashboard?",
-            "How would you explain a sudden drop in conversion rate?",
-        ],
-        "Business Case Questions": [
-            "How would you analyze whether a new product feature is successful?",
-            "How would you prioritize two competing business opportunities?",
-        ],
-        "Data Cleaning": [
-            "How do you handle missing or duplicate data?",
-            "How would you clean inconsistent date or category values in a dataset?",
-        ],
-        "Stakeholder Communication": [
-            "How do you explain technical findings to a non-technical stakeholder?",
-            "Tell me about a time you clarified unclear requirements.",
-        ],
-        "Classroom Management": [
-            "How would you handle a disruptive student while keeping the class on track?",
-            "How do you create a positive classroom environment?",
-        ],
-        "Lesson Planning": [
-            "How do you design a lesson for students with different learning levels?",
-            "How do you check whether students understood the lesson?",
-        ],
-        "Student Assessment": [
-            "How do you use assessment results to improve instruction?",
-            "How would you support a student who is falling behind?",
-        ],
-        "Parent Communication": [
-            "How would you communicate a student concern to a parent?",
-            "How do you build trust with families?",
-        ],
-        "Scenario-Based Teaching Questions": [
-            "A student refuses to participate. What would you do?",
-            "Several students are struggling with the same concept. How would you respond?",
-        ],
-        "Recruiting & Screening": [
-            "How would you screen candidates fairly and consistently?",
-            "How do you improve candidate experience during hiring?",
-        ],
-        "Employee Relations": [
-            "How would you handle an employee complaint?",
-            "How do you maintain confidentiality in HR situations?",
-        ],
-        "Compliance & Policy": [
-            "How do you ensure HR processes follow company policy?",
-            "How would you handle a policy violation?",
-        ],
-        "Conflict Resolution": [
-            "How would you mediate a workplace conflict?",
-            "Tell me about a time you helped resolve a disagreement.",
-        ],
-        "Onboarding": [
-            "How would you design a first-week onboarding plan?",
-            "How do you measure whether onboarding is successful?",
-        ],
-        "Campaign Strategy": [
-            "How would you plan a campaign for a new product launch?",
-            "How do you decide which marketing channels to use?",
-        ],
-        "SEO & Content": [
-            "How do you choose keywords for a content strategy?",
-            "How would you improve an underperforming blog post?",
-        ],
-        "Analytics & Metrics": [
-            "Which metrics would you track for an email campaign?",
-            "How would you analyze an A/B test result?",
-        ],
-        "Brand Positioning": [
-            "How would you differentiate a brand in a crowded market?",
-            "How do you keep messaging consistent across channels?",
-        ],
-        "Case Study Questions": [
-            "How would you evaluate whether a campaign was successful?",
-            "How would you respond if a competitor launched a similar product?",
-        ],
-        "Financial Analysis": [
-            "How would you evaluate whether a business investment is worthwhile?",
-            "How do you explain financial results to non-finance stakeholders?",
-        ],
-        "Budgeting & Forecasting": [
-            "How would you build a quarterly forecast?",
-            "What would you do if actual spending was much higher than budget?",
-        ],
-        "Risk & Controls": [
-            "How would you identify financial or operational risks?",
-            "How do internal controls reduce business risk?",
-        ],
-        "Reporting": [
-            "How do you ensure financial reports are accurate?",
-            "How would you summarize performance trends for leadership?",
-        ],
         "Role Knowledge": [
             f"What skills are most important for a {target_role}?",
             f"Why are you interested in this {target_role} role?",
@@ -449,10 +457,22 @@ def build_rule_based_questions(
         questions = []
 
         for question in raw_questions:
+            if company_name and include_company_prep:
+                question = (
+                    f"{question} How would you connect your answer to "
+                    f"{company_name}'s domain: {company_pattern['domain']}?"
+                )
+
             questions.append(
                 {
                     "question": question,
                     "difficulty": "medium",
+                    "source_style": (
+                        "company_role_pattern"
+                        if include_company_prep
+                        else "role_pattern"
+                    ),
+                    "practice_priority": "high" if category in categories[:3] else "medium",
                     "what_interviewer_is_testing": get_testing_focus(
                         category=category,
                         target_role=target_role,
@@ -467,20 +487,32 @@ def build_rule_based_questions(
         question_sets.append(
             {
                 "category": category,
+                "why_this_category_matters": get_category_reason(
+                    category=category,
+                    role_type=role_type,
+                    company_name=company_name,
+                ),
                 "questions": questions,
             }
         )
+
+    company_prep = company_pattern["prep"] if include_company_prep else []
 
     return {
         "provider_used": "rule_based_fallback",
         "fallback_used": True,
         "question_sets": question_sets,
+        "company_prep": company_prep,
         "preparation_tips": [
             f"AI provider was unavailable, so fallback questions were generated. Reason: {failure_reason}",
+            EXPERIENCE_LEVEL_GUIDANCE.get(
+                experience_level,
+                EXPERIENCE_LEVEL_GUIDANCE["entry_level"],
+            ),
             "Prepare examples from your resume, projects, work experience, or coursework.",
             "Use STAR for behavioral answers: Situation, Task, Action, Result.",
             "Review missing skills and keywords from the saved analysis report.",
-            "For each answer, connect your response to the target role and the job description.",
+            "For each answer, connect your response to the target role and company context.",
         ],
         "focus_areas": categories,
     }
@@ -488,10 +520,14 @@ def build_rule_based_questions(
 
 def generate_interview_questions_with_ai(
     target_role: str,
+    company_name: str | None,
     role_type: str,
     industry: str,
     experience_level: str,
     question_count: int,
+    question_style: str,
+    include_company_prep: bool,
+    include_platform_patterns: bool,
     context_text: str,
 ) -> dict:
     try:
@@ -501,26 +537,42 @@ def generate_interview_questions_with_ai(
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
         categories = get_categories_for_role(role_type)
+        company_pattern = get_company_pattern(company_name)
+        experience_guidance = EXPERIENCE_LEVEL_GUIDANCE.get(
+            experience_level,
+            EXPERIENCE_LEVEL_GUIDANCE["entry_level"],
+        )
 
         prompt = f"""
 You are an expert interview coach and career platform assistant.
 
-Generate role-specific interview questions for the user.
+Generate company-aware, role-specific interview preparation questions.
 
 Important rules:
 - Support all professions, not only technology.
-- Use the role_type and industry to choose relevant question categories.
+- Use the role_type, industry, company_name, and experience_level to choose relevant question categories.
 - Use resume, job description, application, and analysis report context if provided.
+- Generate original questions. Do NOT copy exact questions from other websites or platforms.
+- You may use common interview patterns such as DSA-style, system-design-style, behavioral STAR-style, case-style, domain-style, and project-deep-dive-style questions.
 - If missing skills are provided, include questions that help the user prepare for those areas.
+- If company_name is provided, connect some questions to that company's domain, product context, business model, or likely role expectations.
 - Do NOT invent false experience.
 - Do NOT claim the user has done something unless it appears in context.
 - Keep questions realistic for the user's experience level.
 - Make answer hints specific and useful, not generic.
+- Add source_style for each question, such as company_domain_pattern, role_pattern, project_deep_dive, behavioral_star, dsa_style, system_design_style, case_style, domain_scenario.
+- Add practice_priority for each question: high, medium, or low.
 - Return ONLY valid JSON.
 - Do not include markdown fences.
 
 Target role:
 {target_role}
+
+Company name:
+{company_name}
+
+Company/domain guidance:
+{company_pattern}
 
 Role type:
 {role_type}
@@ -531,8 +583,20 @@ Industry:
 Experience level:
 {experience_level}
 
+Experience-level guidance:
+{experience_guidance}
+
 Question count:
 {question_count}
+
+Question style:
+{question_style}
+
+Include company prep:
+{include_company_prep}
+
+Include platform/interview pattern styles:
+{include_platform_patterns}
 
 Recommended categories:
 {categories}
@@ -545,14 +609,23 @@ Return JSON with this exact structure:
   "question_sets": [
     {{
       "category": "string",
+      "why_this_category_matters": "string",
       "questions": [
         {{
           "question": "string",
           "difficulty": "easy | medium | hard",
+          "source_style": "company_domain_pattern | role_pattern | project_deep_dive | behavioral_star | dsa_style | system_design_style | case_style | domain_scenario",
+          "practice_priority": "high | medium | low",
           "what_interviewer_is_testing": "string",
           "answer_hint": "string"
         }}
       ]
+    }}
+  ],
+  "company_prep": [
+    {{
+      "area": "string",
+      "guidance": "string"
     }}
   ],
   "preparation_tips": ["string"],
@@ -571,6 +644,7 @@ Return JSON with this exact structure:
             "provider_used": "gemini",
             "fallback_used": False,
             "question_sets": ai_result.get("question_sets", []),
+            "company_prep": ai_result.get("company_prep", []),
             "preparation_tips": ai_result.get("preparation_tips", []),
             "focus_areas": ai_result.get("focus_areas", categories),
         }
@@ -578,10 +652,14 @@ Return JSON with this exact structure:
     except Exception as exc:
         return build_rule_based_questions(
             target_role=target_role,
+            company_name=company_name,
             role_type=role_type,
             industry=industry,
             experience_level=experience_level,
             question_count=question_count,
+            question_style=question_style,
+            include_company_prep=include_company_prep,
+            include_platform_patterns=include_platform_patterns,
             context_text=context_text,
             failure_reason=str(exc),
         )
