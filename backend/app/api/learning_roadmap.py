@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.analysis_report import AnalysisReport
 from app.models.application import Application
+from app.models.user import User
 from app.schemas.learning_roadmap import (
     LearningRoadmapRequest,
     LearningRoadmapResponse,
@@ -25,6 +27,7 @@ router = APIRouter(
 def generate_learning_roadmap(
     request: LearningRoadmapRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     application = None
     analysis_report = None
@@ -32,7 +35,10 @@ def generate_learning_roadmap(
     if request.application_id:
         application = (
             db.query(Application)
-            .filter(Application.id == request.application_id)
+            .filter(
+                Application.id == request.application_id,
+                Application.user_id == current_user.id,
+            )
             .first()
         )
 
@@ -42,7 +48,10 @@ def generate_learning_roadmap(
     if request.analysis_report_id:
         analysis_report = (
             db.query(AnalysisReport)
-            .filter(AnalysisReport.id == request.analysis_report_id)
+            .filter(
+                AnalysisReport.id == request.analysis_report_id,
+                AnalysisReport.user_id == current_user.id,
+            )
             .first()
         )
 

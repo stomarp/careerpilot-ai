@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.schemas.advanced_ats import AdvancedATSRequest, AdvancedATSResponse
-from app.services.advanced_ats_analyzer import analyze_advanced_ats
-
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.job_description import JobDescription
 from app.models.resume import Resume
+from app.models.user import User
+from app.schemas.advanced_ats import AdvancedATSRequest, AdvancedATSResponse
 from app.schemas.analysis import (
     AIResumeOptimizerResponse,
     ATSScoreRequest,
@@ -16,6 +16,7 @@ from app.schemas.analysis import (
     ResumeOptimizerRequest,
     ResumeOptimizerResponse,
 )
+from app.services.advanced_ats_analyzer import analyze_advanced_ats
 from app.services.ai_resume_optimizer import optimize_resume_with_ai
 from app.services.ats_scoring import calculate_ats_score
 from app.services.resume_ats_checker import calculate_general_resume_ats_score
@@ -27,24 +28,63 @@ router = APIRouter(
 )
 
 
-@router.post("/ats-score", response_model=ATSScoreResponse)
-def generate_ats_score(
-    request: ATSScoreRequest,
-    db: Session = Depends(get_db),
-):
-    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
+def get_user_resume(
+    db: Session,
+    current_user: User,
+    resume_id: int,
+) -> Resume:
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.user_id == current_user.id,
+        )
+        .first()
+    )
 
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found.")
 
+    return resume
+
+
+def get_user_job_description(
+    db: Session,
+    current_user: User,
+    job_id: int,
+) -> JobDescription:
     job_description = (
         db.query(JobDescription)
-        .filter(JobDescription.id == request.job_id)
+        .filter(
+            JobDescription.id == job_id,
+            JobDescription.user_id == current_user.id,
+        )
         .first()
     )
 
     if not job_description:
         raise HTTPException(status_code=404, detail="Job description not found.")
+
+    return job_description
+
+
+@router.post("/ats-score", response_model=ATSScoreResponse)
+def generate_ats_score(
+    request: ATSScoreRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    resume = get_user_resume(
+        db=db,
+        current_user=current_user,
+        resume_id=request.resume_id,
+    )
+
+    job_description = get_user_job_description(
+        db=db,
+        current_user=current_user,
+        job_id=request.job_id,
+    )
 
     result = calculate_ats_score(
         resume_text=resume.parsed_text or "",
@@ -70,11 +110,13 @@ def generate_ats_score(
 def generate_resume_ats_score(
     request: ResumeATSRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
-
-    if not resume:
-        raise HTTPException(status_code=404, detail="Resume not found.")
+    resume = get_user_resume(
+        db=db,
+        current_user=current_user,
+        resume_id=request.resume_id,
+    )
 
     result = calculate_general_resume_ats_score(
         resume_text=resume.parsed_text or "",
@@ -96,20 +138,19 @@ def generate_resume_ats_score(
 def generate_resume_optimizer(
     request: ResumeOptimizerRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
-
-    if not resume:
-        raise HTTPException(status_code=404, detail="Resume not found.")
-
-    job_description = (
-        db.query(JobDescription)
-        .filter(JobDescription.id == request.job_id)
-        .first()
+    resume = get_user_resume(
+        db=db,
+        current_user=current_user,
+        resume_id=request.resume_id,
     )
 
-    if not job_description:
-        raise HTTPException(status_code=404, detail="Job description not found.")
+    job_description = get_user_job_description(
+        db=db,
+        current_user=current_user,
+        job_id=request.job_id,
+    )
 
     result = optimize_resume_for_job(
         resume_text=resume.parsed_text or "",
@@ -134,20 +175,19 @@ def generate_resume_optimizer(
 def generate_ai_resume_optimizer(
     request: ResumeOptimizerRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
-
-    if not resume:
-        raise HTTPException(status_code=404, detail="Resume not found.")
-
-    job_description = (
-        db.query(JobDescription)
-        .filter(JobDescription.id == request.job_id)
-        .first()
+    resume = get_user_resume(
+        db=db,
+        current_user=current_user,
+        resume_id=request.resume_id,
     )
 
-    if not job_description:
-        raise HTTPException(status_code=404, detail="Job description not found.")
+    job_description = get_user_job_description(
+        db=db,
+        current_user=current_user,
+        job_id=request.job_id,
+    )
 
     result = optimize_resume_with_ai(
         resume_text=resume.parsed_text or "",
@@ -173,20 +213,24 @@ def generate_ai_resume_optimizer(
         final_warning=result["final_warning"],
     )
 
+
 @router.post("/advanced-ats-score", response_model=AdvancedATSResponse)
 def generate_advanced_ats_score(
     request: AdvancedATSRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
+    resume = get_user_resume(
+        db=db,
+        current_user=current_user,
+        resume_id=request.resume_id,
+    )
 
-    if not resume:
-        raise HTTPException(status_code=404, detail="Resume not found.")
-
-    job = db.query(JobDescription).filter(JobDescription.id == request.job_id).first()
-
-    if not job:
-        raise HTTPException(status_code=404, detail="Job description not found.")
+    job = get_user_job_description(
+        db=db,
+        current_user=current_user,
+        job_id=request.job_id,
+    )
 
     if not resume.parsed_text:
         raise HTTPException(

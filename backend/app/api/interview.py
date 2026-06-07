@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.analysis_report import AnalysisReport
 from app.models.application import Application
 from app.models.job_description import JobDescription
 from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.interview import (
     InterviewQuestionRequest,
     InterviewQuestionResponse,
@@ -25,6 +27,7 @@ router = APIRouter(
 def generate_interview_questions(
     request: InterviewQuestionRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     application = None
     analysis_report = None
@@ -34,7 +37,10 @@ def generate_interview_questions(
     if request.application_id:
         application = (
             db.query(Application)
-            .filter(Application.id == request.application_id)
+            .filter(
+                Application.id == request.application_id,
+                Application.user_id == current_user.id,
+            )
             .first()
         )
 
@@ -42,19 +48,32 @@ def generate_interview_questions(
             raise HTTPException(status_code=404, detail="Application not found.")
 
         if application.resume_id and not request.resume_id:
-            resume = db.query(Resume).filter(Resume.id == application.resume_id).first()
+            resume = (
+                db.query(Resume)
+                .filter(
+                    Resume.id == application.resume_id,
+                    Resume.user_id == current_user.id,
+                )
+                .first()
+            )
 
         if application.job_description_id and not request.job_description_id:
             job_description = (
                 db.query(JobDescription)
-                .filter(JobDescription.id == application.job_description_id)
+                .filter(
+                    JobDescription.id == application.job_description_id,
+                    JobDescription.user_id == current_user.id,
+                )
                 .first()
             )
 
     if request.analysis_report_id:
         analysis_report = (
             db.query(AnalysisReport)
-            .filter(AnalysisReport.id == request.analysis_report_id)
+            .filter(
+                AnalysisReport.id == request.analysis_report_id,
+                AnalysisReport.user_id == current_user.id,
+            )
             .first()
         )
 
@@ -64,19 +83,32 @@ def generate_interview_questions(
         if analysis_report.resume_id and not resume:
             resume = (
                 db.query(Resume)
-                .filter(Resume.id == analysis_report.resume_id)
+                .filter(
+                    Resume.id == analysis_report.resume_id,
+                    Resume.user_id == current_user.id,
+                )
                 .first()
             )
 
         if analysis_report.job_description_id and not job_description:
             job_description = (
                 db.query(JobDescription)
-                .filter(JobDescription.id == analysis_report.job_description_id)
+                .filter(
+                    JobDescription.id == analysis_report.job_description_id,
+                    JobDescription.user_id == current_user.id,
+                )
                 .first()
             )
 
     if request.resume_id:
-        resume = db.query(Resume).filter(Resume.id == request.resume_id).first()
+        resume = (
+            db.query(Resume)
+            .filter(
+                Resume.id == request.resume_id,
+                Resume.user_id == current_user.id,
+            )
+            .first()
+        )
 
         if not resume:
             raise HTTPException(status_code=404, detail="Resume not found.")
@@ -84,7 +116,10 @@ def generate_interview_questions(
     if request.job_description_id:
         job_description = (
             db.query(JobDescription)
-            .filter(JobDescription.id == request.job_description_id)
+            .filter(
+                JobDescription.id == request.job_description_id,
+                JobDescription.user_id == current_user.id,
+            )
             .first()
         )
 
