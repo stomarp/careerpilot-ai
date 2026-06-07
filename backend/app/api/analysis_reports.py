@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.analysis_report import AnalysisReport
 from app.models.application import Application
@@ -29,20 +30,9 @@ VALID_REPORT_TYPES = {
 }
 
 
-def get_demo_user_id(db: Session) -> int:
-    user = db.query(User).first()
-
-    if not user:
-        raise HTTPException(
-            status_code=400,
-            detail="No user exists. Please create a demo user first.",
-        )
-
-    return user.id
-
-
 def validate_references(
     db: Session,
+    current_user: User,
     application_id: int | None,
     resume_id: int | None,
     job_description_id: int | None,
@@ -50,21 +40,34 @@ def validate_references(
     if application_id:
         application = (
             db.query(Application)
-            .filter(Application.id == application_id)
+            .filter(
+                Application.id == application_id,
+                Application.user_id == current_user.id,
+            )
             .first()
         )
         if not application:
             raise HTTPException(status_code=404, detail="Application not found.")
 
     if resume_id:
-        resume = db.query(Resume).filter(Resume.id == resume_id).first()
+        resume = (
+            db.query(Resume)
+            .filter(
+                Resume.id == resume_id,
+                Resume.user_id == current_user.id,
+            )
+            .first()
+        )
         if not resume:
             raise HTTPException(status_code=404, detail="Resume not found.")
 
     if job_description_id:
         job_description = (
             db.query(JobDescription)
-            .filter(JobDescription.id == job_description_id)
+            .filter(
+                JobDescription.id == job_description_id,
+                JobDescription.user_id == current_user.id,
+            )
             .first()
         )
         if not job_description:
@@ -85,6 +88,7 @@ def get_analysis_report_type_options():
 def create_analysis_report(
     request: AnalysisReportCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     if request.report_type not in VALID_REPORT_TYPES:
         raise HTTPException(
@@ -92,17 +96,16 @@ def create_analysis_report(
             detail=f"Invalid report_type: {request.report_type}",
         )
 
-    user_id = get_demo_user_id(db)
-
     validate_references(
         db=db,
+        current_user=current_user,
         application_id=request.application_id,
         resume_id=request.resume_id,
         job_description_id=request.job_description_id,
     )
 
     report = AnalysisReport(
-        user_id=user_id,
+        user_id=current_user.id,
         application_id=request.application_id,
         resume_id=request.resume_id,
         job_description_id=request.job_description_id,
@@ -140,8 +143,9 @@ def list_analysis_reports(
     report_type: str | None = None,
     min_score: int | None = None,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    query = db.query(AnalysisReport)
+    query = db.query(AnalysisReport).filter(AnalysisReport.user_id == current_user.id)
 
     if application_id:
         query = query.filter(AnalysisReport.application_id == application_id)
@@ -164,24 +168,49 @@ def list_analysis_reports(
 @router.get("/dashboard", response_model=AnalysisReportDashboardStats)
 def get_analysis_report_dashboard(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    total_reports = db.query(AnalysisReport).count()
+    total_reports = (
+        db.query(AnalysisReport)
+        .filter(AnalysisReport.user_id == current_user.id)
+        .count()
+    )
 
     ats_reports = (
         db.query(AnalysisReport)
-        .filter(AnalysisReport.report_type.in_(["ats_score", "resume_score"]))
+        .filter(
+            AnalysisReport.user_id == current_user.id,
+            AnalysisReport.report_type.in_(["ats_score", "resume_score"]),
+        )
         .count()
     )
 
     ai_optimizer_reports = (
         db.query(AnalysisReport)
-        .filter(AnalysisReport.report_type == "ai_resume_optimizer")
+        .filter(
+            AnalysisReport.user_id == current_user.id,
+            AnalysisReport.report_type == "ai_resume_optimizer",
+        )
         .count()
     )
 
-    avg_score = db.query(func.avg(AnalysisReport.ats_score)).scalar()
-    highest_score = db.query(func.max(AnalysisReport.ats_score)).scalar()
-    lowest_score = db.query(func.min(AnalysisReport.ats_score)).scalar()
+    avg_score = (
+        db.query(func.avg(AnalysisReport.ats_score))
+        .filter(AnalysisReport.user_id == current_user.id)
+        .scalar()
+    )
+
+    highest_score = (
+        db.query(func.max(AnalysisReport.ats_score))
+        .filter(AnalysisReport.user_id == current_user.id)
+        .scalar()
+    )
+
+    lowest_score = (
+        db.query(func.min(AnalysisReport.ats_score))
+        .filter(AnalysisReport.user_id == current_user.id)
+        .scalar()
+    )
 
     return AnalysisReportDashboardStats(
         total_reports=total_reports,
@@ -197,10 +226,14 @@ def get_analysis_report_dashboard(
 def get_reports_for_application(
     application_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     application = (
         db.query(Application)
-        .filter(Application.id == application_id)
+        .filter(
+            Application.id == application_id,
+            Application.user_id == current_user.id,
+        )
         .first()
     )
 
@@ -209,7 +242,10 @@ def get_reports_for_application(
 
     return (
         db.query(AnalysisReport)
-        .filter(AnalysisReport.application_id == application_id)
+        .filter(
+            AnalysisReport.application_id == application_id,
+            AnalysisReport.user_id == current_user.id,
+        )
         .order_by(AnalysisReport.created_at.desc())
         .all()
     )
@@ -219,10 +255,14 @@ def get_reports_for_application(
 def get_analysis_report(
     report_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     report = (
         db.query(AnalysisReport)
-        .filter(AnalysisReport.id == report_id)
+        .filter(
+            AnalysisReport.id == report_id,
+            AnalysisReport.user_id == current_user.id,
+        )
         .first()
     )
 
@@ -236,10 +276,14 @@ def get_analysis_report(
 def delete_analysis_report(
     report_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     report = (
         db.query(AnalysisReport)
-        .filter(AnalysisReport.id == report_id)
+        .filter(
+            AnalysisReport.id == report_id,
+            AnalysisReport.user_id == current_user.id,
+        )
         .first()
     )
 
