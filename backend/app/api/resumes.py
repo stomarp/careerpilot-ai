@@ -4,8 +4,10 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.resume import Resume
+from app.models.user import User
 from app.schemas.resume import ResumeResponse, ResumeUploadResponse
 from app.services.resume_parser import extract_resume_text
 
@@ -22,6 +24,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 async def upload_resume(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     allowed_extensions = {".pdf", ".docx"}
     original_filename = file.filename or "resume"
@@ -50,7 +53,7 @@ async def upload_resume(
         ) from exc
 
     resume = Resume(
-        user_id=1,
+        user_id=current_user.id,
         filename=original_filename,
         parsed_text=parsed_text,
     )
@@ -71,8 +74,16 @@ async def upload_resume(
 def get_resume(
     resume_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    resume = db.query(Resume).filter(Resume.id == resume_id).first()
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.user_id == current_user.id,
+        )
+        .first()
+    )
 
     if not resume:
         raise HTTPException(

@@ -1,9 +1,10 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.application import Application
 from app.models.job_description import JobDescription
@@ -27,18 +28,6 @@ router = APIRouter(
 )
 
 
-def get_demo_user_id(db: Session) -> int:
-    user = db.query(User).first()
-
-    if not user:
-        raise HTTPException(
-            status_code=400,
-            detail="No user exists. Please create a demo user first.",
-        )
-
-    return user.id
-
-
 def validate_application_payload(payload: ApplicationCreate | ApplicationUpdate) -> None:
     if payload.status and payload.status not in VALID_STATUSES:
         raise HTTPException(status_code=400, detail=f"Invalid status: {payload.status}")
@@ -58,18 +47,29 @@ def validate_application_payload(payload: ApplicationCreate | ApplicationUpdate)
 
 def validate_resume_and_job_refs(
     db: Session,
+    current_user: User,
     resume_id: int | None,
     job_description_id: int | None,
 ) -> None:
     if resume_id:
-        resume = db.query(Resume).filter(Resume.id == resume_id).first()
+        resume = (
+            db.query(Resume)
+            .filter(
+                Resume.id == resume_id,
+                Resume.user_id == current_user.id,
+            )
+            .first()
+        )
         if not resume:
             raise HTTPException(status_code=404, detail="Resume not found.")
 
     if job_description_id:
         job_description = (
             db.query(JobDescription)
-            .filter(JobDescription.id == job_description_id)
+            .filter(
+                JobDescription.id == job_description_id,
+                JobDescription.user_id == current_user.id,
+            )
             .first()
         )
         if not job_description:
@@ -97,19 +97,19 @@ def get_application_status_options():
 def create_application(
     request: ApplicationCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     validate_application_payload(request)
 
-    user_id = get_demo_user_id(db)
-
     validate_resume_and_job_refs(
         db=db,
+        current_user=current_user,
         resume_id=request.resume_id,
         job_description_id=request.job_description_id,
     )
 
     application = Application(
-        user_id=user_id,
+        user_id=current_user.id,
         company_name=request.company_name,
         role_title=request.role_title,
         job_url=request.job_url,
@@ -153,8 +153,9 @@ def list_applications(
     company: str | None = None,
     search: str | None = None,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    query = db.query(Application)
+    query = db.query(Application).filter(Application.user_id == current_user.id)
 
     if status:
         query = query.filter(Application.status == status)
@@ -178,8 +179,13 @@ def list_applications(
 @router.get("/dashboard", response_model=ApplicationDashboardStats)
 def get_application_dashboard(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    applications = db.query(Application).all()
+    applications = (
+        db.query(Application)
+        .filter(Application.user_id == current_user.id)
+        .all()
+    )
 
     total = len(applications)
 
@@ -194,7 +200,11 @@ def get_application_dashboard(
         ]
     )
 
-    avg_score = db.query(func.avg(Application.ats_score)).scalar()
+    avg_score = (
+        db.query(func.avg(Application.ats_score))
+        .filter(Application.user_id == current_user.id)
+        .scalar()
+    )
 
     return ApplicationDashboardStats(
         total_applications=total,
@@ -212,10 +222,14 @@ def get_application_dashboard(
 def get_application(
     application_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     application = (
         db.query(Application)
-        .filter(Application.id == application_id)
+        .filter(
+            Application.id == application_id,
+            Application.user_id == current_user.id,
+        )
         .first()
     )
 
@@ -230,12 +244,16 @@ def update_application(
     application_id: int,
     request: ApplicationUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     validate_application_payload(request)
 
     application = (
         db.query(Application)
-        .filter(Application.id == application_id)
+        .filter(
+            Application.id == application_id,
+            Application.user_id == current_user.id,
+        )
         .first()
     )
 
@@ -246,6 +264,7 @@ def update_application(
 
     validate_resume_and_job_refs(
         db=db,
+        current_user=current_user,
         resume_id=update_data.get("resume_id"),
         job_description_id=update_data.get("job_description_id"),
     )
@@ -263,10 +282,14 @@ def update_application(
 def delete_application(
     application_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     application = (
         db.query(Application)
-        .filter(Application.id == application_id)
+        .filter(
+            Application.id == application_id,
+            Application.user_id == current_user.id,
+        )
         .first()
     )
 

@@ -4,8 +4,10 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from app.core.auth_dependencies import get_current_user
 from app.core.database import get_db
 from app.models.job_description import JobDescription
+from app.models.user import User
 from app.schemas.job_description import (
     JobDescriptionCreate,
     JobDescriptionDetailResponse,
@@ -26,6 +28,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 def create_job_description(
     job_data: JobDescriptionCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     if not job_data.description.strip():
         raise HTTPException(
@@ -34,7 +37,7 @@ def create_job_description(
         )
 
     job_description = JobDescription(
-        user_id=1,
+        user_id=current_user.id,
         title=job_data.title,
         company=job_data.company,
         description=job_data.description,
@@ -58,6 +61,7 @@ async def upload_job_description(
     title: str = "Uploaded Job Description",
     company: str | None = None,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     allowed_extensions = {".pdf", ".docx", ".txt"}
     original_filename = file.filename or "job_description"
@@ -89,7 +93,7 @@ async def upload_job_description(
         ) from exc
 
     job_description = JobDescription(
-        user_id=1,
+        user_id=current_user.id,
         title=title,
         company=company,
         description=parsed_text,
@@ -111,10 +115,14 @@ async def upload_job_description(
 def get_job_description(
     job_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     job_description = (
         db.query(JobDescription)
-        .filter(JobDescription.id == job_id)
+        .filter(
+            JobDescription.id == job_id,
+            JobDescription.user_id == current_user.id,
+        )
         .first()
     )
 
