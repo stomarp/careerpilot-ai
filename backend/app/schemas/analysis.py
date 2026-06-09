@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -16,16 +18,48 @@ class ScoreBreakdown(BaseModel):
     measurable_impact: int
 
 
+class ResumeStrength(BaseModel):
+    category: str
+    evidence: str
+
+
+class ResumeGap(BaseModel):
+    category: str
+    severity: str
+    problem: str
+    suggestion: str
+    example_bullet: str
+
+
+class SuggestedAnalysisBullet(BaseModel):
+    category: str
+    bullet: str
+    why_it_helps: str
+
+
+class KeywordDetails(BaseModel):
+    matched: list[str]
+    missing: list[str]
+    note: str
+
+
 class ATSScoreResponse(BaseModel):
     resume_id: int
     job_id: int
     industry: str
     ats_score: int
+    match_level: str
+    summary: str
     breakdown: ScoreBreakdown
     matching_skills: list[str]
     missing_skills: list[str]
     matched_keywords: list[str]
     missing_keywords: list[str]
+    strengths: list[ResumeStrength]
+    resume_gaps: list[ResumeGap]
+    priority_actions: list[str]
+    suggested_bullets: list[SuggestedAnalysisBullet]
+    keyword_details: KeywordDetails
     recommendations: list[str]
 
 

@@ -5,8 +5,12 @@ import {
   AlertCircle,
   BarChart3,
   CheckCircle2,
+  ClipboardList,
   FileSearch,
+  Lightbulb,
   Loader2,
+  ShieldCheck,
+  Sparkles,
   Target,
 } from "lucide-react";
 
@@ -23,73 +27,114 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+
+type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
+
+type ResumeStrength = {
+  category: string;
+  evidence: string;
+};
+
+type ResumeGap = {
+  category: string;
+  severity: string;
+  problem: string;
+  suggestion: string;
+  example_bullet: string;
+};
+
+type SuggestedBullet = {
+  category: string;
+  bullet: string;
+  why_it_helps: string;
+};
+
+type KeywordDetails = {
+  matched: string[];
+  missing: string[];
+  note: string;
+};
 
 type ATSScoreResponse = {
   resume_id: number;
   job_id: number;
   industry: string;
   ats_score: number;
+  match_level: string;
+  summary: string;
   breakdown: Record<string, number>;
   matching_skills: string[];
   missing_skills: string[];
   matched_keywords: string[];
   missing_keywords: string[];
+  strengths: ResumeStrength[];
+  resume_gaps: ResumeGap[];
+  priority_actions: string[];
+  suggested_bullets: SuggestedBullet[];
+  keyword_details: KeywordDetails;
   recommendations: string[];
 };
 
-function ScoreRing({ score }: { score: number }) {
-  const scoreLabel =
-    score >= 80 ? "Strong match" : score >= 60 ? "Good start" : "Needs work";
+function getSeverityVariant(severity: string): BadgeVariant {
+  const normalizedSeverity = severity.toLowerCase();
 
+  if (normalizedSeverity === "high") {
+    return "destructive";
+  }
+
+  if (normalizedSeverity === "medium") {
+    return "secondary";
+  }
+
+  return "outline";
+}
+
+function ScoreCard({ score, label }: { score: number; label: string }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border bg-muted/30 p-8 text-center">
-      <div className="flex h-32 w-32 items-center justify-center rounded-full border-8 border-primary/20 bg-background">
-        <div>
-          <p className="text-4xl font-bold">{score}</p>
-          <p className="text-xs text-muted-foreground">ATS Score</p>
-        </div>
-      </div>
+    <Card className="overflow-hidden">
+      <CardHeader>
+        <CardDescription>Overall match</CardDescription>
+        <CardTitle className="text-2xl">{label}</CardTitle>
+      </CardHeader>
 
-      <Badge className="mt-4">{scoreLabel}</Badge>
-    </div>
+      <CardContent>
+        <div className="flex flex-col items-center justify-center rounded-2xl bg-muted/40 p-8 text-center">
+          <div className="flex h-36 w-36 items-center justify-center rounded-full border-8 border-primary/20 bg-background">
+            <div>
+              <p className="text-5xl font-bold">{score}</p>
+              <p className="text-xs text-muted-foreground">out of 100</p>
+            </div>
+          </div>
+
+          <p className="mt-5 text-sm text-muted-foreground">
+            This score combines skill match, role-signal relevance, experience
+            evidence, formatting, and measurable impact.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
-function ListSection({
-  title,
-  items,
-  emptyText,
-  type,
-}: {
-  title: string;
-  items: string[];
-  emptyText: string;
-  type: "success" | "warning" | "neutral";
-}) {
-  const Icon = type === "success" ? CheckCircle2 : type === "warning" ? AlertCircle : Target;
-
+function EmptyState() {
   return (
-    <div className="rounded-xl border bg-background p-5">
-      <div className="mb-4 flex items-center gap-2">
-        <Icon className="h-4 w-4" />
-        <h3 className="font-semibold">{title}</h3>
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>No analysis yet</CardTitle>
+        <CardDescription>
+          Upload a resume, create a job description, then run ATS analysis.
+        </CardDescription>
+      </CardHeader>
 
-      {items.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-          {items.map((item) => (
-            <Badge
-              key={item}
-              variant={type === "success" ? "default" : "secondary"}
-            >
-              {item}
-            </Badge>
-          ))}
+      <CardContent>
+        <div className="rounded-xl border bg-muted/30 p-6 text-sm text-muted-foreground">
+          Your results will appear here with an overall score, resume gaps,
+          priority actions, suggested bullets, strengths, and role-signal
+          details.
         </div>
-      ) : (
-        <p className="text-sm text-muted-foreground">{emptyText}</p>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -146,23 +191,24 @@ export default function AnalysisPage() {
             Step 3
           </Badge>
           <h1 className="text-3xl font-bold tracking-tight">ATS Analysis</h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            Compare your resume against a saved job description and get a clear
-            score, matching keywords, missing keywords, and recommendations.
+          <p className="mt-2 max-w-3xl text-muted-foreground">
+            Get a realistic resume review based on the job description.
+            CareerCopilot highlights strengths, resume gaps, priority fixes,
+            suggested bullets, and meaningful role signals.
           </p>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
-        <Card>
+        <Card className="h-fit">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileSearch className="h-5 w-5" />
               Run analysis
             </CardTitle>
             <CardDescription>
-              We automatically use the latest resume and job IDs saved from this
-              browser session.
+              CareerCopilot uses your latest uploaded resume and job description
+              IDs from this browser session.
             </CardDescription>
           </CardHeader>
 
@@ -175,7 +221,7 @@ export default function AnalysisPage() {
                   type="number"
                   value={resumeId}
                   onChange={(event) => setResumeId(event.target.value)}
-                  placeholder="4"
+                  placeholder="6"
                   required
                 />
               </div>
@@ -187,7 +233,7 @@ export default function AnalysisPage() {
                   type="number"
                   value={jobId}
                   onChange={(event) => setJobId(event.target.value)}
-                  placeholder="6"
+                  placeholder="9"
                   required
                 />
               </div>
@@ -223,30 +269,166 @@ export default function AnalysisPage() {
         </Card>
 
         <div className="space-y-6">
-          {result ? (
+          {!result ? (
+            <EmptyState />
+          ) : (
             <>
-              <div className="grid gap-6 xl:grid-cols-[260px_1fr]">
-                <ScoreRing score={result.ats_score} />
+              <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
+                <ScoreCard score={result.ats_score} label={result.match_level} />
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Score breakdown</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5" />
+                      Executive summary
+                    </CardTitle>
                     <CardDescription>
-                      How CareerCopilot calculated the ATS fit.
+                      What this result means for your resume.
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="space-y-5">
+                    <p className="rounded-xl border bg-muted/30 p-4 text-sm leading-6">
+                      {result.summary}
+                    </p>
+
+                    <div>
+                      <p className="mb-3 text-sm font-medium">Score breakdown</p>
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {Object.entries(result.breakdown).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex items-center justify-between rounded-xl border bg-background px-4 py-3 text-sm"
+                          >
+                            <span className="capitalize text-muted-foreground">
+                              {key.replaceAll("_", " ")}
+                            </span>
+                            <span className="font-semibold">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    Top resume gaps
+                  </CardTitle>
+                  <CardDescription>
+                    These are the main problems to fix before applying.
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="space-y-4">
+                    {result.resume_gaps.map((gap, index) => (
+                      <div
+                        key={`${gap.category}-${index}`}
+                        className="rounded-2xl border bg-background p-5"
+                      >
+                        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold">
+                              {index + 1}
+                            </div>
+                            <h3 className="font-semibold">{gap.category}</h3>
+                          </div>
+
+                          <Badge variant={getSeverityVariant(gap.severity)}>
+                            {gap.severity} priority
+                          </Badge>
+                        </div>
+
+                        <div className="grid gap-4 lg:grid-cols-2">
+                          <div>
+                            <p className="mb-1 text-sm font-medium">Problem</p>
+                            <p className="text-sm leading-6 text-muted-foreground">
+                              {gap.problem}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="mb-1 text-sm font-medium">Suggestion</p>
+                            <p className="text-sm leading-6 text-muted-foreground">
+                              {gap.suggestion}
+                            </p>
+                          </div>
+                        </div>
+
+                        <Separator className="my-4" />
+
+                        <div>
+                          <p className="mb-2 text-sm font-medium">
+                            Example bullet after you actually build or verify it
+                          </p>
+                          <div className="rounded-xl bg-muted/40 p-4 text-sm leading-6">
+                            {gap.example_bullet}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-6 xl:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <ClipboardList className="h-5 w-5" />
+                      Priority actions
+                    </CardTitle>
+                    <CardDescription>
+                      What to do next to improve this resume match.
                     </CardDescription>
                   </CardHeader>
 
                   <CardContent>
                     <div className="space-y-3">
-                      {Object.entries(result.breakdown).map(([key, value]) => (
+                      {result.priority_actions.map((action, index) => (
                         <div
-                          key={key}
-                          className="flex items-center justify-between rounded-xl border bg-muted/30 px-4 py-3 text-sm"
+                          key={`${action}-${index}`}
+                          className="flex gap-3 rounded-xl border bg-muted/30 p-4 text-sm"
                         >
-                          <span className="capitalize text-muted-foreground">
-                            {key.replaceAll("_", " ")}
-                          </span>
-                          <span className="font-semibold">{value}</span>
+                          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-background text-xs font-semibold">
+                            {index + 1}
+                          </div>
+                          <p className="leading-6">{action}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <ShieldCheck className="h-5 w-5" />
+                      Strengths
+                    </CardTitle>
+                    <CardDescription>
+                      Areas where your resume already aligns with the job.
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent>
+                    <div className="space-y-3">
+                      {result.strengths.map((strength, index) => (
+                        <div
+                          key={`${strength.category}-${index}`}
+                          className="rounded-xl border bg-background p-4"
+                        >
+                          <div className="mb-2 flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <p className="font-medium">{strength.category}</p>
+                          </div>
+                          <p className="text-sm leading-6 text-muted-foreground">
+                            {strength.evidence}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -254,75 +436,96 @@ export default function AnalysisPage() {
                 </Card>
               </div>
 
-              <div className="grid gap-4 xl:grid-cols-2">
-                <ListSection
-                  title="Matched keywords"
-                  items={result.matched_keywords}
-                  emptyText="No matched keywords returned."
-                  type="success"
-                />
-
-                <ListSection
-                  title="Missing keywords"
-                  items={result.missing_keywords}
-                  emptyText="No missing keywords returned."
-                  type="warning"
-                />
-
-                <ListSection
-                  title="Matching skills"
-                  items={result.matching_skills}
-                  emptyText="No matching skills returned."
-                  type="success"
-                />
-
-                <ListSection
-                  title="Missing skills"
-                  items={result.missing_skills}
-                  emptyText="No missing skills returned."
-                  type="warning"
-                />
-              </div>
-
               <Card>
                 <CardHeader>
-                  <CardTitle>Recommendations</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5" />
+                    Suggested resume bullets
+                  </CardTitle>
                   <CardDescription>
-                    Next actions to improve your resume match.
+                    Use these only after the work is truthful, built, or
+                    measurable. Do not copy bullets for skills you cannot
+                    explain.
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent>
-                  <div className="space-y-3">
-                    {result.recommendations.map((recommendation) => (
+                  <div className="space-y-4">
+                    {result.suggested_bullets.map((bullet, index) => (
                       <div
-                        key={recommendation}
-                        className="rounded-xl border bg-muted/30 p-4 text-sm"
+                        key={`${bullet.category}-${index}`}
+                        className="rounded-2xl border bg-background p-5"
                       >
-                        {recommendation}
+                        <Badge variant="secondary" className="mb-3">
+                          {bullet.category}
+                        </Badge>
+
+                        <p className="rounded-xl bg-muted/40 p-4 text-sm leading-6">
+                          {bullet.bullet}
+                        </p>
+
+                        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                          <span className="font-medium text-foreground">
+                            Why it helps:
+                          </span>{" "}
+                          {bullet.why_it_helps}
+                        </p>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
-            </>
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>No analysis yet</CardTitle>
-                <CardDescription>
-                  Upload a resume, create a job description, then run ATS
-                  analysis.
-                </CardDescription>
-              </CardHeader>
 
-              <CardContent>
-                <div className="rounded-xl border bg-muted/30 p-6 text-sm text-muted-foreground">
-                  Your analysis results will appear here with score breakdown,
-                  matched keywords, missing keywords, and recommendations.
-                </div>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5" />
+                    Role signal details
+                  </CardTitle>
+                  <CardDescription>{result.keyword_details.note}</CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-5">
+                  <div>
+                    <p className="mb-3 text-sm font-medium">
+                      Matched role signals
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {result.keyword_details.matched.length > 0 ? (
+                        result.keyword_details.matched.map((signal) => (
+                          <Badge key={signal}>{signal}</Badge>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          No matched role signals returned.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div>
+                    <p className="mb-3 text-sm font-medium">
+                      Missing role signals
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {result.keyword_details.missing.length > 0 ? (
+                        result.keyword_details.missing.map((signal) => (
+                          <Badge key={signal} variant="secondary">
+                            {signal}
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          No missing role signals returned.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
           )}
         </div>
       </div>

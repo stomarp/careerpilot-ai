@@ -97,11 +97,18 @@ def generate_ats_score(
         job_id=job_description.id,
         industry=request.industry,
         ats_score=result["ats_score"],
+        match_level=result["match_level"],
+        summary=result["summary"],
         breakdown=result["breakdown"],
         matching_skills=result["matching_skills"],
         missing_skills=result["missing_skills"],
         matched_keywords=result["matched_keywords"],
         missing_keywords=result["missing_keywords"],
+        strengths=result["strengths"],
+        resume_gaps=result["resume_gaps"],
+        priority_actions=result["priority_actions"],
+        suggested_bullets=result["suggested_bullets"],
+        keyword_details=result["keyword_details"],
         recommendations=result["recommendations"],
     )
 
