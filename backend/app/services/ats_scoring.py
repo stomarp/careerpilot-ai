@@ -993,3 +993,337 @@ def calculate_ats_score(
         "keyword_details": keyword_details,
         "recommendations": build_recommendations(gaps=gaps, score=total_score),
     }
+
+
+# ---------------------------------------------------------------------
+# Final Fit Assistant polish
+# Keeps the same response shape, but improves wording and role-signal ordering.
+# ---------------------------------------------------------------------
+
+MATCHED_SIGNAL_PRIORITY = [
+    "Python",
+    "Java",
+    "FastAPI",
+    "REST APIs",
+    "PostgreSQL",
+    "MySQL",
+    "SQL",
+    "Docker",
+    "CI/CD",
+    "AWS",
+    "Git",
+    "Automated Testing",
+    "System Design",
+    "Data Structures",
+    "Algorithms",
+    "Observability",
+    "LLMs",
+    "AI APIs",
+    "Node.js",
+    "TypeScript",
+    "JavaScript",
+    "React",
+    "Next.js",
+]
+
+MISSING_SIGNAL_PRIORITY = [
+    "Redis",
+    "Caching",
+    "Database Indexing",
+    "Pagination",
+    "Performance Optimization",
+    "Message Queues",
+    "Background Jobs",
+    "Retries",
+    "Rate Limiting",
+    "Idempotency",
+    "Distributed Systems",
+    "Observability",
+    "Structured Logging",
+    "Monitoring",
+    "Metrics",
+    "Tracing",
+    "Authentication",
+    "Authorization",
+    "Security",
+    "JWT",
+]
+
+DO_NOT_SHOW_MISSING_SIGNALS = {
+    "HTTP/JSON",
+    "Code Reviews",
+    "Documentation",
+    "Object-Oriented Programming",
+    "Cloud Deployment",
+    "AWS",
+    "GCP",
+    "Azure",
+    "Django",
+    "Flask",
+    "Spring Boot",
+    "MySQL",
+    "SQL",
+    "Java",
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Git",
+    "Data Structures",
+    "Algorithms",
+    "System Design",
+    "Error Monitoring",
+    "Dashboards",
+    "Eventual Consistency",
+    "Fault Tolerance",
+    "Service Boundaries",
+    "Root Cause Analysis",
+    "Database Schema Design",
+    "API Testing",
+    "Unit Testing",
+    "Integration Testing",
+}
+
+
+def build_summary(score: int, strengths: list[dict], gaps: list[dict]) -> str:
+    gap_names = [gap["category"] for gap in gaps[:3]]
+
+    if not gap_names:
+        return (
+            "Your resume is well aligned for this role. The next improvement is to make project impact, measurable results, and interview-ready proof more specific."
+        )
+
+    if score >= 85:
+        return (
+            "Your resume is an excellent match overall. You already show strong role alignment. The remaining improvements are mostly polish: make "
+            f"{', '.join(gap_names).lower()} more specific and measurable."
+        )
+
+    if score >= 80:
+        return (
+            "Your resume is a strong match for this role. You already show useful backend, database, deployment, and project experience. To become more competitive, strengthen evidence of "
+            f"{', '.join(gap_names).lower()}."
+        )
+
+    if score >= 65:
+        return (
+            "Your resume is a good foundation for this role. You already show relevant backend, database, Docker/CI/CD, and project experience. To become more competitive, add clearer proof of "
+            f"{', '.join(gap_names).lower()} instead of adding random keywords."
+        )
+
+    return (
+        "Your resume needs stronger alignment with this job description. Start by fixing the highest-priority gaps: "
+        f"{', '.join(gap_names).lower()}."
+    )
+
+
+def build_resume_gaps(
+    resume_text: str,
+    job_text: str,
+    resume_signals: set[str],
+    job_signals: set[str],
+) -> list[dict]:
+    gaps = []
+
+    performance_job_signals = {
+        "Redis",
+        "Caching",
+        "Pagination",
+        "Performance Optimization",
+        "Database Indexing",
+        "Rate Limiting",
+    }
+    performance_resume_signals = performance_job_signals & resume_signals
+
+    if performance_job_signals & job_signals and not performance_resume_signals:
+        gaps.append(
+            {
+                "category": "Caching & backend performance",
+                "severity": "high",
+                "problem": "The job asks for caching, indexing, pagination, or performance optimization. Your resume shows backend work, but it does not yet make backend performance proof visible.",
+                "suggestion": "Add a real project enhancement such as Redis caching, indexed PostgreSQL queries, pagination, or response-time measurement.",
+                "example_bullet": "Implemented Redis caching and indexed PostgreSQL queries for frequently accessed API endpoints, reducing repeated database reads and improving response efficiency.",
+            }
+        )
+
+    distributed_job_signals = {
+        "Distributed Systems",
+        "Message Queues",
+        "Background Jobs",
+        "Retries",
+        "Idempotency",
+        "Fault Tolerance",
+        "Eventual Consistency",
+        "Service Boundaries",
+    }
+    distributed_resume_signals = distributed_job_signals & resume_signals
+
+    if distributed_job_signals & job_signals and not distributed_resume_signals:
+        gaps.append(
+            {
+                "category": "Distributed systems evidence",
+                "severity": "high",
+                "problem": "The role mentions queues, retries, background jobs, idempotency, rate limiting, or fault tolerance. Your resume currently reads more like application/API work than distributed backend reliability work.",
+                "suggestion": "Add a practical feature that shows background processing, retry handling, queue-based workflows, or service-boundary thinking.",
+                "example_bullet": "Designed background processing workflows with retry handling and structured failure logging to improve backend reliability.",
+            }
+        )
+
+    cloud_job_signals = {"AWS", "GCP", "Azure", "Cloud Deployment"}
+    cloud_resume_signals = cloud_job_signals & resume_signals
+    deployment_resume_signals = {"Docker", "CI/CD", "AWS", "Cloud Deployment"} & resume_signals
+
+    if cloud_job_signals & job_signals and not deployment_resume_signals:
+        gaps.append(
+            {
+                "category": "Cloud deployment proof",
+                "severity": "medium",
+                "problem": "The role values cloud or cloud-native development, but your resume does not clearly show deployment readiness or cloud-based backend work.",
+                "suggestion": "Show Docker, environment variables, CI/CD, AWS deployment, health checks, or production-style configuration if you have done it.",
+                "example_bullet": "Containerized FastAPI services with Docker and configured environment-based settings for local and cloud-ready deployment workflows.",
+            }
+        )
+    elif cloud_job_signals & job_signals and cloud_resume_signals:
+        gaps.append(
+            {
+                "category": "Cloud deployment proof",
+                "severity": "low",
+                "problem": "Your resume includes cloud/deployment signals, but the proof could be more concrete. The reader should quickly understand what you deployed, how it runs, and how reliability is checked.",
+                "suggestion": "Make deployment evidence specific by mentioning Docker Compose, health checks, environment variables, CI/CD, or AWS workflow details.",
+                "example_bullet": "Configured Docker-based backend services with health checks and CI/CD workflow support for repeatable deployment.",
+            }
+        )
+
+    observability_job_signals = {
+        "Observability",
+        "Structured Logging",
+        "Tracing",
+        "Metrics",
+        "Monitoring",
+        "Dashboards",
+        "Error Monitoring",
+        "Root Cause Analysis",
+    }
+    observability_resume_signals = observability_job_signals & resume_signals
+
+    if observability_job_signals & job_signals and not observability_resume_signals:
+        gaps.append(
+            {
+                "category": "Observability and reliability",
+                "severity": "medium",
+                "problem": "The job mentions logs, tracing, metrics, monitoring, or error analysis. If your resume does not clearly highlight Logsmith-style observability work, this strength may be underused.",
+                "suggestion": "Explicitly mention structured logs, trace grouping, failure detection, incident analysis, or monitoring workflows if you have built them.",
+                "example_bullet": "Built structured log ingestion and trace grouping workflows to help identify failures and analyze backend incidents faster.",
+            }
+        )
+
+    security_job_signals = {"Security", "Authentication", "Authorization", "JWT"}
+    security_resume_signals = security_job_signals & resume_signals
+
+    if security_job_signals & job_signals and not security_resume_signals:
+        gaps.append(
+            {
+                "category": "Security and authentication",
+                "severity": "medium",
+                "problem": "The job values secure backend practices. If your resume does not clearly mention authentication, protected routes, and user-specific data access, this proof may be under-highlighted.",
+                "suggestion": "Highlight JWT auth, protected routes, validation, or user-owned data isolation if you have built those features.",
+                "example_bullet": "Implemented JWT-based authentication and protected user-specific API routes to isolate private resume, job, and application data.",
+            }
+        )
+
+    has_metric = bool(
+        re.search(
+            r"\b\d+%|\b\d+\+|\b\d+x\b|\b\d+\s*(ms|seconds|minutes|users|requests|records)\b",
+            resume_text.lower(),
+        )
+    )
+
+    if not has_metric:
+        gaps.append(
+            {
+                "category": "Measurable impact",
+                "severity": "medium",
+                "problem": "Your resume will be stronger if at least one project bullet includes measured impact such as latency, query speed, test coverage, records processed, or time saved.",
+                "suggestion": "Measure one backend improvement before adding numbers. Do not invent metrics.",
+                "example_bullet": "Reduced repeated database reads by [X%] after adding caching for frequently requested API responses.",
+            }
+        )
+
+    return gaps[:6]
+
+
+def build_priority_actions(gaps: list[dict]) -> list[str]:
+    actions = []
+
+    for gap in gaps[:4]:
+        if gap["category"] == "Caching & backend performance":
+            actions.append("Add one backend performance proof point, such as Redis caching, PostgreSQL indexing, pagination, or response-time measurement.")
+        elif gap["category"] == "Distributed systems evidence":
+            actions.append("Build or document one distributed-systems pattern: background jobs, retries, queues, or rate limiting.")
+        elif gap["category"] == "Cloud deployment proof":
+            actions.append("Make deployment proof concrete by showing Docker, CI/CD, health checks, environment variables, or AWS workflow details.")
+        elif gap["category"] == "Observability and reliability":
+            actions.append("Highlight Logsmith-style observability work: structured logging, trace grouping, failure detection, or incident analysis.")
+        elif gap["category"] == "Security and authentication":
+            actions.append("Mention JWT auth, protected routes, validation, or secure user-specific data access where truthful.")
+        elif gap["category"] == "Measurable impact":
+            actions.append("Measure one project improvement and convert it into a truthful resume metric.")
+
+    if not actions:
+        actions.append("Your resume has good alignment. Improve clarity by making project impact and role-specific evidence more explicit.")
+
+    actions.append("Do not keyword-stuff. Add only skills, metrics, and claims you can explain in an interview.")
+
+    return actions[:6]
+
+
+def build_recommendations(gaps: list[dict], score: int) -> list[str]:
+    recommendations = []
+
+    if score >= 80:
+        recommendations.append("Strong match overall. Focus on sharpening proof, not adding random keywords.")
+    elif score >= 65:
+        recommendations.append("Good foundation. Tailor project bullets to show the exact backend evidence this role asks for.")
+    else:
+        recommendations.append("Improve alignment by addressing the top resume gaps before applying.")
+
+    for gap in gaps[:4]:
+        recommendations.append(f"{gap['category']}: {gap['suggestion']}")
+
+    recommendations.append("Only add skills, tools, metrics, and claims that are truthful and interview-ready.")
+
+    return recommendations[:8]
+
+
+# ---------------------------------------------------------------------
+# Final summary wording polish
+# ---------------------------------------------------------------------
+
+def build_summary(score: int, strengths: list[dict], gaps: list[dict]) -> str:
+    gap_names = [gap["category"] for gap in gaps[:3]]
+
+    if not gap_names:
+        return (
+            "Your resume is well aligned for this role. The next improvement is to make project impact, measurable results, and interview-ready proof more specific."
+        )
+
+    if score >= 85:
+        return (
+            "Your resume is an excellent match overall. You already show strong role alignment. The remaining improvements are mostly polish: make your strongest project evidence more specific and measurable."
+        )
+
+    if score >= 80:
+        return (
+            "Your resume is a strong match for this role. You already show useful backend, database, deployment, and project experience. To become more competitive, strengthen proof of backend performance, distributed-system patterns, deployment readiness, and measurable impact."
+        )
+
+    if score >= 65:
+        return (
+            "Your resume is a good foundation for this role. You already show relevant backend, database, Docker/CI/CD, and project experience. To become more competitive, add clearer proof of caching/backend performance, distributed-system patterns, and deployment readiness instead of adding random keywords."
+        )
+
+    return (
+        "Your resume needs stronger alignment with this job description. Start by fixing the highest-priority gaps: "
+        f"{', '.join(gap_names).lower()}."
+    )
