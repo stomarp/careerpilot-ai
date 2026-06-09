@@ -2,53 +2,61 @@ from app.services.ats_scoring import calculate_ats_score
 
 
 PROJECT_KEYWORDS = {
+    "careercopilot": "CareerCopilot AI",
+    "career copilot": "CareerCopilot AI",
     "logsmith": "Logsmith",
+    "docuguard": "DocuGuard-HR",
     "feedback tracker": "Feedback Tracker",
     "nasa explorer": "NASA Explorer",
-    "docuguard": "DocuGuard",
-    "career": "CareerCopilot AI",
 }
 
 
-HIGH_VALUE_GAPS = [
-    "caching",
-    "distributed systems",
-    "large-scale systems",
-    "rest api",
-    "automated testing",
-    "data processing",
-    "storage",
-    "public cloud",
-    "reliable",
-    "maintainable code",
-    "collaboration",
-    "communication",
-    "a/b testing",
-]
+SKILL_TO_GAP = {
+    "redis": "caching",
+    "caching": "caching",
+    "database indexing": "database_indexing",
+    "query optimization": "database_indexing",
+    "pagination": "pagination",
+    "performance optimization": "performance",
+    "message queues": "background_jobs",
+    "background jobs": "background_jobs",
+    "retries": "retries",
+    "rate limiting": "rate_limiting",
+    "idempotency": "distributed_systems",
+    "distributed systems": "distributed_systems",
+    "authentication": "authentication",
+    "authorization": "authentication",
+    "security": "authentication",
+    "jwt": "authentication",
+    "observability": "observability",
+    "structured logging": "observability",
+    "monitoring": "observability",
+    "metrics": "observability",
+    "tracing": "observability",
+    "automated testing": "testing",
+    "unit testing": "testing",
+    "integration testing": "testing",
+    "api testing": "testing",
+    "cloud deployment": "deployment",
+    "aws": "deployment",
+    "docker": "deployment",
+    "ci/cd": "deployment",
+}
 
 
-IGNORE_KEYWORDS = {
-    "code",
-    "join",
-    "field",
-    "include",
-    "involves",
-    "inquisitive",
-    "degree",
-    "bachelor",
-    "master",
-    "engineers",
-    "developer",
-    "developing",
-    "features",
-    "teams",
-    "designers",
-    "designing",
-    "requirements",
-    "responsibilities",
-    "candidate",
-    "role",
-    "work",
+GAP_LABELS = {
+    "caching": "Redis / Caching",
+    "database_indexing": "Database Indexing",
+    "pagination": "Pagination",
+    "performance": "Backend Performance",
+    "background_jobs": "Background Jobs / Queues",
+    "retries": "Retries",
+    "rate_limiting": "Rate Limiting",
+    "distributed_systems": "Distributed Systems",
+    "authentication": "Authentication & Security",
+    "observability": "Observability",
+    "testing": "Automated Testing",
+    "deployment": "Cloud / Deployment",
 }
 
 
@@ -57,78 +65,116 @@ def detect_projects(resume_text: str) -> list[str]:
     detected_projects = []
 
     for keyword, project_name in PROJECT_KEYWORDS.items():
-        if keyword in text:
+        if keyword in text and project_name not in detected_projects:
             detected_projects.append(project_name)
 
     if not detected_projects:
-        detected_projects.append("Most Relevant Project")
+        detected_projects.append("CareerCopilot AI")
 
     return detected_projects
+
+
+def choose_project_for_gap(gap: str, projects: list[str]) -> str:
+    if gap in {"caching", "database_indexing", "pagination", "performance", "authentication"}:
+        if "CareerCopilot AI" in projects:
+            return "CareerCopilot AI"
+
+    if gap in {"background_jobs", "retries", "rate_limiting", "distributed_systems", "observability"}:
+        if "Logsmith" in projects:
+            return "Logsmith"
+
+    if gap == "testing":
+        if "CareerCopilot AI" in projects:
+            return "CareerCopilot AI"
+
+    if gap == "deployment":
+        if "CareerCopilot AI" in projects:
+            return "CareerCopilot AI"
+
+    return projects[0]
 
 
 def select_priority_gaps(
     missing_skills: list[str],
     missing_keywords: list[str],
 ) -> list[str]:
-    normalized_missing_skills = [skill.lower() for skill in missing_skills]
+    raw_items = [*missing_skills, *missing_keywords]
+    normalized_items = [item.lower().strip() for item in raw_items]
 
-    normalized_missing_keywords = [
-        keyword.lower()
-        for keyword in missing_keywords
-        if keyword.lower() not in IGNORE_KEYWORDS
+    priority_order = [
+        "caching",
+        "database_indexing",
+        "pagination",
+        "performance",
+        "background_jobs",
+        "retries",
+        "rate_limiting",
+        "distributed_systems",
+        "authentication",
+        "observability",
+        "testing",
+        "deployment",
     ]
 
-    priority_gaps = []
+    detected = []
 
-    for gap in HIGH_VALUE_GAPS:
-        if gap in normalized_missing_skills or gap in normalized_missing_keywords:
-            priority_gaps.append(gap)
+    for item in normalized_items:
+        mapped_gap = SKILL_TO_GAP.get(item)
 
-    for keyword in normalized_missing_keywords:
-        if keyword not in priority_gaps and len(priority_gaps) < 5:
-            if keyword not in IGNORE_KEYWORDS and len(keyword) > 3:
-                priority_gaps.append(keyword)
+        if mapped_gap and mapped_gap not in detected:
+            detected.append(mapped_gap)
 
-    return priority_gaps[:5]
+    ordered = [gap for gap in priority_order if gap in detected]
+
+    return ordered[:5]
 
 
-def create_section_suggestions(
-    priority_gaps: list[str],
-    industry: str,
-) -> list[dict]:
-    missing_text = ", ".join(gap.title() for gap in priority_gaps[:4])
+def create_section_suggestions(priority_gaps: list[str]) -> list[dict]:
+    missing_text = ", ".join(GAP_LABELS[gap] for gap in priority_gaps[:4])
 
     if not missing_text:
-        missing_text = "role-specific backend keywords"
+        missing_text = "role-specific backend proof"
 
     return [
         {
             "section": "Summary",
             "priority": "High",
             "issue": "The summary can be more targeted to this job description.",
-            "suggestion": "Add one concise line that highlights backend systems, APIs, scalability, and reliability.",
+            "suggestion": "Add one concise line that positions you as a backend-focused engineer with API, database, deployment, and reliability experience.",
             "example": (
                 "Backend-focused Software Engineer with experience building REST APIs, "
-                "PostgreSQL-backed services, Dockerized applications, and scalable backend workflows."
+                "PostgreSQL-backed services, Dockerized applications, and AI-powered developer workflows."
             ),
-            "truthfulness_note": "Only include systems and tools you can explain in an interview.",
+            "truthfulness_note": "Only include tools and systems you can explain in an interview.",
         },
         {
             "section": "Skills",
             "priority": "High",
-            "issue": f"The job description emphasizes {missing_text}, but these are not clearly visible enough.",
-            "suggestion": "Group skills by category so ATS and recruiters can quickly identify role alignment.",
+            "issue": f"The role emphasizes {missing_text}. These should be visible only if you have actually built or studied them.",
+            "suggestion": "Group skills by category so ATS and recruiters can quickly identify backend, database, cloud, testing, and AI alignment.",
             "example": (
-                "Backend & Systems: REST APIs, FastAPI, PostgreSQL, Docker, AWS, "
-                "CI/CD, caching concepts, distributed systems fundamentals"
+                "Backend & APIs: FastAPI, REST APIs, SQLAlchemy, Pydantic | "
+                "Databases: PostgreSQL, MySQL | DevOps: Docker, CI/CD, GitHub Actions, AWS | "
+                "AI: LLM APIs, prompt engineering, RAG fundamentals"
             ),
-            "truthfulness_note": "Do not add a tool or concept unless you have used it or studied it enough to discuss clearly.",
+            "truthfulness_note": "Do not add a tool or concept unless you have used it or can discuss it clearly.",
+        },
+        {
+            "section": "Projects",
+            "priority": "High",
+            "issue": "Your projects are the strongest place to close this job match gap.",
+            "suggestion": "Enhance one flagship project with a real backend improvement, then add the resume bullet only after building it.",
+            "example": (
+                "Improved CareerCopilot AI backend reliability by adding protected user-specific routes, "
+                "JWT authentication, and production-style API validation."
+            ),
+            "truthfulness_note": "Build or verify the enhancement before adding it to your resume.",
         },
         {
             "section": "Experience",
             "priority": "Medium",
-            "issue": "Experience bullets can show more ownership, scale, reliability, and measurable impact.",
-            "suggestion": "Rewrite 1–2 experience bullets with stronger action verbs and impact.",
+            "issue": "Experience bullets can show more ownership, reliability, and measurable impact.",
+            "suggestion": "Rewrite 1–2 bullets with stronger action verbs and concrete impact.",
             "example": (
                 "Developed and refactored backend modules using Python and Java, improving maintainability, "
                 "release reliability, and application stability across development workflows."
@@ -136,34 +182,14 @@ def create_section_suggestions(
             "truthfulness_note": "Use exact numbers only when they are truthful. Otherwise use honest impact language.",
         },
         {
-            "section": "Projects",
-            "priority": "High",
-            "issue": "Projects are strong, but should better emphasize scalable backend systems, testing, caching, and reliability.",
-            "suggestion": "Enhance one flagship project with Redis caching, pagination, indexed queries, background processing, or automated tests.",
-            "example": (
-                "Optimized Logsmith for high-volume usage by adding pagination, indexed PostgreSQL queries, "
-                "and load testing for core API workflows."
-            ),
-            "truthfulness_note": "Build the enhancement first before adding the bullet to your resume.",
-        },
-        {
             "section": "Education",
             "priority": "Low",
             "issue": "Education is present, but relevant coursework can help for new-grad/backend roles.",
-            "suggestion": "Add relevant coursework if space allows.",
+            "suggestion": "Add relevant coursework if space allows and if it supports the target role.",
             "example": (
-                "Relevant Coursework: Data Structures, Algorithms, Database Systems, "
-                "Software Engineering, Distributed Systems"
+                "Relevant Coursework: Data Structures, Algorithms, Database Systems, Software Engineering, Cloud Computing"
             ),
             "truthfulness_note": "Only include coursework you completed or can discuss.",
-        },
-        {
-            "section": "Certifications",
-            "priority": "Optional",
-            "issue": "The role mentions large-scale backend systems and public cloud, but no cloud certification is listed.",
-            "suggestion": "Consider a beginner-friendly cloud certification if you want to strengthen backend/cloud alignment.",
-            "example": "Certification to consider: AWS Cloud Practitioner or AWS Developer Associate",
-            "truthfulness_note": "Only list certifications after completion.",
         },
     ]
 
@@ -171,102 +197,176 @@ def create_section_suggestions(
 def create_bullet_for_gap(gap: str, project: str) -> str:
     templates = {
         "caching": (
-            f"Improved {project} backend performance by designing caching-ready API workflows "
-            f"for frequently accessed data and reducing repeated database reads."
+            f"Implemented Redis caching in {project} for frequently accessed API responses, "
+            "reducing repeated database reads and improving backend response efficiency."
         ),
-        "distributed systems": (
-            f"Designed scalable backend workflows in {project} with modular API services, "
-            f"database-backed processing, and separation of responsibilities for high-volume usage scenarios."
+        "database_indexing": (
+            f"Optimized PostgreSQL queries in {project} by adding indexes for high-traffic lookup patterns "
+            "and improving data retrieval efficiency."
         ),
-        "large-scale systems": (
-            f"Built scalable backend components in {project} using FastAPI, PostgreSQL, and Docker, "
-            f"with API patterns designed to support high-volume application traffic."
+        "pagination": (
+            f"Added pagination and filtering to {project} API endpoints to support larger datasets "
+            "and improve response consistency."
         ),
-        "rest api": (
-            f"Designed and implemented REST API endpoints in {project} to support structured data ingestion, "
-            f"retrieval, and backend workflow automation."
+        "performance": (
+            f"Measured and improved {project} backend performance by optimizing repeated API workflows "
+            "and reducing unnecessary database operations."
         ),
-        "automated testing": (
-            f"Improved {project} reliability by adding automated tests for backend API endpoints "
-            f"and core service logic."
+        "background_jobs": (
+            f"Designed background processing in {project} to handle long-running work outside the request cycle "
+            "and improve backend reliability."
         ),
-        "data processing": (
-            f"Implemented structured data processing workflows in {project} to transform, store, "
-            f"and retrieve application data efficiently."
+        "retries": (
+            f"Added retry handling and structured failure logging in {project} to make backend workflows more resilient."
         ),
-        "storage": (
-            f"Designed PostgreSQL-backed storage models in {project} to support reliable data persistence, "
-            f"querying, and backend workflow management."
+        "rate_limiting": (
+            f"Implemented rate limiting for {project} API endpoints to protect backend services from excessive requests."
         ),
-        "public cloud": (
-            f"Prepared {project} for cloud deployment by containerizing backend services with Docker "
-            f"and designing environment-based configuration."
+        "distributed_systems": (
+            f"Designed reliability-focused backend workflows in {project} using service boundaries, retries, "
+            "and background processing patterns."
         ),
-        "reliable": (
-            f"Improved backend reliability in {project} through structured error handling, validation, "
-            f"and maintainable service-layer design."
+        "authentication": (
+            f"Implemented JWT-based authentication and protected user-specific API routes in {project} "
+            "to secure private user data."
         ),
-        "maintainable code": (
-            f"Refactored {project} backend logic into modular services, schemas, and API layers "
-            f"to improve maintainability and developer experience."
+        "observability": (
+            f"Built structured logging and trace-style debugging workflows in {project} to improve incident analysis "
+            "and backend visibility."
         ),
-        "collaboration": (
-            "Collaborated with cross-functional team members to clarify requirements, communicate tradeoffs, "
-            "and support delivery alignment."
+        "testing": (
+            f"Added unit and integration tests for {project} backend APIs to improve reliability and prevent regressions."
         ),
-        "communication": (
-            "Communicated technical decisions, implementation tradeoffs, and project progress clearly "
-            "to technical and non-technical stakeholders."
-        ),
-        "a/b testing": (
-            f"Added an experiment-tracking workflow in {project} to compare feature variations "
-            f"and support data-informed product decisions."
+        "deployment": (
+            f"Containerized {project} backend services with Docker and configured environment-based settings "
+            "for repeatable deployment workflows."
         ),
     }
 
     return templates.get(
         gap,
-        f"Enhanced {project} by applying {gap} concepts to improve backend reliability, scalability, and role alignment.",
+        f"Improved {project} backend reliability with a targeted project enhancement aligned to the role.",
     )
 
 
 def create_project_enhancement(gap: str, project: str) -> dict:
     enhancements = {
         "caching": {
-            "enhancement": f"Add Redis caching to {project} for frequently requested endpoints such as trace search or dashboard data.",
-            "bullet": f"Implemented Redis caching in {project} for frequently accessed API responses, reducing repeated database reads and improving response efficiency.",
+            "enhancement": (
+                f"Add Redis caching to {project} for repeated analysis results, dashboard stats, "
+                "or frequently requested API responses."
+            ),
+            "bullet": (
+                f"Implemented Redis caching in {project} for frequently accessed API responses, "
+                "reducing repeated database reads and improving backend response efficiency."
+            ),
         },
-        "distributed systems": {
-            "enhancement": f"Add asynchronous background processing to {project} using Celery, Redis Queue, or Kafka.",
-            "bullet": f"Designed asynchronous background processing in {project} to separate request handling from long-running workloads and improve scalability.",
+        "database_indexing": {
+            "enhancement": (
+                f"Add PostgreSQL indexes in {project} for common lookup fields such as user_id, status, "
+                "job_id, resume_id, created_at, or company_name."
+            ),
+            "bullet": (
+                f"Optimized PostgreSQL queries in {project} by adding indexes for common lookup patterns "
+                "and improving backend data retrieval efficiency."
+            ),
         },
-        "large-scale systems": {
-            "enhancement": f"Add pagination, indexed queries, and load testing to {project}.",
-            "bullet": f"Optimized {project} for high-volume usage by adding pagination, indexed PostgreSQL queries, and load testing for core API workflows.",
+        "pagination": {
+            "enhancement": (
+                f"Add pagination and filtering to {project} list endpoints so large datasets do not return all records at once."
+            ),
+            "bullet": (
+                f"Added pagination and filtering to {project} API endpoints to support larger datasets "
+                "and improve response consistency."
+            ),
         },
-        "automated testing": {
-            "enhancement": f"Add pytest unit and integration tests for {project}'s backend endpoints.",
-            "bullet": f"Added automated unit and integration tests for {project} backend APIs, improving reliability and maintainability.",
+        "performance": {
+            "enhancement": (
+                f"Measure one slow {project} endpoint, optimize the query or service logic, and document the before/after result."
+            ),
+            "bullet": (
+                f"Measured and improved {project} backend performance by optimizing repeated API workflows "
+                "and reducing unnecessary database operations."
+            ),
         },
-        "data processing": {
-            "enhancement": f"Add a processing pipeline to {project} that groups, filters, and summarizes stored records.",
-            "bullet": f"Implemented backend data processing workflows in {project} to transform and summarize structured data for analysis.",
+        "background_jobs": {
+            "enhancement": (
+                f"Add a background job flow to {project}, such as log incident summarization, delayed alert processing, "
+                "or scheduled cleanup tasks."
+            ),
+            "bullet": (
+                f"Designed background processing in {project} to handle long-running work outside the request cycle "
+                "and improve backend reliability."
+            ),
         },
-        "storage": {
-            "enhancement": f"Improve {project}'s PostgreSQL schema with indexes, constraints, and optimized queries.",
-            "bullet": f"Optimized PostgreSQL schema and queries in {project}, improving data retrieval patterns for backend workflows.",
+        "retries": {
+            "enhancement": (
+                f"Add retry handling for external AI/API calls in {project}, with structured errors and safe fallback behavior."
+            ),
+            "bullet": (
+                f"Added retry handling and structured failure logging in {project} to make backend workflows more resilient."
+            ),
         },
-        "a/b testing": {
-            "enhancement": f"Add a simple experiment tracking module to {project}.",
-            "bullet": f"Built an experiment tracking workflow in {project} to compare feature variations and support data-driven product decisions.",
+        "rate_limiting": {
+            "enhancement": (
+                f"Add rate limiting to expensive {project} endpoints such as ATS analysis, AI optimization, or log ingestion."
+            ),
+            "bullet": (
+                f"Implemented rate limiting for {project} API endpoints to protect backend services from excessive requests."
+            ),
+        },
+        "distributed_systems": {
+            "enhancement": (
+                f"Add a queue-backed workflow or background processing pipeline to {project} to separate request handling "
+                "from long-running backend work."
+            ),
+            "bullet": (
+                f"Designed reliability-focused backend workflows in {project} using service boundaries, retries, "
+                "and background processing patterns."
+            ),
+        },
+        "authentication": {
+            "enhancement": (
+                f"Document or strengthen {project} authentication by showing JWT login, protected routes, and user-specific data access."
+            ),
+            "bullet": (
+                f"Implemented JWT-based authentication and protected user-specific API routes in {project} "
+                "to secure private user data."
+            ),
+        },
+        "observability": {
+            "enhancement": (
+                f"Add structured logging, trace IDs, dashboard metrics, or incident explanation workflows to {project}."
+            ),
+            "bullet": (
+                f"Built structured logging and trace-style debugging workflows in {project} to improve incident analysis "
+                "and backend visibility."
+            ),
+        },
+        "testing": {
+            "enhancement": (
+                f"Add unit and integration tests for {project} service logic, protected endpoints, and important API workflows."
+            ),
+            "bullet": (
+                f"Added unit and integration tests for {project} backend APIs to improve reliability and prevent regressions."
+            ),
+        },
+        "deployment": {
+            "enhancement": (
+                f"Document {project} deployment readiness with Docker Compose, environment variables, health checks, and CI/CD."
+            ),
+            "bullet": (
+                f"Containerized {project} backend services with Docker and configured environment-based settings "
+                "for repeatable deployment workflows."
+            ),
         },
     }
 
     selected = enhancements.get(
         gap,
         {
-            "enhancement": f"Build a small feature in {project} that demonstrates {gap} in a practical way.",
-            "bullet": f"Added {gap}-focused functionality to {project} to improve role alignment and practical backend engineering depth.",
+            "enhancement": f"Add one practical backend improvement to {project} that directly supports this job description.",
+            "bullet": f"Improved {project} backend reliability with a targeted project enhancement aligned to the role.",
         },
     )
 
@@ -293,55 +393,60 @@ def optimize_resume_for_job(
     ats_score = ats_result["ats_score"]
 
     projects = detect_projects(resume_text)
-    primary_project = projects[0]
 
     priority_gaps = select_priority_gaps(
         missing_skills=missing_skills,
         missing_keywords=missing_keywords,
     )
 
+    if not priority_gaps:
+        priority_gaps = ["performance", "testing", "deployment"]
+
     section_suggestions = create_section_suggestions(
         priority_gaps=priority_gaps,
-        industry=industry,
     )
 
     suggested_bullets = []
 
     for gap in priority_gaps[:5]:
+        project = choose_project_for_gap(gap=gap, projects=projects)
+
         suggested_bullets.append(
             {
-                "section": "Projects" if gap not in {"collaboration", "communication"} else "Experience",
-                "skill": gap.title(),
-                "bullet": create_bullet_for_gap(gap, primary_project),
+                "section": "Projects",
+                "skill": GAP_LABELS.get(gap, gap.title()),
+                "bullet": create_bullet_for_gap(gap=gap, project=project),
                 "why": (
-                    f"The job description values {gap}. This suggestion improves alignment "
-                    f"only if it reflects your real experience."
+                    f"This targets the role's {GAP_LABELS.get(gap, gap)} expectation. "
+                    "Use it only after the work is real and interview-ready."
                 ),
             }
         )
 
     project_enhancements = [
-        create_project_enhancement(gap, primary_project)
+        create_project_enhancement(
+            gap=gap,
+            project=choose_project_for_gap(gap=gap, projects=projects),
+        )
         for gap in priority_gaps[:5]
-        if gap not in {"collaboration", "communication"}
     ]
 
-    skills_to_learn = [gap.title() for gap in priority_gaps]
+    skills_to_learn = [GAP_LABELS.get(gap, gap.title()) for gap in priority_gaps]
 
     if ats_score >= 80:
         overall_strategy = (
-            "Your resume has strong alignment with this role. Focus on sharper wording, clearer metrics, "
-            "and better highlighting backend scale, reliability, and collaboration."
+            "Your resume is already competitive for this role. Focus on sharpening project proof, "
+            "adding measurable impact, and making backend reliability work easier for recruiters to see."
         )
-    elif ats_score >= 60:
+    elif ats_score >= 65:
         overall_strategy = (
-            "Your resume has moderate alignment with this role. It already shows backend experience, "
-            "but should better highlight scalable systems, caching, testing, reliability, and teamwork."
+            "Your resume has a good foundation for this role. It already shows backend, database, Docker/CI/CD, "
+            "and project experience, but should make performance, reliability, deployment, and system-design proof more concrete."
         )
     else:
         overall_strategy = (
-            "Your resume needs stronger alignment before applying. Improve section keywords, strengthen project bullets, "
-            "and build small enhancements that demonstrate missing role requirements."
+            "Your resume needs stronger alignment before applying. Build or document one practical backend improvement, "
+            "then update your summary, skills, and project bullets around that proof."
         )
 
     return {
@@ -351,7 +456,7 @@ def optimize_resume_for_job(
         "project_enhancements": project_enhancements,
         "skills_to_learn": skills_to_learn[:10],
         "truthfulness_warning": (
-            "Only add suggested bullets if you have actually built, practiced, or can truthfully explain the work. "
-            "If you have not done it yet, complete the suggested project enhancement first and then add it to your resume."
+            "Only add suggested bullets after the work is real, practiced, or clearly explainable. "
+            "Do not list tools, metrics, or architecture claims that you cannot defend in an interview."
         ),
     }
