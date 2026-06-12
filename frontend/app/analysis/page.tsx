@@ -913,16 +913,15 @@ return (
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[420px_1fr]">
-        <Card className="h-fit">
+        <Card className="h-fit lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-auto lg:self-start">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileSearch className="h-5 w-5" />
-              Run analysis
+              Analyze match
             </CardTitle>
             <CardDescription>
-              CareerCopilot uses your latest uploaded resume and job description
-              IDs from this browser session.
-            </CardDescription>
+                Upload a resume, use your latest saved job, then run a fit report with score, gaps, role signals, and recommended fixes.
+              </CardDescription>
           </CardHeader>
 
           <CardContent>
@@ -1001,7 +1000,7 @@ return (
                   </Button>
                 </div>
                       <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                        Upload a PDF resume and CareerCopilot will auto-fill the Resume ID.
+                        Upload a PDF resume and CareerCopilot will prepare it for analysis.
                       </p>
                     </div>
                   </div>
@@ -1033,6 +1032,20 @@ return (
                   ) : null}
                 </div>
 
+
+
+
+              {error ? <p className="text-sm text-destructive">{error}</p> : null}
+
+                                <details className="rounded-2xl border bg-muted/10 p-4">
+                  <summary className="cursor-pointer text-sm font-medium">
+                    Advanced details
+                  </summary>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    These fields are used by the local development backend. In the final product, users will select a resume and job without seeing IDs.
+                  </p>
+
+                  <div className="mt-4 space-y-4">
                 <div className="space-y-2">
                 <Label htmlFor="resumeId">Resume ID</Label>
                 <Input
@@ -1068,9 +1081,10 @@ return (
                 />
               </div>
 
-              {error ? <p className="text-sm text-destructive">{error}</p> : null}
+                  </div>
+                </details>
 
-                <Button type="submit" disabled={isAnalyzing} className="w-full">
+<Button type="submit" disabled={isAnalyzing} className="w-full">
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
