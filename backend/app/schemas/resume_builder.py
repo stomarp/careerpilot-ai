@@ -5,6 +5,7 @@ class ResumeTemplate(BaseModel):
     template_id: str
     name: str
     best_for: str
+    category: str = "General"
     description: str
     experience_level: str
     role_type: str
@@ -165,10 +166,20 @@ class AIFullResumeGenerateResponse(BaseModel):
 class ResumePreviewRequest(BaseModel):
     resume_markdown: str
     design_style: str = "ats_simple"
+    template_id: str = "ats_simple"
+
+    # Customization controls inspired by major resume builders.
+    # Keep defaults ATS-safe.
+    font_family: str = "Arial"
+    font_size: str = "11pt"
+    accent_color: str = "#111827"
+    density: str = "normal"  # compact | normal | spacious
 
 
 class ResumePreviewResponse(BaseModel):
     design_style: str
+    template_id: str = "ats_simple"
+    template_family: str = "precision_ats"
     resume_markdown: str
     resume_html: str
     preview_notes: list[str]

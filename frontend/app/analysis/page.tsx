@@ -1,5 +1,74 @@
 "use client";
 
+function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "applications" }) {
+  const steps = [
+    {
+      id: "jobs",
+      title: "1. Save job",
+      description: "Paste a job description and extract role requirements.",
+      href: "/jobs",
+    },
+    {
+      id: "analysis",
+      title: "2. Analyze fit",
+      description: "Compare resume against the job and find missing proof.",
+      href: "/analysis",
+    },
+    {
+      id: "applications",
+      title: "3. Track pipeline",
+      description: "Save status, follow-ups, notes, and next actions.",
+      href: "/applications",
+    },
+  ];
+
+  return (
+    <div className="mb-8 rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-5 shadow-sm">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            CareerCopilot workflow
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+            Turn a job post into a tracked application
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+            Save the job, analyze your resume fit, then move it into your application tracker.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        {steps.map((step) => {
+          const isActive = step.id === activeStep;
+
+          return (
+            <a
+              key={step.id}
+              href={step.href}
+              className={`rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-md ${
+                isActive
+                  ? "border-primary bg-primary text-primary-foreground shadow-md"
+                  : "bg-background"
+              }`}
+            >
+              <p className="text-sm font-semibold">{step.title}</p>
+              <p
+                className={`mt-1 text-xs leading-5 ${
+                  isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+                }`}
+              >
+                {step.description}
+              </p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
 import { FormEvent, useEffect, useState } from "react";
 import {
   AlertCircle,
@@ -715,6 +784,33 @@ export default function AnalysisPage() {
   const [resumeId, setResumeId] = useState("");
   const [jobId, setJobId] = useState("");
   const [industry, setIndustry] = useState("technology");
+  const [selectedResumeFile, setSelectedResumeFile] = useState<File | null>(null);
+  const [isUploadingResume, setIsUploadingResume] = useState(false);
+  const [resumeUploadMessage, setResumeUploadMessage] = useState("");
+
+  useEffect(() => {
+    const syncLatestAnalysisIds = () => {
+      const latestResumeId =
+        localStorage.getItem("latestResumeId") ||
+        localStorage.getItem("latestUploadedResumeId") ||
+        localStorage.getItem("resumeId");
+
+      const latestJobId =
+        localStorage.getItem("latestJobDescriptionId") ||
+        localStorage.getItem("latestJobId") ||
+        localStorage.getItem("jobDescriptionId");
+
+      if (latestResumeId) {
+        setResumeId(latestResumeId);
+      }
+
+      if (latestJobId) {
+        setJobId(latestJobId);
+      }
+    };
+
+    syncLatestAnalysisIds();
+  }, []);
 
   const [result, setResult] = useState<ATSScoreResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -732,6 +828,47 @@ export default function AnalysisPage() {
       setJobId(latestJobId);
     }
   }, []);
+
+  async function handleResumeUpload() {
+    if (!selectedResumeFile) {
+      setResumeUploadMessage("Choose a PDF resume first.");
+      return;
+    }
+
+    setIsUploadingResume(true);
+    setResumeUploadMessage("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedResumeFile);
+
+      const response = await api.post("/resumes/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const newResumeId =
+        response.data.resume_id ?? response.data.id ?? response.data.resumeId;
+
+      if (newResumeId) {
+        setResumeId(String(newResumeId));
+        localStorage.setItem("latestResumeId", String(newResumeId));
+        localStorage.setItem("latestUploadedResumeId", String(newResumeId));
+        setResumeUploadMessage(
+          `Resume uploaded successfully. Resume ID ${newResumeId} is ready for analysis.`
+        );
+      } else {
+        setResumeUploadMessage("Resume uploaded, but no resume ID was returned.");
+      }
+    } catch {
+      setResumeUploadMessage(
+        "Resume upload failed. Make sure the backend is running and the file is a PDF."
+      );
+    } finally {
+      setIsUploadingResume(false);
+    }
+  }
 
   async function handleRunAnalysis(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -756,14 +893,18 @@ export default function AnalysisPage() {
     }
   }
 
-  return (
+    const analysisReady =
+    resumeId.trim().length > 0 && jobId.trim().length > 0;
+
+return (
     <AppShell>
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <Badge variant="secondary" className="mb-3">
             Step 3
           </Badge>
-          <h1 className="text-3xl font-bold tracking-tight">ATS Analysis</h1>
+          <CareerWorkflowBar activeStep="analysis" />
+<h1 className="text-3xl font-bold tracking-tight">ATS Analysis</h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">
             Get a detailed ATS report and an assistant-style fit review that
             explains whether to apply now, tailor first, or build missing proof.
@@ -786,7 +927,113 @@ export default function AnalysisPage() {
 
           <CardContent>
             <form onSubmit={handleRunAnalysis} className="space-y-5">
-              <div className="space-y-2">
+              <div className="rounded-2xl border bg-muted/20 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold">
+                        Upload resume for analysis
+                      </p>
+
+                {/* Analysis setup strip */}
+                <div className="mt-4 rounded-2xl border bg-gradient-to-br from-background to-muted/30 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <Badge variant="secondary">Match setup</Badge>
+                      <p className="mt-2 text-sm font-medium">
+                        Analyze one resume against one saved job
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                        Upload a resume, use your latest saved job, then run the fit report.
+                      </p>
+                    </div>
+
+                    <Badge variant={resumeId && jobId ? "secondary" : "outline"}>
+                      {resumeId && jobId ? "Ready" : "Needs setup"}
+                    </Badge>
+                  </div>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                    <div className="rounded-xl border bg-background p-3">
+                      <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Resume
+                      </p>
+                      <p className="mt-1 text-sm font-semibold">
+                        {resumeId ? `#${resumeId}` : "Upload needed"}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border bg-background p-3">
+                      <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Job
+                      </p>
+                      <p className="mt-1 text-sm font-semibold">
+                        {jobId ? `#${jobId}` : "Save job first"}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border bg-background p-3">
+                      <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Industry
+                      </p>
+                      <p className="mt-1 text-sm font-semibold capitalize">
+                        {industry}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 w-full"
+                    onClick={() => {
+                      const latestJobId =
+                        localStorage.getItem("latestJobDescriptionId") ||
+                        localStorage.getItem("latestJobId") ||
+                        localStorage.getItem("jobDescriptionId");
+
+                      if (latestJobId) {
+                        setJobId(latestJobId);
+                      }
+                    }}
+                  >
+                    Use latest saved job
+                  </Button>
+                </div>
+                      <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                        Upload a PDF resume and CareerCopilot will auto-fill the Resume ID.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(event) =>
+                        setSelectedResumeFile(event.target.files?.[0] ?? null)
+                      }
+                      className="rounded-xl border bg-background px-3 py-2 text-sm"
+                    />
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleResumeUpload}
+                      disabled={isUploadingResume}
+                    >
+                      {isUploadingResume ? "Uploading..." : "Upload resume"}
+                    </Button>
+                  </div>
+
+                  {resumeUploadMessage ? (
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      {resumeUploadMessage}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="space-y-2">
                 <Label htmlFor="resumeId">Resume ID</Label>
                 <Input
                   id="resumeId"
@@ -823,7 +1070,7 @@ export default function AnalysisPage() {
 
               {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-              <Button type="submit" disabled={isAnalyzing} className="w-full">
+                <Button type="submit" disabled={isAnalyzing} className="w-full">
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -832,7 +1079,7 @@ export default function AnalysisPage() {
                 ) : (
                   <>
                     <BarChart3 className="mr-2 h-4 w-4" />
-                    Run ATS analysis
+                    Analyze resume fit
                   </>
                 )}
               </Button>

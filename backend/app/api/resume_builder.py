@@ -147,15 +147,22 @@ def ai_generate_resume(
 @router.post("/preview", response_model=ResumePreviewResponse)
 def preview_resume(
     request: ResumePreviewRequest,
-):
+) -> ResumePreviewResponse:
     result = build_resume_html(
         resume_markdown=request.resume_markdown,
         design_style=request.design_style,
+        template_id=request.template_id,
+        font_family=request.font_family,
+        font_size=request.font_size,
+        accent_color=request.accent_color,
+        density=request.density,
     )
 
     return ResumePreviewResponse(
-        design_style=request.design_style,
-        resume_markdown=request.resume_markdown,
+        design_style=result["design_style"],
+        template_id=result["template_id"],
+        template_family=result["template_family"],
+        resume_markdown=result["resume_markdown"],
         resume_html=result["resume_html"],
         preview_notes=result["preview_notes"],
     )

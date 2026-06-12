@@ -7,6 +7,36 @@ from app.services.resume_templates import (
 )
 
 
+TECH_ROLES = {
+    "software_engineer",
+    "backend_engineer",
+    "ai_engineer",
+    "data_analyst",
+    "product_manager",
+    "ux_designer",
+}
+
+HEALTHCARE_ROLES = {
+    "healthcare_admin",
+    "medical_assistant",
+    "nursing_support",
+}
+
+BUSINESS_ROLES = {
+    "finance",
+    "marketing",
+    "sales",
+    "hr",
+    "operations",
+    "admin_assistant",
+}
+
+EDUCATION_ROLES = {
+    "teacher",
+    "instructional_designer",
+}
+
+
 def build_contact_line(request: ResumeCreateRequest) -> str:
     contact_items = []
 
@@ -36,21 +66,69 @@ def build_summary_section(request: ResumeCreateRequest) -> str:
     if request.experience_level == "senior":
         heading = "## Executive Summary"
 
+    if request.role_type == "teacher":
+        heading = "## Teaching Summary"
+
+    if request.role_type in HEALTHCARE_ROLES:
+        heading = "## Professional Summary"
+
     return f"{heading}\n{request.summary}"
+
+
+def get_skills_heading(role_type: str) -> str:
+    if role_type == "backend_engineer":
+        return "## Backend & Technical Skills"
+
+    if role_type == "ai_engineer":
+        return "## AI & Backend Skills"
+
+    if role_type == "data_analyst":
+        return "## Data & Analytics Skills"
+
+    if role_type == "product_manager":
+        return "## Product Skills"
+
+    if role_type == "ux_designer":
+        return "## Design & Research Skills"
+
+    if role_type == "finance":
+        return "## Finance & Analysis Skills"
+
+    if role_type == "marketing":
+        return "## Marketing Skills"
+
+    if role_type == "sales":
+        return "## Sales Skills"
+
+    if role_type == "hr":
+        return "## HR & Recruiting Skills"
+
+    if role_type == "operations":
+        return "## Operations Skills"
+
+    if role_type in HEALTHCARE_ROLES:
+        return "## Healthcare Skills"
+
+    if role_type in EDUCATION_ROLES:
+        return "## Education Skills"
+
+    if role_type == "customer_support":
+        return "## Customer Support Skills"
+
+    if role_type == "legal_assistant":
+        return "## Legal Support Skills"
+
+    if role_type in TECH_ROLES:
+        return "## Technical Skills"
+
+    return "## Skills"
 
 
 def build_skills_section(request: ResumeCreateRequest) -> str:
     if not request.skills:
         return ""
 
-    heading = "## Skills"
-
-    if request.role_type in {"backend_engineer", "ai_engineer", "software_engineer"}:
-        heading = "## Technical Skills"
-
-    if request.role_type == "ai_engineer":
-        heading = "## AI & Technical Skills"
-
+    heading = get_skills_heading(request.role_type)
     return f"{heading}\n{', '.join(request.skills)}"
 
 
@@ -58,7 +136,12 @@ def build_education_section(request: ResumeCreateRequest) -> str:
     if not request.education:
         return ""
 
-    lines = ["## Education"]
+    heading = "## Education"
+
+    if request.role_type in {"teacher", "instructional_designer"}:
+        heading = "## Education & Certifications"
+
+    lines = [heading]
 
     for item in request.education:
         lines.append(f"**{item.school}**")
@@ -81,14 +164,30 @@ def build_education_section(request: ResumeCreateRequest) -> str:
     return "\n".join(lines).strip()
 
 
+def get_experience_heading(request: ResumeCreateRequest) -> str:
+    if request.experience_level == "senior":
+        return "## Professional Experience"
+
+    if request.role_type == "teacher":
+        return "## Teaching Experience"
+
+    if request.role_type in HEALTHCARE_ROLES:
+        return "## Healthcare Experience"
+
+    if request.role_type == "customer_support":
+        return "## Customer Support Experience"
+
+    if request.role_type == "legal_assistant":
+        return "## Legal Support Experience"
+
+    return "## Experience"
+
+
 def build_experience_section(request: ResumeCreateRequest) -> str:
     if not request.experience:
         return ""
 
-    lines = ["## Experience"]
-
-    if request.experience_level == "senior":
-        lines = ["## Professional Experience"]
+    lines = [get_experience_heading(request)]
 
     for item in request.experience:
         lines.append(f"**{item.title}** | {item.company}")
@@ -114,19 +213,39 @@ def build_experience_section(request: ResumeCreateRequest) -> str:
     return "\n".join(lines).strip()
 
 
+def get_projects_heading(request: ResumeCreateRequest) -> str:
+    if request.role_type == "backend_engineer":
+        return "## Backend Projects"
+
+    if request.role_type == "ai_engineer":
+        return "## AI Projects"
+
+    if request.role_type == "data_analyst":
+        return "## Analytics Projects"
+
+    if request.role_type == "product_manager":
+        return "## Product Case Studies"
+
+    if request.role_type == "ux_designer":
+        return "## Portfolio Projects"
+
+    if request.role_type in TECH_ROLES:
+        return "## Technical Projects"
+
+    if request.role_type in {"marketing", "sales", "operations", "finance"}:
+        return "## Selected Projects"
+
+    if request.role_type in EDUCATION_ROLES:
+        return "## Teaching Projects"
+
+    return "## Projects"
+
+
 def build_projects_section(request: ResumeCreateRequest) -> str:
     if not request.projects:
         return ""
 
-    heading = "## Projects"
-
-    if request.role_type in {"software_engineer", "backend_engineer", "ai_engineer"}:
-        heading = "## Technical Projects"
-
-    if request.design_style == "technical_project_heavy":
-        heading = "## Selected Technical Projects"
-
-    lines = [heading]
+    lines = [get_projects_heading(request)]
 
     for item in request.projects:
         project_title = f"**{item.name}**"
@@ -153,8 +272,8 @@ def build_leadership_impact_section(request: ResumeCreateRequest) -> str:
 
     return (
         "## Leadership Impact\n"
-        "- Add 2-3 bullets showing technical leadership, mentoring, architecture ownership, "
-        "cross-functional influence, or business impact."
+        "- Add 2-3 bullets showing leadership, ownership, team impact, "
+        "cross-functional influence, measurable outcomes, or business results."
     )
 
 
@@ -190,38 +309,38 @@ def generate_resume_suggestions(request: ResumeCreateRequest) -> list[str]:
     )
 
     if not request.summary:
-        suggestions.append(
-            "Add a short 2-3 line professional summary tailored to your target role."
-        )
+        suggestions.append("Add a short 2-3 line professional summary tailored to your target role.")
 
     if len(request.skills) < 6:
-        suggestions.append(
-            "Add more role-specific skills such as languages, frameworks, databases, tools, and cloud platforms."
-        )
+        suggestions.append("Add more role-specific skills that match the job description.")
 
     if request.experience_level in {"new_grad", "internship"} and not request.projects:
-        suggestions.append(
-            "For new grad or internship resumes, add at least 2 strong technical or academic projects."
-        )
+        suggestions.append("For new grad or internship resumes, add at least 2 strong projects, coursework items, or academic accomplishments.")
 
     if request.experience_level in {"experienced", "senior"} and not request.experience:
-        suggestions.append(
-            "For experienced resumes, add professional experience before projects."
-        )
+        suggestions.append("For experienced resumes, add professional experience before projects.")
 
     if request.role_type == "backend_engineer":
-        suggestions.append(
-            "For backend roles, emphasize REST APIs, databases, cloud, testing, scalability, and reliability."
-        )
+        suggestions.append("For backend roles, emphasize APIs, databases, cloud, testing, scalability, and reliability.")
 
     if request.role_type == "ai_engineer":
-        suggestions.append(
-            "For AI Engineer roles, emphasize LLM apps, RAG, embeddings, vector databases, evaluation, and backend integration."
-        )
+        suggestions.append("For AI roles, emphasize LLM apps, RAG, embeddings, evaluation, and backend integration.")
+
+    if request.role_type == "teacher":
+        suggestions.append("For teaching roles, emphasize classroom management, curriculum, student outcomes, and parent communication.")
+
+    if request.role_type in HEALTHCARE_ROLES:
+        suggestions.append("For healthcare roles, emphasize patient care, compliance, scheduling, documentation, and EHR systems.")
+
+    if request.role_type == "finance":
+        suggestions.append("For finance roles, emphasize reporting, Excel, forecasting, budgeting, compliance, and measurable financial impact.")
+
+    if request.role_type == "marketing":
+        suggestions.append("For marketing roles, include campaigns, analytics, SEO, content strategy, and measurable growth.")
 
     if request.target_role:
         suggestions.append(
-            f"Use keywords related to {request.target_role}: {', '.join(role_keywords[:6])}."
+            f"Use keywords related to {request.target_role}: {', '.join(role_keywords[:8])}."
         )
 
     suggestions.extend(design_guidance)
@@ -230,6 +349,17 @@ def generate_resume_suggestions(request: ResumeCreateRequest) -> list[str]:
 
 
 def build_resume_markdown(request: ResumeCreateRequest) -> dict:
+    template = get_template(request.template_id)
+
+    if template.get("role_type"):
+        request.role_type = template["role_type"]
+
+    if template.get("experience_level") and template["experience_level"] != "general":
+        request.experience_level = template["experience_level"]
+
+    if template.get("design_style"):
+        request.design_style = template["design_style"]
+
     section_order = get_section_order(
         template_id=request.template_id,
         experience_level=request.experience_level,
@@ -265,7 +395,6 @@ def generate_template_suggestions(
     design_guidance = get_design_guidance(design_style)
 
     recommended_template = "ats_simple"
-
     role_lower = target_role.lower()
 
     if role_type == "ai_engineer" or "ai" in role_lower or "llm" in role_lower:
@@ -273,17 +402,27 @@ def generate_template_suggestions(
     elif role_type == "backend_engineer" or "backend" in role_lower:
         recommended_template = "backend_engineer"
     elif role_type == "software_engineer" or "software" in role_lower or "swe" in role_lower:
-        recommended_template = "new_grad_swe" if experience_level in {"new_grad", "internship"} else "ats_simple"
+        recommended_template = "new_grad_swe" if experience_level in {"new_grad", "internship"} else "modern_clean"
     elif role_type == "data_analyst" or "data" in role_lower:
         recommended_template = "data_analyst"
     elif role_type == "teacher" or "teacher" in role_lower or "education" in role_lower:
         recommended_template = "teacher"
-    elif role_type == "hr":
-        recommended_template = "hr"
-    elif role_type == "marketing":
-        recommended_template = "marketing"
-    elif role_type == "finance":
+    elif role_type == "healthcare_admin" or "healthcare" in role_lower or "patient" in role_lower:
+        recommended_template = "healthcare_admin"
+    elif role_type == "medical_assistant" or "medical assistant" in role_lower:
+        recommended_template = "medical_assistant"
+    elif role_type == "finance" or "finance" in role_lower or "accounting" in role_lower:
         recommended_template = "finance"
+    elif role_type == "marketing" or "marketing" in role_lower or "seo" in role_lower:
+        recommended_template = "marketing"
+    elif role_type == "sales" or "sales" in role_lower:
+        recommended_template = "sales"
+    elif role_type == "hr" or "recruit" in role_lower or "human resources" in role_lower:
+        recommended_template = "hr"
+    elif role_type == "customer_support" or "support" in role_lower or "customer" in role_lower:
+        recommended_template = "customer_support"
+    elif role_type == "legal_assistant" or "legal" in role_lower or "paralegal" in role_lower:
+        recommended_template = "legal_assistant"
 
     section_order = get_section_order(
         template_id=recommended_template,
@@ -297,19 +436,13 @@ def generate_template_suggestions(
     ]
 
     if experience_level in {"new_grad", "internship"}:
-        suggestions.append(
-            "For new grad or internship roles, emphasize education, projects, coursework, and technical skills."
-        )
+        suggestions.append("For new grad or internship roles, emphasize education, projects, coursework, and skills.")
 
     if experience_level == "experienced":
-        suggestions.append(
-            "For experienced roles, place professional experience above projects."
-        )
+        suggestions.append("For experienced roles, place professional experience above projects.")
 
     if experience_level == "senior":
-        suggestions.append(
-            "For senior roles, highlight leadership impact, architecture ownership, mentoring, and business outcomes."
-        )
+        suggestions.append("For senior roles, highlight leadership impact, ownership, mentoring, and business outcomes.")
 
     return {
         "recommended_template": recommended_template,

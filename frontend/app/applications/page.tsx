@@ -1,5 +1,74 @@
 "use client";
 
+function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "applications" }) {
+  const steps = [
+    {
+      id: "jobs",
+      title: "1. Save job",
+      description: "Paste a job description and extract role requirements.",
+      href: "/jobs",
+    },
+    {
+      id: "analysis",
+      title: "2. Analyze fit",
+      description: "Compare resume against the job and find missing proof.",
+      href: "/analysis",
+    },
+    {
+      id: "applications",
+      title: "3. Track pipeline",
+      description: "Save status, follow-ups, notes, and next actions.",
+      href: "/applications",
+    },
+  ];
+
+  return (
+    <div className="mb-8 rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-5 shadow-sm">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            CareerCopilot workflow
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+            Turn a job post into a tracked application
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
+            Save the job, analyze your resume fit, then move it into your application tracker.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        {steps.map((step) => {
+          const isActive = step.id === activeStep;
+
+          return (
+            <a
+              key={step.id}
+              href={step.href}
+              className={`rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-md ${
+                isActive
+                  ? "border-primary bg-primary text-primary-foreground shadow-md"
+                  : "bg-background"
+              }`}
+            >
+              <p className="text-sm font-semibold">{step.title}</p>
+              <p
+                className={`mt-1 text-xs leading-5 ${
+                  isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+                }`}
+              >
+                {step.description}
+              </p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
 import { FormEvent, useEffect, useState } from "react";
 import {
   BriefcaseBusiness,
@@ -285,7 +354,8 @@ export default function ApplicationsPage() {
           <Badge variant="secondary" className="mb-3">
             Application Tracker
           </Badge>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <CareerWorkflowBar activeStep="applications" />
+<h1 className="text-3xl font-bold tracking-tight">
             Track Your Job Applications
           </h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">
