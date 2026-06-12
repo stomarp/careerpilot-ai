@@ -23,3 +23,11 @@ backend/uploads/
 
 # Logs
 *.log
+
+# Generated resume exports
+backend/exports/*.pdf
+backend/exports/*.docx
+
+
+backend/exports/*.pdf
+backend/exports/*.docx

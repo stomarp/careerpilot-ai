@@ -1,3 +1,5 @@
+import os
+from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -7,13 +9,30 @@ from app.core.security import decode_access_token
 from app.models.user import User
 
 
-bearer_scheme = HTTPBearer()
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
+    # LOCAL DEV AUTH FALLBACK:
+    # If frontend does not send a Bearer token, use a local/demo user.
+    if credentials is None:
+        demo_user = (
+            db.query(User).filter(User.email == "demo@careercopilot.ai").first()
+            or db.query(User).filter(User.id == 1).first()
+            or db.query(User).first()
+        )
+
+        if demo_user:
+            return demo_user
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No local demo user found. Please register/login first.",
+        )
+
     token = credentials.credentials
 
     try:
