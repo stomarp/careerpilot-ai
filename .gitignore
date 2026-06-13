@@ -31,3 +31,7 @@ backend/exports/*.docx
 
 backend/exports/*.pdf
 backend/exports/*.docx
+
+backend/test_careercopilot.db
+backend/.pytest_cache/
+backend/tests/__pycache__/
