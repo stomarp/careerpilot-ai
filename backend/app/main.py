@@ -14,6 +14,7 @@ from app.api import (
     resume_builder,
     resumes,
 )
+from app.core.config import settings
 from app.core.database import engine
 
 app = FastAPI(
@@ -24,10 +25,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -57,5 +55,25 @@ def health_check():
     except Exception:
         return {
             "status": "unhealthy",
+            "database": "disconnected",
+        }
+
+
+
+@app.get("/ready")
+def readiness_check():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return {
+            "status": "ready",
+            "environment": settings.ENVIRONMENT,
+            "database": "connected",
+            "cors_origins": settings.cors_origins,
+        }
+    except Exception:
+        return {
+            "status": "not_ready",
+            "environment": settings.ENVIRONMENT,
             "database": "disconnected",
         }
