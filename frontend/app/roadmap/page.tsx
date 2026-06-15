@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
 import {
-  ArrowRight,
+  useMemo,
+  useState } from "react";import {  ArrowRight,
   BookOpen,
   Brain,
   CalendarDays,
@@ -18,6 +18,7 @@ import {
   Sparkles,
   Target,
   Trophy,
+  Download
 } from "lucide-react";
 
 import { api } from "@/lib/api";
@@ -378,6 +379,14 @@ export default function RoadmapPage() {
   return (
     <AppShell>
       <div className="space-y-6">
+        <div className="flex justify-end">
+          <Button variant="outline" asChild>
+            <Link href="/export-center?type=roadmap">
+              <Download className="mr-2 h-4 w-4" />
+              Export roadmap
+            </Link>
+          </Button>
+        </div>
         <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
