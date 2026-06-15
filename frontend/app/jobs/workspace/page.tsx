@@ -33,6 +33,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 
 type WorkspaceTab =
@@ -51,6 +58,20 @@ type JobDetail = {
   company: string | null;
   description: string;
   created_at?: string;
+};
+
+type ResumeOption = {
+  resume_id: number;
+  filename: string;
+  parsed_text?: string | null;
+  created_at?: string;
+};
+
+type JobCreateResponse = {
+  job_id: number;
+  title: string;
+  company: string | null;
+  status: string;
 };
 
 type ResumeStrength = {
@@ -488,6 +509,9 @@ function SectionHeader({
 export default function JobWorkspacePage() {
   const [jobId, setJobId] = useState("");
   const [resumeId, setResumeId] = useState("");
+  const [savedJobs, setSavedJobs] = useState<JobDetail[]>([]);
+  const [savedResumes, setSavedResumes] = useState<ResumeOption[]>([]);
+  const [isLoadingSources, setIsLoadingSources] = useState(false);
   const [industry, setIndustry] = useState("technology");
   const [job, setJob] = useState<JobDetail | null>(null);
   const [atsReport, setAtsReport] = useState<ATSScoreResponse | null>(null);
@@ -499,14 +523,7 @@ export default function JobWorkspacePage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const latestJobId = localStorage.getItem("careercopilot_latest_job_id") ?? "";
-    const latestResumeId =
-      localStorage.getItem("careercopilot_latest_resume_id") ??
-      localStorage.getItem("careercopilot_resume_id") ??
-      "";
-
-    setJobId(latestJobId);
-    setResumeId(latestResumeId);
+    void loadWorkspaceSources();
   }, []);
 
   const jobInsights = useMemo(() => getJobInsights(job), [job]);
@@ -569,6 +586,125 @@ export default function JobWorkspacePage() {
       description: roadmap ? `${roadmap.weekly_plan.length} weeks` : "Generate roadmap",
     },
   ];
+
+  async function loadWorkspaceSources() {
+    setIsLoadingSources(true);
+    setError("");
+
+    try {
+      const latestJobId = localStorage.getItem("careercopilot_latest_job_id") ?? "";
+      const latestResumeId =
+        localStorage.getItem("careercopilot_latest_resume_id") ??
+        localStorage.getItem("careercopilot_resume_id") ??
+        "";
+
+      const [jobsResponse, resumesResponse] = await Promise.all([
+        api.get<JobDetail[]>("/jobs"),
+        api.get<ResumeOption[]>("/resumes"),
+      ]);
+
+      const jobs = jobsResponse.data;
+      const resumes = resumesResponse.data;
+
+      setSavedJobs(jobs);
+      setSavedResumes(resumes);
+
+      const selectedJobId =
+        jobId || latestJobId || (jobs[0] ? String(jobs[0].job_id) : "");
+      const selectedResumeId =
+        resumeId || latestResumeId || (resumes[0] ? String(resumes[0].resume_id) : "");
+
+      if (selectedJobId) {
+        setJobId(selectedJobId);
+        const selectedJob = jobs.find((item) => String(item.job_id) === selectedJobId);
+
+        if (selectedJob) {
+          setJob(selectedJob);
+          localStorage.setItem("careercopilot_latest_job_id", selectedJobId);
+          localStorage.setItem("careercopilot_export_job", JSON.stringify(selectedJob));
+        }
+      }
+
+      if (selectedResumeId) {
+        setResumeId(selectedResumeId);
+        localStorage.setItem("careercopilot_latest_resume_id", selectedResumeId);
+      }
+
+      if (!jobs.length || !resumes.length) {
+        setError(
+          "To run the workspace, upload at least one resume and save at least one job."
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Could not load saved jobs and resumes. Make sure backend is running.");
+    } finally {
+      setIsLoadingSources(false);
+    }
+  }
+
+  function handleJobSelection(value: string) {
+    setJobId(value);
+    localStorage.setItem("careercopilot_latest_job_id", value);
+
+    const selectedJob = savedJobs.find((item) => String(item.job_id) === value);
+    if (selectedJob) {
+      setJob(selectedJob);
+      localStorage.setItem("careercopilot_export_job", JSON.stringify(selectedJob));
+    }
+  }
+
+  function handleResumeSelection(value: string) {
+    setResumeId(value);
+    localStorage.setItem("careercopilot_latest_resume_id", value);
+  }
+
+  async function createDemoWorkspace() {
+    setLoading("demo");
+    setError("");
+
+    try {
+      const selectedResume =
+        savedResumes.find((resume) => String(resume.resume_id) === resumeId) ??
+        savedResumes[0];
+
+      if (!selectedResume) {
+        setError("Upload a resume first, then use Demo Workspace.");
+        return;
+      }
+
+      const response = await api.post<JobCreateResponse>("/jobs", {
+        title: "Backend Engineer",
+        company: "Visa",
+        description:
+          "We are looking for a Backend Engineer with experience building REST APIs, PostgreSQL-backed services, caching, distributed systems, testing, CI/CD, Docker, AWS, authentication, authorization, and cloud-based backend applications. The candidate should be comfortable working with scalable backend systems, production quality, observability, and cross-functional teams.",
+      });
+
+      const jobResponse = await api.get<JobDetail>(`/jobs/${response.data.job_id}`);
+      const demoJob = jobResponse.data;
+
+      setSavedJobs((current) => [
+        demoJob,
+        ...current.filter((item) => item.job_id !== demoJob.job_id),
+      ]);
+
+      setJob(demoJob);
+      setJobId(String(demoJob.job_id));
+      setResumeId(String(selectedResume.resume_id));
+
+      localStorage.setItem("careercopilot_latest_job_id", String(demoJob.job_id));
+      localStorage.setItem(
+        "careercopilot_latest_resume_id",
+        String(selectedResume.resume_id)
+      );
+      localStorage.setItem("careercopilot_export_job", JSON.stringify(demoJob));
+    } catch (err) {
+      console.error(err);
+      setError("Could not create demo workspace. Make sure backend is running and you are logged in.");
+    } finally {
+      setLoading(null);
+    }
+  }
 
   async function loadJobById() {
     if (!jobId.trim()) {
@@ -863,95 +999,169 @@ export default function JobWorkspacePage() {
             <CardHeader>
               <SectionHeader
                 icon={<BriefcaseBusiness className="h-5 w-5" />}
-                title="Workspace setup"
-                description="Use the latest saved job ID and resume ID, or enter them manually."
+                title="Run job workspace"
+                description="Choose one saved job and one resume. CareerCopilot handles the IDs in the background."
               />
             </CardHeader>
 
-            <CardContent className="space-y-5">
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label>Job ID</Label>
-                  <Input
-                    value={jobId}
-                    onChange={(event) => setJobId(event.target.value)}
-                    placeholder="Latest job ID"
-                  />
+            <CardContent className="space-y-4">
+              <div className="rounded-2xl border bg-muted/20 p-4">
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                  Workspace source
+                </p>
+
+                <div className="mt-3 grid gap-3 xl:grid-cols-[1.25fr_1fr_0.75fr]">
+                  <div className="space-y-2">
+                    <Label>Job</Label>
+                    <Select value={jobId} onValueChange={handleJobSelection}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a saved job" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {savedJobs.map((savedJob) => (
+                          <SelectItem key={savedJob.job_id} value={String(savedJob.job_id)}>
+                            {savedJob.title}
+                            {savedJob.company ? ` • ${savedJob.company}` : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Resume</Label>
+                    <Select value={resumeId} onValueChange={handleResumeSelection}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a resume" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {savedResumes.map((resume) => (
+                          <SelectItem key={resume.resume_id} value={String(resume.resume_id)}>
+                            {resume.filename}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Industry</Label>
+                    <Input
+                      value={industry}
+                      onChange={(event) => setIndustry(event.target.value)}
+                      placeholder="technology"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Resume ID</Label>
-                  <Input
-                    value={resumeId}
-                    onChange={(event) => setResumeId(event.target.value)}
-                    placeholder="Resume ID"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Industry</Label>
-                  <Input
-                    value={industry}
-                    onChange={(event) => setIndustry(event.target.value)}
-                    placeholder="technology"
-                  />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="rounded-full">
+                    {savedJobs.length} saved job{savedJobs.length === 1 ? "" : "s"}
+                  </Badge>
+                  <Badge variant="secondary" className="rounded-full">
+                    {savedResumes.length} resume{savedResumes.length === 1 ? "" : "s"}
+                  </Badge>
+                  {job ? (
+                    <Badge variant="outline" className="rounded-full">
+                      Selected: {job.title}
+                      {job.company ? ` at ${job.company}` : ""}
+                    </Badge>
+                  ) : null}
                 </div>
               </div>
 
-              <div className="grid gap-2 md:grid-cols-2">
+              {!savedJobs.length || !savedResumes.length ? (
+                <div className="rounded-2xl border border-dashed bg-muted/20 p-4">
+                  <p className="font-medium">Start with one resume and one job</p>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    Upload a resume and save a job first. Then return here to run the workspace.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button variant="outline" asChild>
+                      <Link href="/resumes">Upload Resume</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                      <Link href="/jobs">Save Job</Link>
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+
+              <Button
+                className="w-full"
+                onClick={runFullWorkspace}
+                disabled={isBusy || !jobId || !resumeId}
+              >
+                {isBusy ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                {isBusy ? "Running AI workspace..." : "Run AI workspace"}
+              </Button>
+
+              <div className="grid gap-2 sm:grid-cols-3">
+                <Button
+                  variant="outline"
+                  onClick={() => void loadWorkspaceSources()}
+                  disabled={isBusy || isLoadingSources}
+                >
+                  {isLoadingSources ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                  )}
+                  Refresh
+                </Button>
+
                 <Button
                   variant="outline"
                   onClick={loadJobById}
-                  disabled={isBusy}
+                  disabled={isBusy || !jobId}
                 >
                   {loading === "job" ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
                     <FileSearch className="mr-2 h-4 w-4" />
                   )}
-                  Load job
+                  Load
                 </Button>
 
                 <Button
-                  onClick={runFullWorkspace}
-                  disabled={isBusy}
+                  variant="outline"
+                  onClick={createDemoWorkspace}
+                  disabled={isBusy || !savedResumes.length}
                 >
-                  {isBusy ? (
+                  {loading === "demo" ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
                     <Sparkles className="mr-2 h-4 w-4" />
                   )}
-                  {isBusy ? "Running workspace..." : "Run full AI workspace"}
+                  Demo
                 </Button>
               </div>
 
-              <Separator />
-
-              <div className="rounded-2xl border bg-muted/20 p-4">
-                <p className="font-medium">How to use this workspace</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Enter Job ID and Resume ID, then click <span className="font-medium text-foreground">Run full AI workspace</span>.
-                  It will run ATS match, AI resume optimizer, interview prep, and roadmap generation in one flow.
-                </p>
-              </div>
-
-              <div className="grid gap-2 sm:grid-cols-2">
-                {workspaceHealth.map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-start justify-between gap-3 rounded-2xl border bg-muted/20 p-3"
-                  >
-                    <div>
-                      <p className="font-medium">{item.label}</p>
-                      <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                    <Badge variant={item.complete ? "default" : "outline"}>
-                      {item.complete ? "Ready" : "Pending"}
-                    </Badge>
-                  </div>
-                ))}
+              <div className="rounded-2xl border bg-muted/20 p-3">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant={job ? "default" : "secondary"} className="rounded-full">
+                    Job {job ? "ready" : "needed"}
+                  </Badge>
+                  <Badge variant={resumeId ? "default" : "secondary"} className="rounded-full">
+                    Resume {resumeId ? "selected" : "needed"}
+                  </Badge>
+                  <Badge variant={atsReport ? "default" : "secondary"} className="rounded-full">
+                    ATS {atsReport ? "ready" : "pending"}
+                  </Badge>
+                  <Badge variant={optimizer ? "default" : "secondary"} className="rounded-full">
+                    Optimizer {optimizer ? "ready" : "pending"}
+                  </Badge>
+                  <Badge variant={interview ? "default" : "secondary"} className="rounded-full">
+                    Interview {interview ? "ready" : "pending"}
+                  </Badge>
+                  <Badge variant={roadmap ? "default" : "secondary"} className="rounded-full">
+                    Roadmap {roadmap ? "ready" : "pending"}
+                  </Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
