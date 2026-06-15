@@ -28,6 +28,23 @@ router = APIRouter(
 )
 
 
+
+def replace_none_with_empty_string(value):
+    if isinstance(value, dict):
+        return {
+            key: replace_none_with_empty_string(item)
+            for key, item in value.items()
+        }
+
+    if isinstance(value, list):
+        return [replace_none_with_empty_string(item) for item in value]
+
+    if value is None:
+        return ""
+
+    return value
+
+
 def get_user_resume(
     db: Session,
     current_user: User,
@@ -201,6 +218,8 @@ def generate_ai_resume_optimizer(
         job_description_text=job_description.description or "",
         industry=request.industry,
     )
+
+    result = replace_none_with_empty_string(result)
 
     return AIResumeOptimizerResponse(
         resume_id=resume.id,

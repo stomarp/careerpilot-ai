@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "applications" }) {
   const steps = [
     {
@@ -70,7 +72,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
 
 
 import { FormEvent, useMemo, useState } from "react";
-import { BriefcaseBusiness, CheckCircle2, Loader2, Save } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Layers3, Loader2, Save } from "lucide-react";
 
 import { api } from "@/lib/api";
 import { AppShell } from "@/components/layout/AppShell";
@@ -260,6 +262,25 @@ export default function JobsPage() {
             Step 2
           </Badge>
           <CareerWorkflowBar activeStep="jobs" />
+
+        <div className="mb-8 rounded-3xl border bg-muted/20 p-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="font-semibold">Next step after saving a job</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Open the Job Workspace to run ATS match, AI resume optimizer, interview prep, roadmap, and pipeline strategy from one place.
+              </p>
+            </div>
+
+            <Button asChild>
+              <Link href="/jobs/workspace">
+                <Layers3 className="mr-2 h-4 w-4" />
+                Open Job Workspace
+              </Link>
+            </Button>
+          </div>
+        </div>
+
 <h1 className="text-3xl font-bold tracking-tight">
             Smart Job Intake
           </h1>

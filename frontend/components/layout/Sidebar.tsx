@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
-  BarChart3,
+  usePathname } from "next/navigation";import {  BarChart3,
   BriefcaseBusiness,
   FileSearch,
   FileText,
@@ -12,6 +11,7 @@ import {
   MessageSquareText,
   NotebookText,
   Sparkles,
+  Layers3
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -31,6 +31,11 @@ const navItems = [
     title: "Jobs",
     href: "/jobs",
     icon: BriefcaseBusiness,
+  },
+{
+    title: "Job Workspace",
+    href: "/jobs/workspace",
+    icon: Layers3,
   },
   {
     title: "Analysis",
