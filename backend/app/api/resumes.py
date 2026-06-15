@@ -70,6 +70,29 @@ async def upload_resume(
     )
 
 
+@router.get("", response_model=list[ResumeResponse])
+def list_resumes(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    resumes = (
+        db.query(Resume)
+        .filter(Resume.user_id == current_user.id)
+        .order_by(Resume.created_at.desc())
+        .all()
+    )
+
+    return [
+        ResumeResponse(
+            resume_id=resume.id,
+            filename=resume.filename,
+            parsed_text=resume.parsed_text,
+            created_at=resume.created_at,
+        )
+        for resume in resumes
+    ]
+
+
 @router.get("/{resume_id}", response_model=ResumeResponse)
 def get_resume(
     resume_id: int,

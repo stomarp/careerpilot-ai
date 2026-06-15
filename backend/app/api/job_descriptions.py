@@ -55,6 +55,30 @@ def create_job_description(
     )
 
 
+@router.get("", response_model=list[JobDescriptionDetailResponse])
+def list_job_descriptions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    job_descriptions = (
+        db.query(JobDescription)
+        .filter(JobDescription.user_id == current_user.id)
+        .order_by(JobDescription.created_at.desc())
+        .all()
+    )
+
+    return [
+        JobDescriptionDetailResponse(
+            job_id=job_description.id,
+            title=job_description.title,
+            company=job_description.company,
+            description=job_description.description,
+            created_at=job_description.created_at,
+        )
+        for job_description in job_descriptions
+    ]
+
+
 @router.post("/upload", response_model=JobDescriptionResponse)
 async def upload_job_description(
     file: UploadFile = File(...),
