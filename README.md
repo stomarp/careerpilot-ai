@@ -1,92 +1,100 @@
 # CareerCopilot AI
 
-CareerCopilot AI is a full-stack AI-powered career platform that helps candidates turn resumes and job descriptions into ATS analysis, resume improvement guidance, job-fit insights, and a structured application pipeline.
+CareerCopilot AI is a full-stack AI-powered job-search command center that helps candidates move from resume and job description to a complete application strategy.
 
-It is designed as a job-search operating system: build or upload a resume, paste a job description, analyze fit, identify gaps, improve your resume strategy, and track every application through a pipeline.
+It combines resume upload, job intake, ATS analysis, AI resume optimization, interview preparation, learning roadmaps, exports, saved application packs, and application tracking into one workflow.
 
----
+## Product Flow
 
-## Product Screenshots
+Dashboard  
+→ Resume Upload / Resume Builder  
+→ Job Intake  
+→ Guided Job Workspace  
+→ ATS Analysis  
+→ AI Resume Optimizer  
+→ Interview Prep  
+→ Learning Roadmap  
+→ Export Center  
+→ Application Packs  
+→ Applications Tracker
 
-### Dashboard
+## Core Features
 
-![CareerCopilot Dashboard](docs/screenshots/dashboard.png)
+### Resume Workflow
 
-### Resume Template Gallery
+- Upload PDF/DOCX resumes
+- Parse resume text
+- Store user-owned resume records
+- Resume builder and template gallery
 
-![Resume Templates](docs/screenshots/resume-templates.png)
+### Job Intake
 
-### Resume Builder
+- Save job descriptions
+- Capture title, company, and job text
+- Store job records for later analysis
+- Use saved jobs inside the guided workspace
 
-![Resume Builder](docs/screenshots/resume-builder.png)
+### Guided Job Workspace
 
-### Smart Job Intake
-
-![Smart Job Intake](docs/screenshots/jobs-intake.png)
-
-### Live Job Intelligence
-
-![Live Job Intelligence](docs/screenshots/job-intelligence.png)
-
-### ATS Analysis Report
-
-![ATS Analysis Report](docs/screenshots/analysis-report.png)
-
-### Application Pipeline
-
-![Applications Pipeline](docs/screenshots/applications-pipeline.png)
-
----
-
-## Features
-
-### Resume Builder
-
-- Professional resume template gallery
-- Resume preview experience for multiple resume styles
-- Resume customization controls for template, font, spacing, and accent color
-- Resume upload and parsing flow for existing PDF resumes
-- Resume-builder workflow designed for job applications and ATS readability
-
-### Smart Job Intake
-
-- Job description input and parsing workflow
-- Role, company, location, and source tracking
-- Live job intelligence panel for extracted role signals
-- Detected skills, responsibilities, seniority, work type, and ATS keywords
-- Saved job flow that connects directly into analysis
+- Select saved job from dropdown
+- Select uploaded resume from dropdown
+- Run the full AI workspace without manually entering IDs
+- Generate ATS match, optimizer, interview prep, roadmap, and pipeline strategy
 
 ### ATS Analysis
 
-- Resume-to-job match scoring
-- Overall match classification
-- Executive summary of candidate fit
-- Score breakdown across key hiring categories
-- Resume gaps and improvement recommendations
-- Priority actions for improving job alignment
+- Resume-to-job match score
+- Matched skills
+- Missing skills
+- Keywords
+- Priority actions
+- Candidate fit summary
 
-### Applications Pipeline
+### AI Resume Optimizer
 
-- Job Search Command Center for daily job-search focus
-- Smart filters by keyword, status, and priority
-- Kanban-style application pipeline grouped by stage
-- Follow-up tracking and next-action visibility
-- Detailed application list for notes, links, cleanup, and status changes
-- Add Application modal for a cleaner dashboard experience
+- Job-specific resume strategy
+- Section feedback
+- Suggested bullet improvements
+- Project enhancement ideas
+- Truthfulness warning so users do not add fake experience
 
----
+### Interview Prep
 
-## Current Product Flow
+- Role-specific technical questions
+- Behavioral questions
+- Company-aware prompts
+- Answer hints
+- Practice priorities
 
-Dashboard
-→ Resume Builder / Resume Upload
-→ Smart Job Intake
-→ ATS Analysis
-→ Application Pipeline
+### Learning Roadmap
 
-CareerCopilot AI is built around a complete candidate workflow, not a single resume tool.
+- Weekly plan
+- Daily plan
+- Skill gap learning path
+- Portfolio project actions
+- Interview preparation actions
 
----
+### Export Center
+
+- Export full application packs
+- Export analysis, optimizer, interview prep, roadmap, or recruiter note
+- Copy to clipboard
+- Download as Markdown
+- Print or save as PDF
+- Save output as a persistent Application Pack
+
+### Application Packs
+
+- Save generated career artifacts
+- Reopen saved packs later
+- Search packs
+- Copy, download, print, or delete packs
+
+### Applications Tracker
+
+- Track job applications
+- Manage status, priority, follow-up date, notes, and next actions
+- Use pipeline-style workflow for job search organization
 
 ## Tech Stack
 
@@ -96,7 +104,7 @@ CareerCopilot AI is built around a complete candidate workflow, not a single res
 - React
 - TypeScript
 - Tailwind CSS
-- shadcn/ui-style components
+- shadcn-style UI components
 - Lucide icons
 
 ### Backend
@@ -108,123 +116,96 @@ CareerCopilot AI is built around a complete candidate workflow, not a single res
 - PostgreSQL
 - Alembic migrations
 
-### Infrastructure and Tools
+### Tools
 
 - Docker
-- Docker Compose
-- Git and GitHub
+- GitHub Actions
 - REST APIs
-- Local frontend/backend development workflow
+- AI provider integrations
+- Makefile-based local workflow
 
----
+## API Areas
 
-## Backend API Areas
-
-CareerCopilot AI is organized around core product modules:
-
-- `/resumes`
-- `/job-descriptions`
-- `/analysis`
-- `/applications`
-
-Key backend capabilities include:
-
-- Resume upload and parsing
-- Job description upload and intake
-- ATS-style score generation
-- Application creation, update, delete, and dashboard summary
-- PostgreSQL-backed persistent storage
-
----
-
-## Architecture
-
-Frontend: Next.js + React + TypeScript  
-↓ REST API calls  
-Backend: FastAPI + Pydantic + SQLAlchemy  
-↓ ORM models and migrations  
-Database: PostgreSQL
-
-The application separates user-facing product workflows from backend API and database layers, making it easier to extend with AI services, authentication, analytics, deployment, and reporting.
-
----
+- /resumes
+- /jobs
+- /analysis
+- /interview
+- /learning-roadmap
+- /application-packs
+- /applications
+- /resume-builder
+- /auth
+- /health
+- /ready
 
 ## Local Development
 
-### 1. Clone the repository
+### Backend
 
-    git clone https://github.com/stomarp/careercopilot-ai.git
-    cd careercopilot-ai
+cd backend
+cp .env.example .env
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+alembic upgrade head
+uvicorn app.main:app --reload
 
-### 2. Start backend services
+Backend:
 
-    cd backend
-    docker compose up -d
+http://127.0.0.1:8000
 
-### 3. Run backend
+### Frontend
 
-    source .venv/bin/activate
-    uvicorn app.main:app --reload
+cd frontend
+cp .env.local.example .env.local
+npm install
+npm run dev
 
-### 4. Run frontend
+Frontend:
 
-Open a new terminal:
+http://localhost:3000
 
-    cd frontend
-    npm install
-    npm run dev
+## Useful Commands
 
-Frontend usually runs on:
+make check-env
+make migrate
+make test
+make build
+make demo-check
 
-    http://localhost:3000
+## Demo Flow
 
-Backend usually runs on:
+1. Upload a resume
+2. Save a job description
+3. Open Job Workspace
+4. Select saved job and resume
+5. Run AI workspace
+6. Review ATS match, optimizer, interview prep, and roadmap
+7. Open Export Center
+8. Save Application Pack
+9. Reopen it from Application Packs
+10. Track the application in Applications
 
-    http://localhost:8000
+See:
 
----
+- docs/DEMO_FLOW.md
+- docs/DEPLOYMENT.md
+- docs/PRODUCTION_READINESS.md
 
 ## Why This Project Matters
 
-CareerCopilot AI demonstrates full-stack software engineering and product thinking across a realistic job-search workflow.
-
-It shows experience with:
+CareerCopilot AI demonstrates end-to-end software engineering and product thinking:
 
 - Backend API design
 - Database modeling
-- Resume and job-description parsing
-- ATS-style scoring logic
-- Product dashboards
-- Frontend state management
-- User workflow design
-- Dockerized local development
-- End-to-end feature delivery
-
----
-
-## Roadmap
-
-Planned upgrades:
-
-- AI-generated resume improvement suggestions
-- Interview preparation module
-- Personalized learning roadmap based on skill gaps
-- Report export as PDF
-- Authentication and user accounts
-- Production deployment
-- Backend test coverage
-- GitHub Actions CI
-- RAG/vector search for resume and job memory
-
----
+- AI-assisted workflows
+- User-owned persistent data
+- Full-stack product architecture
+- Candidate-focused UX
+- Exportable artifacts
+- Deployment readiness
+- Production-style project organization
 
 ## Resume-Ready Project Summary
 
-Built CareerCopilot AI, a full-stack AI career platform using FastAPI, PostgreSQL, Docker, Next.js, and TypeScript that parses resumes and job descriptions, generates ATS-style match analysis, identifies resume gaps, and tracks job applications through a Kanban-style pipeline.
-
----
-
-## Project Status
-
-CareerCopilot AI is actively under development. The current version includes resume builder, smart job intake, ATS analysis, and application pipeline workflows.
-
+Built CareerCopilot AI, a full-stack AI job-search command center using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and AI APIs. The platform parses resumes and job descriptions, generates ATS match analysis, provides AI resume optimization, creates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline.
