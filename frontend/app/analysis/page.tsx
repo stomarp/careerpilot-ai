@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "applications" }) {
   const steps = [
     {
@@ -69,9 +71,10 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
 }
 
 
-import { FormEvent, useEffect, useState } from "react";
 import {
-  AlertCircle,
+  FormEvent,
+  useEffect,
+  useState } from "react";import {  AlertCircle,
   BarChart3,
   CheckCircle2,
   ClipboardList,
@@ -83,6 +86,7 @@ import {
   Sparkles,
   Target,
   Wrench,
+  Download
 } from "lucide-react";
 
 import { api } from "@/lib/api";
@@ -898,6 +902,14 @@ export default function AnalysisPage() {
 
 return (
     <AppShell>
+        <div className="mb-6 flex justify-end">
+          <Button variant="outline" asChild>
+            <Link href="/export-center?type=analysis">
+              <Download className="mr-2 h-4 w-4" />
+              Export analysis
+            </Link>
+          </Button>
+        </div>
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <Badge variant="secondary" className="mb-3">
