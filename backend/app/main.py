@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.api import (
+    application_packs,
     analysis,
     analysis_reports,
     applications,
@@ -33,6 +34,7 @@ app.add_middleware(
 )
 
 app.include_router(resumes.router)
+app.include_router(application_packs.router)
 app.include_router(job_descriptions.router)
 app.include_router(analysis.router)
 app.include_router(resume_builder.router)

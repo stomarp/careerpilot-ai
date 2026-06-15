@@ -517,6 +517,44 @@ ${sectionMarkdown}
 Generated with CareerCopilot AI.`;
   }, [atsScore, company, decision, exportTitle, jobTitle, sections]);
 
+  async function saveApplicationPack() {
+    setIsLoading(true);
+    setStatus("");
+
+    try {
+      await api.post("/application-packs", {
+        job_id: jobId ? Number(jobId) : null,
+        resume_id: localStorage.getItem("careercopilot_latest_resume_id")
+          ? Number(localStorage.getItem("careercopilot_latest_resume_id"))
+          : null,
+        title: exportTitle,
+        company,
+        role_title: jobTitle,
+        pack_type: exportType,
+        ats_score: atsScore ? Number(atsScore) : null,
+        decision,
+        summary: analysisSummary,
+        content_markdown: exportMarkdown,
+        artifacts: {
+          export_type: exportType,
+          matched_skills: splitComma(matchedSkills),
+          missing_skills: splitComma(missingSkills),
+          resume_optimizer: splitLines(resumeOptimizer),
+          interview_prep: splitLines(interviewPrep),
+          roadmap_plan: splitLines(roadmapPlan),
+          recruiter_note: recruiterNote,
+        },
+      });
+
+      setStatus("Application pack saved to your library.");
+    } catch (err) {
+      console.error(err);
+      setStatus("Could not save application pack. Make sure backend is running and you are logged in.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function copyExport() {
     await navigator.clipboard.writeText(exportMarkdown);
     setStatus(`${exportTitle} copied to clipboard.`);
@@ -725,6 +763,17 @@ Generated with CareerCopilot AI.`;
                   <Button onClick={printExport}>
                     <Printer className="mr-2 h-4 w-4" />
                     Print / PDF
+                  </Button>
+                  <Button onClick={saveApplicationPack} disabled={isLoading}>
+                    {isLoading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="mr-2 h-4 w-4" />
+                    )}
+                    Save Pack
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/application-packs">Saved Packs</Link>
                   </Button>
                 </div>
               </div>

@@ -79,6 +79,11 @@ const navGroups = [
         icon: Download,
       },
       {
+        title: "Application Packs",
+        href: "/application-packs",
+        icon: FileText,
+      },
+      {
         title: "Applications",
         href: "/applications",
         icon: NotebookText,
