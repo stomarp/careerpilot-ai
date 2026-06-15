@@ -19,6 +19,11 @@ class InterviewQuestionRequest(BaseModel):
     include_company_prep: bool = True
     include_platform_patterns: bool = True
 
+    difficulty: str | None = None
+    job_description_text: str | None = None
+    resume_context: str | None = None
+    focus_areas: list[str] | None = None
+
 
 class InterviewQuestion(BaseModel):
     question: str

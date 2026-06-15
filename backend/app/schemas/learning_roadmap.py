@@ -12,6 +12,11 @@ class LearningRoadmapRequest(BaseModel):
 
     timeline_days: int = Field(default=30, ge=7, le=90)
 
+    weekly_hours: int | None = Field(default=None, ge=1, le=80)
+    focus_areas: list[str] | None = None
+    goal_notes: str | None = None
+    missing_items: list[str] | None = None
+
 
 class RoadmapOverview(BaseModel):
     summary: str
