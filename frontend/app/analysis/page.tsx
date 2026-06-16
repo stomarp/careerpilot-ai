@@ -25,7 +25,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
   ];
 
   return (
-    <div className="mb-8 rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-5 shadow-sm">
+    <div className="mb-8 cc-product-hero-soft p-5 sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -308,7 +308,7 @@ function ScoreCard({ score, label }: { score: number; label: string }) {
 
 function EmptyState() {
   return (
-    <Card>
+    <Card className="cc-product-card-static">
       <CardHeader>
         <CardTitle>No analysis yet</CardTitle>
         <CardDescription>
@@ -336,8 +336,8 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
   const buildPlan = getBuildToFixPlan(result.resume_gaps);
 
   return (
-    <div className="space-y-6">
-      <Card className="border-primary/20">
+    <div className="cc-product-page space-y-6">
+      <Card className="cc-product-card-static border-primary/20">
         <CardHeader>
           <Badge className="mb-2 w-fit" variant={applyDecision.variant}>
             {applyDecision.label}
@@ -366,7 +366,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5" />
@@ -394,7 +394,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
@@ -428,7 +428,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
         </Card>
       </div>
 
-      <Card>
+      <Card className="cc-product-card-static">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Wrench className="h-5 w-5" />
@@ -474,7 +474,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5" />
@@ -502,7 +502,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Rocket className="h-5 w-5" />
@@ -537,7 +537,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
         </Card>
       </div>
 
-      <Card>
+      <Card className="cc-product-card-static">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
@@ -582,7 +582,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
         <ScoreCard score={result.ats_score} label={result.match_level} />
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
@@ -618,7 +618,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
         </Card>
       </div>
 
-      <Card>
+      <Card className="cc-product-card-static">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5" />
@@ -682,7 +682,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ClipboardList className="h-5 w-5" />
@@ -710,7 +710,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShieldCheck className="h-5 w-5" />
@@ -742,7 +742,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
         </Card>
       </div>
 
-      <Card>
+      <Card className="cc-product-card-static">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lightbulb className="h-5 w-5" />
@@ -903,7 +903,7 @@ export default function AnalysisPage() {
 return (
     <AppShell>
         <div className="mb-6 flex justify-end">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="cc-cta-secondary">
             <Link href="/export-center?type=analysis">
               <Download className="mr-2 h-4 w-4" />
               Export analysis
@@ -916,8 +916,8 @@ return (
             Step 3
           </Badge>
           <CareerWorkflowBar activeStep="analysis" />
-<h1 className="text-3xl font-bold tracking-tight">ATS Analysis</h1>
-          <p className="mt-2 max-w-3xl text-muted-foreground">
+<h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">ATS Analysis</h1>
+          <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
             Get a detailed ATS report and an assistant-style fit review that
             explains whether to apply now, tailor first, or build missing proof.
           </p>
