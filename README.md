@@ -209,3 +209,72 @@ CareerCopilot AI demonstrates end-to-end software engineering and product thinki
 ## Resume-Ready Project Summary
 
 Built CareerCopilot AI, a full-stack AI job-search command center using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and AI APIs. The platform parses resumes and job descriptions, generates ATS match analysis, provides AI resume optimization, creates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline.
+
+<!-- DEPLOYMENT_START -->
+## Deployment
+
+CareerCopilot AI is deployment-ready as a production-style full-stack app.
+
+Production stack:
+
+- Frontend: Vercel Next.js app
+- Backend: Render FastAPI web service
+- Database: Render PostgreSQL
+- Migrations: Alembic runs automatically during backend startup
+
+Production files:
+
+- render.yaml
+- frontend/vercel.json
+- backend/.env.production.example
+- frontend/.env.production.example
+- scripts/smoke_production.sh
+- docs/LAUNCH_RUNBOOK.md
+
+Backend deployment on Render:
+
+Build command:
+
+    cd backend && pip install --upgrade pip && pip install -r requirements.txt
+
+Start command:
+
+    cd backend && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+Required Render environment variables:
+
+    ENVIRONMENT=production
+    APP_ENV=production
+    LOG_LEVEL=info
+    FRONTEND_URL=https://your-vercel-app.vercel.app
+    BACKEND_CORS_ORIGINS=https://your-vercel-app.vercel.app,http://localhost:3000
+
+Render injects:
+
+    DATABASE_URL
+    SECRET_KEY
+
+Frontend deployment on Vercel:
+
+Set Vercel root directory:
+
+    frontend
+
+Required Vercel environment variables:
+
+    NEXT_PUBLIC_API_BASE_URL=https://your-render-api.onrender.com
+    NEXT_PUBLIC_APP_NAME=CareerCopilot AI
+    NEXT_PUBLIC_APP_ENV=production
+
+Production smoke test:
+
+    API_URL=https://your-render-api.onrender.com WEB_URL=https://your-vercel-app.vercel.app ./scripts/smoke_production.sh
+
+Expected result:
+
+    Production smoke test passed
+
+Full launch checklist:
+
+    docs/LAUNCH_RUNBOOK.md
+<!-- DEPLOYMENT_END -->
