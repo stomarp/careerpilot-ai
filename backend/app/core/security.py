@@ -1,14 +1,10 @@
-import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import bcrypt
 from jose import JWTError, jwt
 
-
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-before-production")
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
+from app.core.config import settings
 
 
 def hash_password(password: str) -> str:
@@ -45,7 +41,7 @@ def create_access_token(
     expire = datetime.now(timezone.utc) + (
         expires_delta
         if expires_delta
-        else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        else timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
 
     payload: dict[str, Any] = {
@@ -53,11 +49,11 @@ def create_access_token(
         "exp": expire,
     }
 
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.jwt_algorithm)
 
 
 def decode_access_token(token: str) -> dict[str, Any]:
     try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.jwt_algorithm])
     except JWTError as exc:
         raise ValueError("Invalid or expired token.") from exc
