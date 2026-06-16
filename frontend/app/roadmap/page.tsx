@@ -378,35 +378,35 @@ export default function RoadmapPage() {
 
   return (
     <AppShell>
-      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
+      <div className="cc-product-page space-y-6">
         <div className="flex justify-end">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="cc-cta-secondary">
             <Link href="/export-center?type=roadmap">
               <Download className="mr-2 h-4 w-4" />
               Export roadmap
             </Link>
           </Button>
         </div>
-        <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6">
+        <div className="cc-product-hero-soft p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">
                 AI Learning Roadmap
               </Badge>
-              <h1 className="text-3xl font-bold tracking-tight">
+              <h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
                 Generate a personalized career roadmap
               </h1>
-              <p className="mt-2 max-w-3xl text-muted-foreground">
+              <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
                 Turn missing skills into a structured study plan with weekly goals,
                 daily tasks, portfolio projects, resume actions, and interview prep.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="cc-cta-secondary">
                 <Link href="/interview-prep">Back to Interview Prep</Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="cc-cta-primary">
                 <Link href="/applications">
                   Track Applications
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -444,7 +444,7 @@ export default function RoadmapPage() {
         ) : null}
 
         <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-          <Card className="border-primary/20">
+          <Card className="cc-product-card-static border-primary/20">
             <CardHeader>
               <div className="flex items-start gap-3">
                 <div className="rounded-2xl border bg-muted/30 p-3">
@@ -643,7 +643,7 @@ export default function RoadmapPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Study topics</CardDescription>
               <CardTitle className="text-3xl">{activeStudyTopics.length}</CardTitle>
@@ -655,7 +655,7 @@ export default function RoadmapPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Weekly plan</CardDescription>
               <CardTitle className="text-3xl">{activeWeeklyPlan.length}</CardTitle>
@@ -667,7 +667,7 @@ export default function RoadmapPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Mini projects</CardDescription>
               <CardTitle className="text-3xl">{activeMiniProjects.length}</CardTitle>
@@ -679,7 +679,7 @@ export default function RoadmapPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Resume actions</CardDescription>
               <CardTitle className="text-3xl">{resumeActions.length}</CardTitle>
@@ -692,7 +692,7 @@ export default function RoadmapPage() {
           </Card>
         </div>
 
-        <Card className="border-primary/20">
+        <Card className="cc-product-card-static border-primary/20">
           <CardContent className="p-3">
             <div className="grid gap-2 md:grid-cols-5">
               {roadmapTabs.map((tab) => (
@@ -724,7 +724,7 @@ export default function RoadmapPage() {
 
         {activeTab === "overview" ? (
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
@@ -769,7 +769,7 @@ export default function RoadmapPage() {
             </Card>
 
             <div className="space-y-6">
-              <Card>
+              <Card className="cc-product-card-static">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Database className="h-4 w-4" />
@@ -801,7 +801,7 @@ export default function RoadmapPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="cc-product-card-static">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Database className="h-4 w-4" />
@@ -824,7 +824,7 @@ export default function RoadmapPage() {
         ) : null}
 
         {activeTab === "weekly" ? (
-          <Card className="border-primary/20">
+          <Card className="cc-product-card-static border-primary/20">
             <CardHeader>
               <div className="flex items-start gap-3">
                 <div className="rounded-2xl border bg-muted/30 p-3">
@@ -869,7 +869,7 @@ export default function RoadmapPage() {
         ) : null}
 
         {activeTab === "daily" ? (
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Rocket className="h-4 w-4" />
@@ -929,7 +929,7 @@ export default function RoadmapPage() {
 
         {activeTab === "projects" ? (
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Rocket className="h-4 w-4" />
@@ -958,7 +958,7 @@ export default function RoadmapPage() {
             </Card>
 
             <div className="grid gap-6">
-              <Card>
+              <Card className="cc-product-card-static">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Code2 className="h-4 w-4" />
@@ -975,7 +975,7 @@ export default function RoadmapPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="cc-product-card-static">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <Server className="h-4 w-4" />
@@ -997,7 +997,7 @@ export default function RoadmapPage() {
 
         {activeTab === "actions" ? (
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Layers3 className="h-4 w-4" />
@@ -1016,7 +1016,7 @@ export default function RoadmapPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Brain className="h-4 w-4" />
@@ -1036,7 +1036,7 @@ export default function RoadmapPage() {
             </Card>
 
             {roadmap?.progress_checkpoints?.length ? (
-              <Card>
+              <Card className="cc-product-card-static">
                 <CardHeader>
                   <CardTitle>Progress checkpoints</CardTitle>
                   <CardDescription>
@@ -1064,7 +1064,7 @@ export default function RoadmapPage() {
             ) : null}
 
             {roadmap?.final_advice?.length ? (
-              <Card>
+              <Card className="cc-product-card-static">
                 <CardHeader>
                   <CardTitle>Final advice</CardTitle>
                   <CardDescription>
@@ -1083,7 +1083,7 @@ export default function RoadmapPage() {
           </div>
         ) : null}
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
@@ -1123,7 +1123,7 @@ export default function RoadmapPage() {
                 )}
                 {isGenerating ? "Generating..." : "Regenerate roadmap"}
               </Button>
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="cc-cta-secondary">
                 <Link href="/interview-prep">Practice interview</Link>
               </Button>
             </div>

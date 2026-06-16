@@ -540,35 +540,35 @@ export default function InterviewPrepPage() {
 
   return (
     <AppShell>
-      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
+      <div className="cc-product-page space-y-6">
         <div className="flex justify-end">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="cc-cta-secondary">
             <Link href="/export-center?type=interview">
               <Download className="mr-2 h-4 w-4" />
               Export interview prep
             </Link>
           </Button>
         </div>
-        <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6">
+        <div className="cc-product-hero-soft p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">
                 Interview Coach
               </Badge>
-              <h1 className="text-3xl font-bold tracking-tight">
+              <h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
                 Generate a custom interview practice session
               </h1>
-              <p className="mt-2 max-w-3xl text-muted-foreground">
+              <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
                 Build a role-specific mock interview from your target company,
                 job description, resume context, difficulty, and focus areas.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="cc-cta-secondary">
                 <Link href="/reports">Back to Reports</Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="cc-cta-primary">
                 <Link href="/roadmap">
                   Build Roadmap
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -606,7 +606,7 @@ export default function InterviewPrepPage() {
         ) : null}
 
         <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-          <Card className="border-primary/20">
+          <Card className="cc-product-card-static border-primary/20">
             <CardHeader>
               <div className="flex items-start gap-3">
                 <div className="rounded-2xl border bg-muted/30 p-3">
@@ -847,7 +847,7 @@ export default function InterviewPrepPage() {
           </Card>
         </div>
 
-        <Card className="border-primary/20">
+        <Card className="cc-product-card-static border-primary/20">
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
@@ -894,7 +894,7 @@ export default function InterviewPrepPage() {
         </Card>
 
         <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Mic className="h-4 w-4" />
@@ -949,7 +949,7 @@ export default function InterviewPrepPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <MessageSquareText className="h-4 w-4" />
@@ -977,7 +977,7 @@ export default function InterviewPrepPage() {
 
         {aiResponse ? (
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <CardTitle>AI company prep</CardTitle>
                 <CardDescription>
@@ -1002,7 +1002,7 @@ export default function InterviewPrepPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <CardTitle>AI preparation tips</CardTitle>
                 <CardDescription>
@@ -1021,7 +1021,7 @@ export default function InterviewPrepPage() {
           </div>
         ) : null}
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Code2 className="h-4 w-4" />
@@ -1060,7 +1060,7 @@ export default function InterviewPrepPage() {
                 )}
                 {isGenerating ? "Generating..." : "Generate new mock interview"}
               </Button>
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="cc-cta-secondary">
                 <Link href="/roadmap">Turn gaps into roadmap</Link>
               </Button>
             </div>

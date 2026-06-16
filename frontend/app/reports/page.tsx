@@ -274,24 +274,24 @@ export default function ReportsPage() {
 
   return (
     <AppShell>
-      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
-        <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6">
+      <div className="cc-product-page space-y-6">
+        <div className="cc-product-hero-soft p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">
                 Report Studio
               </Badge>
-              <h1 className="text-3xl font-bold tracking-tight">
+              <h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
                 Resume-job fit reports
               </h1>
-              <p className="mt-2 max-w-3xl text-muted-foreground">
+              <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
                 Turn ATS analysis into a polished improvement report with match
                 scores, skill gaps, keyword gaps, and action steps.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="cc-cta-secondary">
                 <Link href="/analysis">Back to Analysis</Link>
               </Button>
 
@@ -319,7 +319,7 @@ export default function ReportsPage() {
         ) : null}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Total reports</CardDescription>
               <CardTitle className="text-3xl">{reports.length}</CardTitle>
@@ -331,7 +331,7 @@ export default function ReportsPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Average score</CardDescription>
               <CardTitle className="text-3xl">
@@ -345,7 +345,7 @@ export default function ReportsPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Highest score</CardDescription>
               <CardTitle className="text-3xl">
@@ -359,7 +359,7 @@ export default function ReportsPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader className="pb-2">
               <CardDescription>Recommendations</CardDescription>
               <CardTitle className="text-3xl">
@@ -375,7 +375,7 @@ export default function ReportsPage() {
         </div>
 
         {isLoading ? (
-          <Card>
+          <Card className="cc-product-card-static">
             <CardContent className="flex min-h-64 items-center justify-center">
               <div className="flex items-center text-sm text-muted-foreground">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -477,7 +477,7 @@ export default function ReportsPage() {
                 <Separator />
 
                 <div className="grid gap-4 xl:grid-cols-3">
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4" />
@@ -494,7 +494,7 @@ export default function ReportsPage() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <div className="flex items-center gap-2">
                         <Target className="h-4 w-4" />
@@ -511,7 +511,7 @@ export default function ReportsPage() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <div className="flex items-center gap-2">
                         <Lightbulb className="h-4 w-4" />
@@ -530,7 +530,7 @@ export default function ReportsPage() {
                 </div>
 
                 <div className="grid gap-4 lg:grid-cols-2">
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <CardTitle className="text-base">
                         Priority recommendations
@@ -563,7 +563,7 @@ export default function ReportsPage() {
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <CardTitle className="text-base">
                         Next product steps
@@ -607,7 +607,7 @@ export default function ReportsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="cc-product-card-static">
               <CardHeader>
                 <CardTitle>Report history</CardTitle>
                 <CardDescription>
