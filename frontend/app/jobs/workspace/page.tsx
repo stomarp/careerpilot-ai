@@ -1526,7 +1526,7 @@ export default function JobWorkspacePage() {
                   <CardHeader>
                     <Badge variant="secondary">
                       {optimizer.provider_used}
-                      {optimizer.fallback_used ? " fallback" : " AI response"}
+                      {optimizer.fallback_used ? " Smart Optimize Mode" : " AI response"}
                     </Badge>
                     <CardTitle className="mt-3">AI resume strategy</CardTitle>
                     <CardDescription>
@@ -1636,7 +1636,7 @@ export default function JobWorkspacePage() {
                   <CardHeader>
                     <Badge variant="secondary">
                       {interview.provider_used}
-                      {interview.fallback_used ? " fallback" : " AI response"}
+                      {interview.fallback_used ? " Smart Practice Mode" : " AI response"}
                     </Badge>
                     <CardTitle className="mt-3">Company prep</CardTitle>
                     <CardDescription>
@@ -1742,7 +1742,7 @@ export default function JobWorkspacePage() {
                   <CardHeader>
                     <Badge variant="secondary">
                       {roadmap.provider_used}
-                      {roadmap.fallback_used ? " fallback" : " AI response"}
+                      {roadmap.fallback_used ? " Guided Roadmap Mode" : " AI response"}
                     </Badge>
                     <CardTitle className="mt-3">Roadmap overview</CardTitle>
                     <CardDescription>

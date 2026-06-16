@@ -162,7 +162,7 @@ export default function ApplicationPacksPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
         <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>

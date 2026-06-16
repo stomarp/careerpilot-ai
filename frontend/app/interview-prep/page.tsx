@@ -540,7 +540,7 @@ export default function InterviewPrepPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
         <div className="flex justify-end">
           <Button variant="outline" asChild>
             <Link href="/export-center?type=interview">
@@ -591,7 +591,7 @@ export default function InterviewPrepPage() {
                 <p className="font-medium">AI interview generated</p>
                 <p className="text-sm text-muted-foreground">
                   Provider: {aiResponse.provider_used}
-                  {aiResponse.fallback_used ? " • fallback used" : " • AI response"}
+                  {aiResponse.fallback_used ? " • Smart Practice Mode" : " • AI Generated"}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">

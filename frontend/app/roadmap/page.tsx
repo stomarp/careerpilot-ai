@@ -378,7 +378,7 @@ export default function RoadmapPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
         <div className="flex justify-end">
           <Button variant="outline" asChild>
             <Link href="/export-center?type=roadmap">
@@ -429,7 +429,7 @@ export default function RoadmapPage() {
                 <p className="font-medium">AI roadmap generated</p>
                 <p className="text-sm text-muted-foreground">
                   Provider: {roadmap.provider_used}
-                  {roadmap.fallback_used ? " • fallback used" : " • AI response"}
+                  {roadmap.fallback_used ? " • Guided Roadmap Mode" : " • AI Generated"}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
