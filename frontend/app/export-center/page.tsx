@@ -587,14 +587,14 @@ Generated with CareerCopilot AI.`;
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="cc-product-page space-y-6">
         <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6 print:border-none">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">
                 Export Center
               </Badge>
-              <h1 className="text-3xl font-bold tracking-tight">
+              <h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
                 Export career workflow outputs
               </h1>
               <p className="mt-2 max-w-3xl text-muted-foreground">
@@ -840,7 +840,7 @@ function EditableBlock({
   onChange: (value: string) => void;
 }) {
   return (
-    <Card>
+    <Card className="cc-product-card-static">
       <CardHeader>
         <CardTitle className="text-base">{title}</CardTitle>
       </CardHeader>

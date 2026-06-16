@@ -578,7 +578,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
 
 function ReportView({ result }: { result: ATSScoreResponse }) {
   return (
-    <div className="space-y-6">
+    <div className="cc-product-page space-y-6">
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
         <ScoreCard score={result.ats_score} label={result.match_level} />
 

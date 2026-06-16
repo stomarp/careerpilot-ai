@@ -23,7 +23,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
   ];
 
   return (
-    <div className="mb-8 rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-5 shadow-sm">
+    <div className="mb-8 cc-product-hero-soft p-5 sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -503,7 +503,7 @@ export default function ApplicationsPage() {
             Application Tracker
           </Badge>
           <CareerWorkflowBar activeStep="applications" />
-<h1 className="text-3xl font-bold tracking-tight">
+<h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
             Track Your Job Applications
           </h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">
@@ -523,49 +523,49 @@ export default function ApplicationsPage() {
       </div>
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-7">
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Total</CardDescription>
             <CardTitle>{dashboard?.total_applications ?? applications.length}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Saved</CardDescription>
             <CardTitle>{dashboard?.saved ?? 0}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Applied/OA</CardDescription>
             <CardTitle>{dashboard?.applied ?? 0}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Interviewing</CardDescription>
             <CardTitle>{dashboard?.interviewing ?? 0}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Offers</CardDescription>
             <CardTitle>{dashboard?.offers ?? 0}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Rejected</CardDescription>
             <CardTitle>{dashboard?.rejected ?? 0}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader className="pb-2">
             <CardDescription>Follow-ups</CardDescription>
             <CardTitle>{dashboard?.upcoming_followups ?? 0}</CardTitle>
@@ -886,7 +886,7 @@ export default function ApplicationsPage() {
           </CardContent>
         </Card>
           <div className="min-w-0 space-y-6">
-                          <Card>
+                          <Card className="cc-product-card-static">
                 <CardHeader>
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
@@ -1150,7 +1150,7 @@ export default function ApplicationsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="cc-product-card-static">
             <CardHeader>
             <CardTitle>All applications</CardTitle>
             <CardDescription>
