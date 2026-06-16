@@ -163,7 +163,7 @@ export default function ApplicationPacksPage() {
   return (
     <AppShell>
       <div className="cc-product-page space-y-6">
-        <div className="cc-product-hero-soft p-6 sm:p-8">
+        <div className="cc-page-hero-visual p-6 sm:p-8">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">

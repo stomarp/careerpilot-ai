@@ -588,7 +588,7 @@ Generated with CareerCopilot AI.`;
   return (
     <AppShell>
       <div className="cc-product-page space-y-6">
-        <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6 print:border-none">
+        <div className="cc-page-hero-visual rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6 print:border-none">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">
