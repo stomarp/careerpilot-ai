@@ -442,7 +442,7 @@ export default function ReportsPage() {
                 </div>
               </CardHeader>
 
-              <CardContent className="space-y-6">
+              <CardContent className="cc-product-page space-y-6">
                 <p className="rounded-2xl border bg-muted/20 p-5 text-sm leading-7 text-muted-foreground">
                   {latestReport?.summary ??
                     "No summary available for this report."}

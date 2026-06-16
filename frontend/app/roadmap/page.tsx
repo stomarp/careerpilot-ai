@@ -768,7 +768,7 @@ export default function RoadmapPage() {
               </CardContent>
             </Card>
 
-            <div className="space-y-6">
+            <div className="cc-product-page space-y-6">
               <Card className="cc-product-card-static">
                 <CardHeader>
                   <div className="flex items-center gap-2">

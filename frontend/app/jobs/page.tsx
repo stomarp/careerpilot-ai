@@ -25,7 +25,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
   ];
 
   return (
-    <div className="mb-8 rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-5 shadow-sm">
+    <div className="mb-8 cc-product-hero-soft p-5 sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -281,7 +281,7 @@ export default function JobsPage() {
           </div>
         </div>
 
-<h1 className="text-3xl font-bold tracking-tight">
+<h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
             Smart Job Intake
           </h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
@@ -293,7 +293,7 @@ export default function JobsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BriefcaseBusiness className="h-5 w-5" />
@@ -462,7 +462,7 @@ export default function JobsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cc-product-card-static">
           <CardHeader>
             <CardTitle>Saved job</CardTitle>
             <CardDescription>

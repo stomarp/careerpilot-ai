@@ -2052,7 +2052,7 @@ export default function ResumesPage() {
             <Badge variant="secondary" className="mb-3">
               Free Professional Resume Templates
             </Badge>
-            <h2 className="text-3xl font-bold tracking-tight">
+            <h2 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
               Start building your resume with these free templates
             </h2>
             <p className="mt-2 max-w-3xl text-muted-foreground">
@@ -2311,7 +2311,7 @@ export default function ResumesPage() {
                 </TabsList>
 
                 <TabsContent value="build-new" className="mt-6">
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <CardTitle>New resume</CardTitle>
                       <CardDescription>
@@ -2448,7 +2448,7 @@ export default function ResumesPage() {
                 </TabsContent>
 
                 <TabsContent value="boost-existing" className="mt-6">
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <CardTitle>Improve existing resume</CardTitle>
                       <CardDescription>
@@ -2494,7 +2494,7 @@ export default function ResumesPage() {
                     isOpening={isOpening}
                   />
 
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <CardTitle>Export resume</CardTitle>
                       <CardDescription>
@@ -2528,7 +2528,7 @@ export default function ResumesPage() {
                     </Card>
                   </>
                 ) : (
-                  <Card>
+                  <Card className="cc-product-card-static">
                     <CardHeader>
                       <CardTitle>Resume result</CardTitle>
                       <CardDescription>
@@ -2984,7 +2984,7 @@ function ResumeEditorOpen({
   );
 
 return (
-    <div className="space-y-6">
+    <div className="cc-product-page space-y-6">
       <Tabs defaultValue="preview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3 rounded-2xl bg-muted/50 p-1">
           <TabsTrigger value="preview" className="rounded-xl">
@@ -2999,7 +2999,7 @@ return (
         </TabsList>
 
         <TabsContent value="preview">
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader>
               <CardTitle>Resume preview</CardTitle>
               <CardDescription>
@@ -3045,7 +3045,7 @@ return (
         </TabsContent>
 
         <TabsContent value="editor">
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader>
               <CardTitle>Editor</CardTitle>
               <CardDescription>
@@ -3246,7 +3246,7 @@ ${keywordsToAdd}`
                   )}
 
 
-          <Card>
+          <Card className="cc-product-card-static">
             <CardHeader>
               <CardTitle>Suggestions</CardTitle>
               <CardDescription>
