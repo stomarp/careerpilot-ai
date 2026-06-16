@@ -274,6 +274,11 @@ Expected result:
 
     Production smoke test passed
 
+Deployment docs:
+
+    docs/DEPLOYMENT_GUIDE.md
+    docs/LAUNCH_RUNBOOK.md
+
 Full launch checklist:
 
     docs/LAUNCH_RUNBOOK.md
