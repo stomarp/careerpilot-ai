@@ -170,7 +170,7 @@ export default function ReportsPage() {
       setReports(response.data);
     } catch (err) {
       console.error(err);
-      setError("Unable to load reports. Please make sure the backend is running.");
+      setError("Reports could not load. Refresh the page or create a sample report to preview the experience.");
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +185,7 @@ export default function ReportsPage() {
         report_type: "ats_score",
         industry: "technology",
         ats_score: 89,
-        provider_used: "rule_based_demo",
+        provider_used: "smart_report_engine",
         fallback_used: false,
         title: "Backend Engineer ATS Fit Report",
         summary:
@@ -274,7 +274,7 @@ export default function ReportsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="cc-gradient-page space-y-6 rounded-3xl p-1 sm:p-2">
         <div className="rounded-3xl border bg-gradient-to-br from-background via-background to-muted/40 p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
@@ -306,7 +306,7 @@ export default function ReportsPage() {
                 ) : (
                   <Sparkles className="mr-2 h-4 w-4" />
                 )}
-                Create demo report
+                Generate sample report
               </Button>
             </div>
           </div>
@@ -402,7 +402,7 @@ export default function ReportsPage() {
                   ) : (
                     <Sparkles className="mr-2 h-4 w-4" />
                   )}
-                  Create demo report
+                  Generate sample report
                 </Button>
               </div>
             </CardContent>
