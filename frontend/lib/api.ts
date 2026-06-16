@@ -3,6 +3,20 @@ import axios from "axios";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
+const AUTH_TOKEN_KEY = "careercopilot_token";
+const LEGACY_AUTH_TOKEN_KEY = "token";
+
+function readStoredAuthToken() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return (
+    localStorage.getItem(AUTH_TOKEN_KEY) ||
+    localStorage.getItem(LEGACY_AUTH_TOKEN_KEY)
+  );
+}
+
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -11,8 +25,7 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token = readStoredAuthToken();
 
   if (
     token &&
@@ -30,20 +43,18 @@ api.interceptors.request.use((config) => {
 
 export function saveAuthToken(token: string) {
   if (typeof window !== "undefined") {
-    localStorage.setItem("careercopilot_token", token);
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    localStorage.removeItem(LEGACY_AUTH_TOKEN_KEY);
   }
 }
 
 export function getAuthToken() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return localStorage.getItem("careercopilot_token");
+  return readStoredAuthToken();
 }
 
 export function clearAuthToken() {
   if (typeof window !== "undefined") {
-    localStorage.removeItem("careercopilot_token");
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(LEGACY_AUTH_TOKEN_KEY);
   }
 }
