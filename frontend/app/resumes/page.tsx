@@ -2985,7 +2985,7 @@ function ResumeEditorOpen({
 
 return (
     <div className="cc-product-page space-y-6">
-      <Tabs defaultValue="preview" className="space-y-6">
+      <Tabs defaultValue="preview" className="cc-product-page space-y-6">
         <TabsList className="grid w-full grid-cols-3 rounded-2xl bg-muted/50 p-1">
           <TabsTrigger value="preview" className="rounded-xl">
             Open

@@ -23,7 +23,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
   ];
 
   return (
-    <div className="mb-8 cc-product-hero-soft p-5 sm:p-6">
+    <div className="mb-8 cc-workflow-card p-5 sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">

@@ -387,7 +387,7 @@ export default function RoadmapPage() {
             </Link>
           </Button>
         </div>
-        <div className="cc-product-hero-soft p-6 sm:p-8">
+        <div className="cc-page-hero-visual p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <Badge variant="secondary" className="mb-3">

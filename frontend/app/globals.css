@@ -504,3 +504,121 @@
   background: rgba(255, 255, 255, 0.96) !important;
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.055) !important;
 }
+
+/* Final consistency pass: make every product page visibly premium */
+.cc-workflow-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    linear-gradient(135deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.94)),
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.55), transparent 26rem),
+    radial-gradient(circle at top right, rgba(168, 85, 247, 0.42), transparent 26rem),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.24), transparent 26rem);
+  color: white;
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.18);
+}
+
+.cc-workflow-card p,
+.cc-workflow-card h1,
+.cc-workflow-card h2,
+.cc-workflow-card h3 {
+  color: white !important;
+}
+
+.cc-workflow-card .text-muted-foreground {
+  color: rgba(226, 232, 240, 0.82) !important;
+}
+
+.cc-workflow-card a {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: none !important;
+}
+
+.cc-workflow-card a:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: white !important;
+}
+
+.cc-workflow-card a.bg-primary,
+.cc-workflow-card a.text-primary-foreground,
+.cc-workflow-card a[class*="bg-primary"],
+.cc-workflow-card a[class*="text-primary-foreground"] {
+  background: white !important;
+  color: rgb(15, 23, 42) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22) !important;
+}
+
+.cc-page-hero-visual {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  background:
+    linear-gradient(135deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.94)),
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.55), transparent 26rem),
+    radial-gradient(circle at top right, rgba(217, 70, 239, 0.38), transparent 26rem),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.22), transparent 26rem) !important;
+  color: white !important;
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.18) !important;
+}
+
+.cc-page-hero-visual h1,
+.cc-page-hero-visual h2,
+.cc-page-hero-visual h3,
+.cc-page-hero-visual p {
+  color: white !important;
+}
+
+.cc-page-hero-visual .text-muted-foreground,
+.cc-page-hero-visual .text-slate-600 {
+  color: rgba(226, 232, 240, 0.84) !important;
+}
+
+.cc-page-hero-visual::after,
+.cc-workflow-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 1.5rem 0 1.5rem;
+  height: 0.35rem;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899, #f97316);
+}
+
+.cc-product-page {
+  padding: 1rem !important;
+}
+
+.cc-product-page > section,
+.cc-product-page > div {
+  animation: cc-fade-up 240ms ease both;
+}
+
+@keyframes cc-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cc-product-page .rounded-3xl.border,
+.cc-product-page .rounded-\[2rem\].border {
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+}
+
+.cc-product-page label {
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+}
+
+.cc-product-page [class*="text-3xl"],
+.cc-product-page [class*="text-4xl"] {
+  letter-spacing: -0.04em;
+}
