@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: careercopilot-api
+    runtime: python
+    plan: free
+    rootDir: .
+    buildCommand: cd backend && pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: cd backend && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: ENVIRONMENT
+        value: production
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        fromDatabase:
+          name: careercopilot-postgres
+          property: connectionString
+      - key: BACKEND_CORS_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+
+databases:
+  - name: careercopilot-postgres
+    plan: free
+    databaseName: careercopilot
+    user: careercopilot
