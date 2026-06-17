@@ -25,17 +25,17 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
   ];
 
   return (
-    <div className="mb-8 cc-workflow-card p-5 sm:p-6">
+    <div className="mb-8 cc-analysis-command p-6 sm:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            CareerCopilot workflow
+            ATS Match Command Center
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            Turn a job post into a tracked application
+            Analyze resume fit before you apply
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Save the job, analyze your resume fit, then move it into your application tracker.
+            Select a resume and job description, then get a recruiter-style score, gap analysis, and action plan.
           </p>
         </div>
       </div>
@@ -48,10 +48,10 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
             <a
               key={step.id}
               href={step.href}
-              className={`rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-md ${
+              className={`cc-analysis-step transition hover:-translate-y-0.5 ${
                 isActive
-                  ? "border-primary bg-primary text-primary-foreground shadow-md"
-                  : "bg-background"
+                  ? "cc-analysis-step-active"
+                  : ""
               }`}
             >
               <p className="text-sm font-semibold">{step.title}</p>
@@ -308,18 +308,29 @@ function ScoreCard({ score, label }: { score: number; label: string }) {
 
 function EmptyState() {
   return (
-    <Card className="cc-product-card-static">
-      <CardHeader>
-        <CardTitle>No analysis yet</CardTitle>
-        <CardDescription>
-          Upload a resume, create a job description, then run ATS analysis.
+    <Card className="cc-analysis-empty">
+      <CardHeader className="text-center">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-950/20">
+          <FileSearch className="h-6 w-6" />
+        </div>
+        <CardTitle className="text-2xl font-black">Ready for your first ATS match</CardTitle>
+        <CardDescription className="mx-auto max-w-2xl">
+          Upload or select a resume, connect it with a job description, and CareerCopilot will generate a recruiter-style fit report.
         </CardDescription>
       </CardHeader>
 
       <CardContent>
-        <div className="rounded-xl border bg-muted/30 p-6 text-sm text-muted-foreground">
-          Your results will appear here with a detailed report and an
-          assistant-style fit summary.
+        <div className="grid gap-3 md:grid-cols-3">
+          {[
+            { title: "1. Resume", description: "Use a parsed resume or upload one directly." },
+            { title: "2. Job", description: "Select the job description you want to target." },
+            { title: "3. Analysis", description: "Get score, gaps, keywords, and next actions." },
+          ].map((item) => (
+            <div key={item.title} className="cc-analysis-insight-card">
+              <p className="font-bold text-slate-950">{item.title}</p>
+              <p className="mt-1 text-sm leading-6 text-slate-500">{item.description}</p>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
@@ -336,7 +347,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
   const buildPlan = getBuildToFixPlan(result.resume_gaps);
 
   return (
-    <div className="cc-product-page space-y-6">
+    <div className="cc-analysis-result-shell space-y-6">
       <Card className="cc-product-card-static border-primary/20">
         <CardHeader>
           <Badge className="mb-2 w-fit" variant={applyDecision.variant}>
@@ -344,10 +355,10 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
           </Badge>
           <CardTitle className="flex items-center gap-2 text-2xl">
             <Sparkles className="h-5 w-5" />
-            Am I a good fit?
+            Recruiter fit verdict
           </CardTitle>
           <CardDescription>
-            A practical read on fit, risk, and what to improve before applying.
+            A clear hiring-readiness decision based on skills, proof, risk, and role alignment.
           </CardDescription>
         </CardHeader>
 
@@ -356,7 +367,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
             {result.summary}
           </p>
 
-          <div className="rounded-2xl border bg-background p-5">
+          <div className="cc-analysis-insight-card">
             <p className="mb-2 font-medium">Apply decision</p>
             <p className="text-sm leading-6 text-muted-foreground">
               {applyDecision.description}
@@ -382,7 +393,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
               {result.strengths.map((strength, index) => (
                 <div
                   key={`${strength.category}-${index}`}
-                  className="rounded-xl border bg-background p-4"
+                  className="cc-analysis-insight-card"
                 >
                   <p className="mb-1 font-medium">{strength.category}</p>
                   <p className="text-sm leading-6 text-muted-foreground">
@@ -410,7 +421,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
               {result.resume_gaps.slice(0, 5).map((gap, index) => (
                 <div
                   key={`${gap.category}-${index}`}
-                  className="rounded-xl border bg-background p-4"
+                  className="cc-analysis-insight-card"
                 >
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <p className="font-medium">{gap.category}</p>
@@ -445,7 +456,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
               {buildPlan.map((item, index) => (
                 <div
                   key={`${item.title}-${index}`}
-                  className="rounded-2xl border bg-background p-5"
+                  className="cc-analysis-insight-card"
                 >
                   <div className="mb-3 flex items-center gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold">
@@ -490,7 +501,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
               {result.suggested_bullets.slice(0, 3).map((bullet, index) => (
                 <div
                   key={`${bullet.category}-${index}`}
-                  className="rounded-xl border bg-background p-4"
+                  className="cc-analysis-insight-card"
                 >
                   <Badge variant="secondary" className="mb-3">
                     {bullet.category}
@@ -578,7 +589,7 @@ function AssistantView({ result }: { result: ATSScoreResponse }) {
 
 function ReportView({ result }: { result: ATSScoreResponse }) {
   return (
-    <div className="cc-product-page space-y-6">
+    <div className="cc-analysis-result-shell space-y-6">
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
         <ScoreCard score={result.ats_score} label={result.match_level} />
 
@@ -634,7 +645,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
             {result.resume_gaps.map((gap, index) => (
               <div
                 key={`${gap.category}-${index}`}
-                className="rounded-2xl border bg-background p-5"
+                className="cc-analysis-insight-card"
               >
                 <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2">
@@ -726,7 +737,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
               {result.strengths.map((strength, index) => (
                 <div
                   key={`${strength.category}-${index}`}
-                  className="rounded-xl border bg-background p-4"
+                  className="cc-analysis-insight-card"
                 >
                   <div className="mb-2 flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4" />
@@ -759,7 +770,7 @@ function ReportView({ result }: { result: ATSScoreResponse }) {
             {result.suggested_bullets.map((bullet, index) => (
               <div
                 key={`${bullet.category}-${index}`}
-                className="rounded-2xl border bg-background p-5"
+                className="cc-analysis-insight-card"
               >
                 <Badge variant="secondary" className="mb-3">
                   {bullet.category}
