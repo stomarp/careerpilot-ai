@@ -922,3 +922,34 @@ div {
     radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.10), transparent 24rem);
 }
 
+/* Analysis upload layout fix */
+.cc-product-page input[type="file"] {
+  display: block;
+  width: 100% !important;
+}
+
+.cc-product-page input[type="file"] + button,
+.cc-product-page input[type="file"] ~ button {
+  white-space: nowrap;
+}
+
+@media (max-width: 1280px) {
+  .cc-product-page input[type="file"] {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Prevent upload/action rows from clipping inside cards */
+.cc-product-page .flex:has(input[type="file"]) {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cc-product-page .flex:has(input[type="file"]) input[type="file"] {
+  flex: 1 1 18rem;
+}
+
+.cc-product-page .flex:has(input[type="file"]) button {
+  flex: 0 0 auto;
+}
+
