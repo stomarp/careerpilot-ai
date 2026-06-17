@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -622,3 +622,117 @@
 .cc-product-page [class*="text-4xl"] {
   letter-spacing: -0.04em;
 }
+
+/* Final UI quality fixes: modern font + visible text on dark heroes */
+html,
+body {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+textarea,
+select,
+label,
+a,
+p,
+span,
+div {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+.cc-product-page h1,
+.cc-product-page h2,
+.cc-product-page h3 {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+/* Fix active workflow cards that became white with invisible text */
+.cc-workflow-card a[class*="bg-primary"] *,
+.cc-workflow-card a[class*="text-primary-foreground"] *,
+.cc-workflow-card a.bg-white *,
+.cc-workflow-card a[class*="bg-white"] * {
+  color: rgb(15, 23, 42) !important;
+}
+
+.cc-workflow-card a[class*="bg-primary"] .text-muted-foreground,
+.cc-workflow-card a[class*="text-primary-foreground"] .text-muted-foreground,
+.cc-workflow-card a.bg-white .text-muted-foreground,
+.cc-workflow-card a[class*="bg-white"] .text-muted-foreground {
+  color: rgba(15, 23, 42, 0.68) !important;
+}
+
+/* Fix white buttons inside dark hero panels */
+.cc-page-hero-visual a[class*="bg-white"],
+.cc-page-hero-visual button[class*="bg-white"],
+.cc-product-hero-soft a[class*="bg-white"],
+.cc-product-hero-soft button[class*="bg-white"],
+.cc-workflow-card a[class*="bg-white"],
+.cc-workflow-card button[class*="bg-white"] {
+  color: rgb(15, 23, 42) !important;
+}
+
+.cc-page-hero-visual a[class*="bg-white"] *,
+.cc-page-hero-visual button[class*="bg-white"] *,
+.cc-product-hero-soft a[class*="bg-white"] *,
+.cc-product-hero-soft button[class*="bg-white"] *,
+.cc-workflow-card a[class*="bg-white"] *,
+.cc-workflow-card button[class*="bg-white"] * {
+  color: rgb(15, 23, 42) !important;
+}
+
+/* Keep dark CTA buttons readable */
+.cc-page-hero-visual .cc-cta-primary,
+.cc-product-hero-soft .cc-cta-primary,
+.cc-workflow-card .cc-cta-primary,
+.cc-page-hero-visual a[class*="bg-slate"],
+.cc-product-hero-soft a[class*="bg-slate"],
+.cc-workflow-card a[class*="bg-slate"] {
+  color: white !important;
+}
+
+.cc-page-hero-visual .cc-cta-primary *,
+.cc-product-hero-soft .cc-cta-primary *,
+.cc-workflow-card .cc-cta-primary *,
+.cc-page-hero-visual a[class*="bg-slate"] *,
+.cc-product-hero-soft a[class*="bg-slate"] *,
+.cc-workflow-card a[class*="bg-slate"] * {
+  color: white !important;
+}
+
+/* Make cards feel cleaner and less newspaper-like */
+.cc-product-card-static,
+.cc-section-shell,
+.cc-feature-panel {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.cc-product-card-static h1,
+.cc-product-card-static h2,
+.cc-product-card-static h3,
+.cc-product-card-static p {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Reduce overly editorial look */
+.cc-product-page p {
+  line-height: 1.65;
+}
+
+.cc-product-page .text-muted-foreground {
+  color: rgb(100, 116, 139) !important;
+}
+
+.cc-page-hero-visual .text-muted-foreground,
+.cc-product-hero-soft .text-muted-foreground,
+.cc-workflow-card .text-muted-foreground {
+  color: rgba(226, 232, 240, 0.84) !important;
+}
+
