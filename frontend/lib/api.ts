@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const FALLBACK_API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://careercopilot-api.onrender.com"
+    : "http://127.0.0.1:8000";
+
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL || FALLBACK_API_BASE_URL;
 
 const AUTH_TOKEN_KEY = "careercopilot_token";
 const LEGACY_AUTH_TOKEN_KEY = "token";
