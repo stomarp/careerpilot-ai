@@ -1028,7 +1028,7 @@ return (
                     </div>
                   </div>
 
-                  <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+                  <div className="grid gap-3">
                     <input
                       type="file"
                       accept=".pdf"
@@ -1043,7 +1043,7 @@ return (
                       variant="outline"
                       onClick={handleResumeUpload}
                       disabled={isUploadingResume}
-                    >
+                     className="w-full justify-center whitespace-nowrap rounded-2xl">
                       {isUploadingResume ? "Uploading..." : "Upload resume"}
                     </Button>
                   </div>
