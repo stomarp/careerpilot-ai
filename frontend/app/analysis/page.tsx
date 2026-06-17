@@ -313,9 +313,9 @@ function EmptyState() {
         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-950/20">
           <FileSearch className="h-6 w-6" />
         </div>
-        <CardTitle className="text-2xl font-black">Ready for your first ATS match</CardTitle>
+        <CardTitle className="text-2xl font-black">Ready for your first fit report</CardTitle>
         <CardDescription className="mx-auto max-w-2xl">
-          Upload or select a resume, connect it with a job description, and CareerCopilot will generate a recruiter-style fit report.
+          Select a resume and a job description, then generate a score, skill-gap summary, keyword review, and action plan.
         </CardDescription>
       </CardHeader>
 
@@ -927,7 +927,7 @@ return (
             Step 3
           </Badge>
           <CareerWorkflowBar activeStep="analysis" />
-<h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">ATS Analysis</h1>
+<h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">Resume–Job Fit Analysis</h1>
           <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
             Get a detailed ATS report and an assistant-style fit review that
             explains whether to apply now, tailor first, or build missing proof.
@@ -940,10 +940,10 @@ return (
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileSearch className="h-5 w-5" />
-              Analyze match
+              Run match analysis
             </CardTitle>
             <CardDescription>
-                Upload a resume, use your latest saved job, then run a fit report with score, gaps, role signals, and recommended fixes.
+                Connect one resume with one job description and generate a recruiter-style fit report.
               </CardDescription>
           </CardHeader>
 
@@ -1062,10 +1062,10 @@ return (
 
                                 <details className="rounded-2xl border bg-muted/10 p-4">
                   <summary className="cursor-pointer text-sm font-medium">
-                    Advanced details
+                    Advanced setup
                   </summary>
                   <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                    These fields are used by the local development backend. In the final product, users will select a resume and job without seeing IDs.
+                    Use this only when you want to manually override the selected resume, job, or industry.
                   </p>
 
                   <div className="mt-4 space-y-4">
