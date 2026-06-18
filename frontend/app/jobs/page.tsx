@@ -7,7 +7,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
     {
       id: "jobs",
       title: "1. Save job",
-      description: "Paste a job description and extract role requirements.",
+      description: "Paste a job description or job URL and extract role requirements.",
       href: "/jobs",
     },
     {
@@ -335,7 +335,7 @@ export default function JobsPage() {
                   id="description"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Paste the full job description here..."
+                  placeholder="Paste the full job description or job URL here..."
                   className="min-h-72"
                   required
                 />
@@ -351,7 +351,7 @@ export default function JobsPage() {
                         Parsed role signals
                       </h3>
                       <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                        This preview updates as you paste the job description.
+                        This preview updates as you paste the job description or job URL.
                       </p>
                     </div>
 
@@ -406,7 +406,7 @@ export default function JobsPage() {
                           ))
                         ) : (
                           <p className="text-sm text-muted-foreground">
-                            Paste a longer job description to detect skills.
+                            Paste a longer job description or job URL to detect skills.
                           </p>
                         )}
                       </div>
@@ -522,7 +522,7 @@ export default function JobsPage() {
               </div>
             ) : (
               <div className="rounded-xl border bg-muted/30 p-6 text-sm text-muted-foreground">
-                No job saved in this session yet. Add a job description to run
+                No job saved in this session yet. Add a job description or job URL to run
                 ATS analysis.
               </div>
             )}
