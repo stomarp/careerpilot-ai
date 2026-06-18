@@ -18,42 +18,62 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-const companyPrep: Record<string, string[]> = {
-  amazon: ["Leadership Principles stories", "Arrays/strings", "HashMap", "System design basics", "Ownership examples"],
-  google: ["DSA depth", "Graphs/trees", "Dynamic programming basics", "Clean problem solving", "Scalability fundamentals"],
-  meta: ["Fast coding rounds", "Product sense basics", "Trees/graphs", "System design tradeoffs", "Clear communication"],
-  microsoft: ["OOP design", "Arrays/strings", "Behavioral examples", "API design", "Debugging stories"],
-  visa: ["Backend APIs", "SQL/database design", "Reliability", "Security basics", "Java/Python fundamentals"],
+const companyPrep: Record<string, { focus: string[]; leetcode: string[]; systemDesign: string[] }> = {
+  amazon: {
+    focus: ["Leadership Principles", "Ownership", "Backend services", "Scalability", "Operational excellence"],
+    leetcode: ["Two Sum", "LRU Cache", "Merge Intervals", "Number of Islands", "Top K Frequent Elements"],
+    systemDesign: ["Design an order tracking system", "Design a notification service", "Design a rate limiter"],
+  },
+  google: {
+    focus: ["Problem solving depth", "Graphs/trees", "Clean code", "Scalability", "Tradeoff explanation"],
+    leetcode: ["Longest Substring Without Repeating Characters", "Word Ladder", "Course Schedule", "Binary Tree Maximum Path Sum", "Merge K Sorted Lists"],
+    systemDesign: ["Design Google Drive", "Design autocomplete", "Design a URL shortener"],
+  },
+  meta: {
+    focus: ["Fast coding rounds", "Trees/graphs", "Product thinking", "Clear communication", "System tradeoffs"],
+    leetcode: ["Valid Palindrome", "Subarray Sum Equals K", "Lowest Common Ancestor", "Clone Graph", "Random Pick with Weight"],
+    systemDesign: ["Design news feed", "Design Messenger", "Design Instagram stories"],
+  },
+  microsoft: {
+    focus: ["OOP design", "Debugging", "API design", "Behavioral examples", "Collaboration"],
+    leetcode: ["Reverse Linked List", "Merge Two Sorted Lists", "Design Parking Lot", "Binary Tree Level Order Traversal", "Meeting Rooms II"],
+    systemDesign: ["Design Teams chat", "Design file sync", "Design calendar scheduling"],
+  },
+  visa: {
+    focus: ["Backend APIs", "SQL/database design", "Reliability", "Security basics", "Java/Python fundamentals"],
+    leetcode: ["Two Sum", "Valid Parentheses", "Group Anagrams", "Product of Array Except Self", "Top K Frequent Elements"],
+    systemDesign: ["Design payment transaction tracker", "Design fraud alert service", "Design secure API gateway"],
+  },
+};
+
+const levelGuidance: Record<string, string[]> = {
+  "New Grad": ["DSA fundamentals", "OOP basics", "SQL basics", "Resume project explanation", "Behavioral STAR answers"],
+  "Entry Level": ["Clean coding", "API basics", "Database CRUD", "Testing/debugging stories", "Project ownership"],
+  "Mid Level": ["System design basics", "API scalability", "Database indexes", "Production debugging", "Cross-team collaboration"],
+  "Senior": ["Architecture tradeoffs", "Mentorship", "Reliability", "Distributed systems", "Technical leadership"],
 };
 
 export default function InterviewPrepPage() {
   const [company, setCompany] = useState("Visa");
   const [role, setRole] = useState("Software Engineer");
-  const [level, setLevel] = useState("New Grad / Entry Level");
+  const [level, setLevel] = useState("Entry Level");
   const [jobText, setJobText] = useState("");
 
   const normalizedCompany = company.trim().toLowerCase();
 
   const generatedPrep = useMemo(() => {
-    const topics =
+    const companyBank =
       companyPrep[normalizedCompany] ??
-      ["Arrays/strings", "HashMap", "SQL/API basics", "System design fundamentals", "Behavioral stories"];
+      {
+        focus: ["DSA fundamentals", "Backend APIs", "SQL/API basics", "System design fundamentals", "Behavioral stories"],
+        leetcode: ["Two Sum", "Longest Substring Without Repeating Characters", "Merge Intervals", "Binary Tree Level Order Traversal", "Top K Frequent Elements"],
+        systemDesign: ["Design a job application tracker", "Design a resume upload and parsing service", "Design notification/reminder system"],
+      };
 
     return {
-      focus: topics,
-      coding: [
-        "Two Sum / HashMap pattern",
-        "Longest substring / sliding window",
-        "Merge intervals or meeting rooms",
-        "Tree BFS/DFS traversal",
-        "SQL join and aggregation question",
-      ],
-      systemDesign: [
-        "Design a job application tracker",
-        "Design a resume upload and parsing service",
-        "Design notification/reminder system",
-        "Discuss database schema, indexes, caching, and API rate limits",
-      ],
+      focus: [...companyBank.focus, ...(levelGuidance[level] ?? [])].slice(0, 8),
+      coding: companyBank.leetcode,
+      systemDesign: companyBank.systemDesign,
       behavioral: [
         "Tell me about yourself in 90 seconds",
         "Describe a project you built end-to-end",
@@ -65,7 +85,7 @@ export default function InterviewPrepPage() {
         "Explain auth, resume upload, ATS scoring, application tracker, and production CORS/debugging work.",
       ],
     };
-  }, [normalizedCompany]);
+  }, [normalizedCompany, level]);
 
   return (
     <AppShell>
@@ -106,8 +126,17 @@ export default function InterviewPrepPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Level</Label>
-                <Input value={level} onChange={(e) => setLevel(e.target.value)} placeholder="New Grad / Entry Level" />
+                <Label>Experience level</Label>
+                <select
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value)}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option>New Grad</option>
+                  <option>Entry Level</option>
+                  <option>Mid Level</option>
+                  <option>Senior</option>
+                </select>
               </div>
 
               <div className="space-y-2">
@@ -141,14 +170,14 @@ export default function InterviewPrepPage() {
               <CardContent>
                 <p className="text-sm leading-7 text-slate-700">
                   Focus on clear problem solving, backend fundamentals, project explanation, and company-style preparation.
-                  These are commonly practiced topic areas, not guaranteed interview questions.
+                  These are commonly practiced and reported company-style topic areas, not guaranteed interview questions.
                 </p>
               </CardContent>
             </Card>
 
             <div className="grid gap-4 md:grid-cols-2">
               <PrepCard icon={Building2} title="Company focus" items={generatedPrep.focus} />
-              <PrepCard icon={Code2} title="Coding practice" items={generatedPrep.coding} />
+              <PrepCard icon={Code2} title="Company-style LeetCode practice" items={generatedPrep.coding} />
               <PrepCard icon={Layers3} title="System design" items={generatedPrep.systemDesign} />
               <PrepCard icon={MessageSquareText} title="Behavioral + project" items={[...generatedPrep.behavioral, ...generatedPrep.projectTalk]} />
             </div>
