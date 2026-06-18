@@ -1322,7 +1322,7 @@ export default function ResumesPage() {
   const [experienceTitle, setExperienceTitle] = useState("");
   const [experienceCompany, setExperienceCompany] = useState("");
   const [experienceBullets, setExperienceBullets] = useState("");
-  const [projectName, setProjectName] = useState("CareerCopilot AI");
+  const [projectName, setProjectName] = useState("CareerPilot AI");
   const [projectTechStack, setProjectTechStack] = useState(
     "Python, FastAPI, PostgreSQL, Docker, OpenAI API"
   );
@@ -1569,7 +1569,7 @@ export default function ResumesPage() {
 
 
   useEffect(() => {
-    const latestResumeId = localStorage.getItem("careercopilot_latest_resume_id");
+    const latestResumeId = localStorage.getItem("careerpilot_latest_resume_id");
 
     if (latestResumeId) {
       setResumeId(latestResumeId);
@@ -1771,7 +1771,7 @@ export default function ResumesPage() {
       setUploadedResume(response.data);
       setResumeId(String(response.data.resume_id));
       localStorage.setItem(
-        "careercopilot_latest_resume_id",
+        "careerpilot_latest_resume_id",
         String(response.data.resume_id)
       );
       setSuccessMessage(`Uploaded resume ${response.data.resume_id}.`);
@@ -1962,7 +1962,7 @@ export default function ResumesPage() {
             </h1>
 
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-              Choose sleek, minimalist templates designed for ATS parsing, recruiter readability, and fast customization inside CareerCopilot.
+              Choose sleek, minimalist templates designed for ATS parsing, recruiter readability, and fast customization inside CareerPilot.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -2031,7 +2031,7 @@ export default function ResumesPage() {
                   </div>
                   <div className="mt-2 text-xs leading-5">
                     <p className="font-semibold">
-                      CareerCopilot AI | FastAPI, PostgreSQL, Docker
+                      CareerPilot AI | FastAPI, PostgreSQL, Docker
                     </p>
                     <p>
                       • Built ATS analysis, fit assistant, and resume optimization
@@ -2095,7 +2095,7 @@ export default function ResumesPage() {
                 Find my best template
               </h3>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Choose your target role and level. CareerCopilot will surface the safest and most relevant resume formats.
+                Choose your target role and level. CareerPilot will surface the safest and most relevant resume formats.
               </p>
             </div>
 
@@ -2452,7 +2452,7 @@ export default function ResumesPage() {
                     <CardHeader>
                       <CardTitle>Improve existing resume</CardTitle>
                       <CardDescription>
-                        Upload an existing resume and improve it with CareerCopilot.
+                        Upload an existing resume and improve it with CareerPilot.
                       </CardDescription>
                     </CardHeader>
 

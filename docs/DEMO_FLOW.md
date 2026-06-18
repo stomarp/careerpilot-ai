@@ -1,10 +1,10 @@
-# CareerCopilot AI Recruiter Demo Flow
+# CareerPilot AI Recruiter Demo Flow
 
 Use this flow to demo the product in under five minutes.
 
 ## Product Pitch
 
-CareerCopilot AI is a job-search command center. A candidate can upload a resume, save a job, generate an ATS match, receive AI resume optimization advice, prepare for interviews, create a learning roadmap, export the full application strategy, save it as an Application Pack, and track the application pipeline.
+CareerPilot AI is a job-search command center. A candidate can upload a resume, save a job, generate an ATS match, receive AI resume optimization advice, prepare for interviews, create a learning roadmap, export the full application strategy, save it as an Application Pack, and track the application pipeline.
 
 ## Demo Steps
 

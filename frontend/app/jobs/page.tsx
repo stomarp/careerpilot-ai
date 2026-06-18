@@ -29,7 +29,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            CareerCopilot workflow
+            CareerPilot workflow
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight">
             Turn a job post into a tracked application
@@ -242,7 +242,7 @@ export default function JobsPage() {
       setCreatedJob(response.data);
 
       localStorage.setItem(
-        "careercopilot_latest_job_id",
+        "careerpilot_latest_job_id",
         String(response.data.job_id)
       );
     } catch {
@@ -285,7 +285,7 @@ export default function JobsPage() {
             Smart Job Intake
           </h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Paste a job post and CareerCopilot will extract role signals, keywords, and requirements before comparing it with your
+            Paste a job post and CareerPilot will extract role signals, keywords, and requirements before comparing it with your
             resume and identify matched skills, missing keywords, and
             improvement opportunities.
           </p>
@@ -300,7 +300,7 @@ export default function JobsPage() {
               Job post
             </CardTitle>
             <CardDescription>
-              Paste the full job post. CareerCopilot will read it like a recruiter and prepare it for fit analysis.
+              Paste the full job post. CareerPilot will read it like a recruiter and prepare it for fit analysis.
             </CardDescription>
           </CardHeader>
 

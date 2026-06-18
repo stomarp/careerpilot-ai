@@ -59,7 +59,7 @@ export function Sidebar() {
         </div>
 
         <div>
-          <p className="text-base font-bold leading-none">CareerCopilot AI</p>
+          <p className="text-base font-bold leading-none">CareerPilot AI</p>
           <p className="mt-1 text-xs text-slate-300">Job search command center</p>
         </div>
       </Link>

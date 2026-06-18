@@ -1,10 +1,10 @@
-# CareerCopilot AI Deployment Guide
+# CareerPilot AI Deployment Guide
 
-This guide explains how to deploy CareerCopilot AI as a production-style SaaS app.
+This guide explains how to deploy CareerPilot AI as a production-style SaaS app.
 
 ## Production architecture
 
-CareerCopilot AI uses:
+CareerPilot AI uses:
 
 - Frontend: Next.js on Vercel
 - Backend: FastAPI on Render
@@ -31,11 +31,11 @@ Render should use the root-level render.yaml file.
 
 Backend service name:
 
-    careercopilot-api
+    careerpilot-api
 
 Database name:
 
-    careercopilot-postgres
+    careerpilot-postgres
 
 Backend build command:
 
@@ -76,7 +76,7 @@ Set the Vercel root directory to:
 Add these Vercel environment variables:
 
     NEXT_PUBLIC_API_BASE_URL=https://your-render-api.onrender.com
-    NEXT_PUBLIC_APP_NAME=CareerCopilot AI
+    NEXT_PUBLIC_APP_NAME=CareerPilot AI
     NEXT_PUBLIC_APP_ENV=production
 
 ## Production smoke test

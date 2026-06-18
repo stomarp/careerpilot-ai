@@ -50,7 +50,7 @@ export default function HomePage() {
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-base font-black leading-none">CareerCopilot AI</p>
+            <p className="text-base font-black leading-none">CareerPilot AI</p>
             <p className="mt-1 text-xs font-medium text-slate-500">
               Job search command center
             </p>
@@ -79,7 +79,7 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            CareerCopilot AI helps you upload resumes, analyze ATS fit, track job
+            CareerPilot AI helps you upload resumes, analyze ATS fit, track job
             applications, generate interview prep, and build learning roadmaps
             from one polished workspace.
           </p>

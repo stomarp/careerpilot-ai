@@ -38,7 +38,7 @@ export function Header() {
 
           <div className="min-w-0">
             <p className="truncate text-sm font-bold text-slate-950 sm:text-base">
-              CareerCopilot Workspace
+              CareerPilot Workspace
             </p>
             <p className="truncate text-xs text-slate-500">
               Analyze resumes, prepare interviews, and track applications.

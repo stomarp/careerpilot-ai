@@ -8,7 +8,7 @@ const FALLBACK_API_BASE_URL =
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || FALLBACK_API_BASE_URL;
 
-const AUTH_TOKEN_KEY = "careercopilot_token";
+const AUTH_TOKEN_KEY = "careerpilot_token";
 const LEGACY_AUTH_TOKEN_KEY = "token";
 
 function readStoredAuthToken() {

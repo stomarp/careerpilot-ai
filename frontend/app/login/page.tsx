@@ -57,7 +57,7 @@ export default function LoginPage() {
               <Sparkles className="h-6 w-6" />
             </div>
             <div>
-              <p className="font-black">CareerCopilot AI</p>
+              <p className="font-black">CareerPilot AI</p>
               <p className="text-xs text-slate-300">Job search command center</p>
             </div>
           </Link>

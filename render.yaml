@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: careercopilot-api
+    name: careerpilot-api
     runtime: python
     plan: free
     rootDir: .
@@ -19,7 +19,7 @@ services:
         value: info
       - key: DATABASE_URL
         fromDatabase:
-          name: careercopilot-postgres
+          name: careerpilot-postgres
           property: connectionString
       - key: BACKEND_CORS_ORIGINS
         sync: false
@@ -29,7 +29,7 @@ services:
         generateValue: true
 
 databases:
-  - name: careercopilot-postgres
+  - name: careerpilot-postgres
     plan: free
-    databaseName: careercopilot
-    user: careercopilot
+    databaseName: careerpilot
+    user: careerpilot

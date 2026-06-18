@@ -1,4 +1,4 @@
-# CareerCopilot AI Launch Runbook
+# CareerPilot AI Launch Runbook
 
 ## 1. Deployment targets
 
@@ -11,8 +11,8 @@
 1. Push render.yaml to GitHub.
 2. In Render, create a new Blueprint from the repository.
 3. Render should create:
-   - careercopilot-api
-   - careercopilot-postgres
+   - careerpilot-api
+   - careerpilot-postgres
 
 4. Confirm backend build command:
 
@@ -46,7 +46,7 @@
 3. Add Vercel environment variables:
 
     NEXT_PUBLIC_API_BASE_URL=https://your-render-api.onrender.com
-    NEXT_PUBLIC_APP_NAME=CareerCopilot AI
+    NEXT_PUBLIC_APP_NAME=CareerPilot AI
     NEXT_PUBLIC_APP_ENV=production
 
 4. Deploy the frontend.
@@ -107,7 +107,7 @@ Review the failing migration before applying any downgrade in production.
 
 ## 7. Launch notes
 
-CareerCopilot AI production launch should feel like a real SaaS product:
+CareerPilot AI production launch should feel like a real SaaS product:
 
 - Stable hosted frontend
 - Stable hosted backend

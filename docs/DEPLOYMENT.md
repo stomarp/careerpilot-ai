@@ -1,6 +1,6 @@
-# CareerCopilot AI Deployment Guide
+# CareerPilot AI Deployment Guide
 
-CareerCopilot AI is a full-stack AI career platform built with Next.js, FastAPI, PostgreSQL, SQLAlchemy, Alembic, and AI provider integrations.
+CareerPilot AI is a full-stack AI career platform built with Next.js, FastAPI, PostgreSQL, SQLAlchemy, Alembic, and AI provider integrations.
 
 ## Production Architecture
 

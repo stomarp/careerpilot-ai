@@ -1,6 +1,6 @@
-# CareerCopilot AI - API Design
+# CareerPilot AI - API Design
 
-CareerCopilot AI uses a FastAPI backend with PostgreSQL persistence. The API supports resume parsing, job description intake, ATS-style analysis, and application tracking.
+CareerPilot AI uses a FastAPI backend with PostgreSQL persistence. The API supports resume parsing, job description intake, ATS-style analysis, and application tracking.
 
 ---
 
