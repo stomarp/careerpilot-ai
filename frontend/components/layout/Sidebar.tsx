@@ -24,7 +24,6 @@ const navGroups = [
     label: "Workspace",
     items: [
       { title: "Dashboard", href: "/dashboard", icon: Home },
-      { title: "Job Workspace", href: "/jobs/workspace", icon: Layers3 },
       { title: "Jobs", href: "/jobs", icon: BriefcaseBusiness, exact: true },
       { title: "Resumes", href: "/resumes", icon: FileText },
     ],
@@ -41,9 +40,10 @@ const navGroups = [
   {
     label: "Outputs",
     items: [
-      { title: "Export Center", href: "/export-center", icon: Download },
-      { title: "Application Packs", href: "/application-packs", icon: FileText },
       { title: "Applications", href: "/applications", icon: NotebookText },
+      { title: "Application Packs", href: "/application-packs", icon: FileText },
+      { title: "Export Center", href: "/export-center", icon: Download },
+      { title: "Job Workspace", href: "/jobs/workspace", icon: Layers3 },
     ],
   },
 ];
