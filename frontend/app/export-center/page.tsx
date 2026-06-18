@@ -212,7 +212,7 @@ function readStoredJson<T>(key: string): T | null {
 }
 
 function createRecruiterNote(role: string, company: string) {
-  return `Hi, I’m interested in the ${role}${company ? ` role at ${company}` : " role"}. My background includes backend development with FastAPI, PostgreSQL, Docker, REST APIs, CI/CD, and AI-powered workflow projects. I recently built CareerCopilot AI, a full-stack job-search platform with resume analysis, job parsing, AI interview preparation, learning roadmap generation, and application workflow tracking. I’d love to be considered for this opportunity.`;
+  return `Hi, I’m interested in the ${role}${company ? ` role at ${company}` : " role"}. My background includes backend development with FastAPI, PostgreSQL, Docker, REST APIs, CI/CD, and AI-powered workflow projects. I recently built CareerPilot AI, a full-stack job-search platform with resume analysis, job parsing, AI interview preparation, learning roadmap generation, and application workflow tracking. I’d love to be considered for this opportunity.`;
 }
 
 export default function ExportCenterPage() {
@@ -238,7 +238,7 @@ export default function ExportCenterPage() {
     "Add one backend performance proof point.\nQuantify API, testing, or workflow impact.\nMention deployment details truthfully.\nTailor project bullets to the target job."
   );
   const [interviewPrep, setInterviewPrep] = useState(
-    "Prepare one backend API design story.\nPrepare one database/schema design story.\nPrepare one testing/debugging story.\nPractice explaining CareerCopilot AI in 90 seconds."
+    "Prepare one backend API design story.\nPrepare one database/schema design story.\nPrepare one testing/debugging story.\nPractice explaining CareerPilot AI in 90 seconds."
   );
   const [roadmapPlan, setRoadmapPlan] = useState(
     "Week 1: REST API foundations and clean backend design.\nWeek 2: Database indexing, schema design, and query optimization.\nWeek 3: Testing, CI/CD, and deployment proof.\nWeek 4: System design stories and interview readiness."
@@ -251,7 +251,7 @@ export default function ExportCenterPage() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    const latestJobId = localStorage.getItem("careercopilot_latest_job_id") ?? "";
+    const latestJobId = localStorage.getItem("careerpilot_latest_job_id") ?? "";
     setJobId(latestJobId);
 
     const params = new URLSearchParams(window.location.search);
@@ -268,16 +268,16 @@ export default function ExportCenterPage() {
   }, []);
 
   function loadStoredWorkspaceOutputs() {
-    const storedJob = readStoredJson<JobDetail>("careercopilot_export_job");
-    const storedAts = readStoredJson<ATSScoreResponse>("careercopilot_export_ats");
+    const storedJob = readStoredJson<JobDetail>("careerpilot_export_job");
+    const storedAts = readStoredJson<ATSScoreResponse>("careerpilot_export_ats");
     const storedOptimizer = readStoredJson<AIResumeOptimizerResponse>(
-      "careercopilot_export_optimizer"
+      "careerpilot_export_optimizer"
     );
     const storedInterview = readStoredJson<BackendInterviewResponse>(
-      "careercopilot_export_interview"
+      "careerpilot_export_interview"
     );
     const storedRoadmap = readStoredJson<LearningRoadmapResponse>(
-      "careercopilot_export_roadmap"
+      "careerpilot_export_roadmap"
     );
 
     if (storedJob) {
@@ -373,7 +373,7 @@ export default function ExportCenterPage() {
 
     try {
       const latestJobId =
-        jobId || localStorage.getItem("careercopilot_latest_job_id") || "";
+        jobId || localStorage.getItem("careerpilot_latest_job_id") || "";
 
       if (latestJobId) {
         const jobResponse = await api.get<JobDetail>(`/jobs/${latestJobId}`);
@@ -383,7 +383,7 @@ export default function ExportCenterPage() {
         setJobTitle(job.title);
         setCompany(job.company ?? "");
         setRecruiterNote(createRecruiterNote(job.title, job.company ?? ""));
-        localStorage.setItem("careercopilot_export_job", JSON.stringify(job));
+        localStorage.setItem("careerpilot_export_job", JSON.stringify(job));
       }
 
       try {
@@ -514,7 +514,7 @@ ${sectionMarkdown}
 
 ---
 
-Generated with CareerCopilot AI.`;
+Generated with CareerPilot AI.`;
   }, [atsScore, company, decision, exportTitle, jobTitle, sections]);
 
   async function saveApplicationPack() {
@@ -524,8 +524,8 @@ Generated with CareerCopilot AI.`;
     try {
       await api.post("/application-packs", {
         job_id: jobId ? Number(jobId) : null,
-        resume_id: localStorage.getItem("careercopilot_latest_resume_id")
-          ? Number(localStorage.getItem("careercopilot_latest_resume_id"))
+        resume_id: localStorage.getItem("careerpilot_latest_resume_id")
+          ? Number(localStorage.getItem("careerpilot_latest_resume_id"))
           : null,
         title: exportTitle,
         company,
@@ -574,7 +574,7 @@ Generated with CareerCopilot AI.`;
       .replace(/^-|-$/g, "");
 
     link.href = url;
-    link.download = `${fileName || "careercopilot-export"}.md`;
+    link.download = `${fileName || "careerpilot-export"}.md`;
     link.click();
 
     URL.revokeObjectURL(url);

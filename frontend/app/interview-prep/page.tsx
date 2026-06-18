@@ -164,7 +164,7 @@ function buildQuestions({
     {
       id: "tech-1",
       category: "Technical",
-      question: "Explain how you designed the FastAPI backend and database models for CareerCopilot AI.",
+      question: "Explain how you designed the FastAPI backend and database models for CareerPilot AI.",
       whyItMatters: "Tests backend architecture and data modeling clarity.",
     },
     {
@@ -191,7 +191,7 @@ function buildQuestions({
     {
       id: "system-1",
       category: "System design",
-      question: "Design a scalable version of CareerCopilot AI for thousands of users uploading resumes and jobs.",
+      question: "Design a scalable version of CareerPilot AI for thousands of users uploading resumes and jobs.",
       whyItMatters: "Tests API, storage, queues, database, and scaling decisions.",
     },
     {
@@ -218,7 +218,7 @@ function buildQuestions({
     {
       id: "beh-2",
       category: "Behavioral",
-      question: "How did you handle bugs or blockers while building CareerCopilot AI?",
+      question: "How did you handle bugs or blockers while building CareerPilot AI?",
       whyItMatters: "Shows debugging and persistence.",
     },
     {
@@ -239,15 +239,15 @@ function buildQuestions({
     {
       id: "project-2",
       category: "Project",
-      question: "What part of CareerCopilot AI are you most proud of?",
+      question: "What part of CareerPilot AI are you most proud of?",
       whyItMatters: "Helps you explain impact confidently.",
     },
     {
       id: "project-3",
       category: "Project",
       question: hasResumeContext
-        ? "Which resume bullet best proves your CareerCopilot AI work, and how would you defend it?"
-        : "How would you explain CareerCopilot AI to a non-technical recruiter?",
+        ? "Which resume bullet best proves your CareerPilot AI work, and how would you defend it?"
+        : "How would you explain CareerPilot AI to a non-technical recruiter?",
       whyItMatters: "Tests resume/project storytelling.",
     },
   ];
@@ -290,7 +290,7 @@ function buildQuestions({
       {
         id: "faang-1",
         category: "System design",
-        question: `Design an AI-powered career platform like CareerCopilot AI for 1 million users.`,
+        question: `Design an AI-powered career platform like CareerPilot AI for 1 million users.`,
         whyItMatters: "FAANG-style system design depth.",
       },
       ...bank,
@@ -358,10 +358,10 @@ export default function InterviewPrepPage() {
     "Backend and AI-focused role requiring API design, distributed systems, testing, cloud deployment, and AI product thinking."
   );
   const [resumeContext, setResumeContext] = useState(
-    "CareerCopilot AI: FastAPI, PostgreSQL, Docker, Next.js, TypeScript, ATS analysis, resume parsing, application tracking, backend tests."
+    "CareerPilot AI: FastAPI, PostgreSQL, Docker, Next.js, TypeScript, ATS analysis, resume parsing, application tracking, backend tests."
   );
   const [answerDraft, setAnswerDraft] = useState(
-    "I built CareerCopilot AI to solve the problem of managing resumes, job descriptions, ATS analysis, and application tracking in one workflow. I used FastAPI for backend APIs, PostgreSQL for persistence, Docker for local services, and Next.js with TypeScript for the product interface."
+    "I built CareerPilot AI to solve the problem of managing resumes, job descriptions, ATS analysis, and application tracking in one workflow. I used FastAPI for backend APIs, PostgreSQL for persistence, Docker for local services, and Next.js with TypeScript for the product interface."
   );
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [aiResponse, setAiResponse] = useState<BackendInterviewResponse | null>(null);
@@ -534,7 +534,7 @@ export default function InterviewPrepPage() {
       "AI Software Engineer role focused on backend APIs, LLM-powered product features, system design, reliable services, testing, deployment, and AI product thinking."
     );
     setResumeContext(
-      "CareerCopilot AI: full-stack AI career platform using FastAPI, PostgreSQL, Docker, Next.js, TypeScript, resume parsing, ATS analysis, application pipeline, reports, and backend tests."
+      "CareerPilot AI: full-stack AI career platform using FastAPI, PostgreSQL, Docker, Next.js, TypeScript, resume parsing, ATS analysis, application pipeline, reports, and backend tests."
     );
   }
 
@@ -1034,7 +1034,7 @@ export default function InterviewPrepPage() {
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {[
-                "Practice CareerCopilot project explanation in 90 seconds.",
+                "Practice CareerPilot project explanation in 90 seconds.",
                 "Prepare one backend API design story.",
                 "Prepare one debugging story from the Applications page.",
                 "Practice one database schema design explanation.",

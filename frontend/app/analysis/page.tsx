@@ -239,7 +239,7 @@ function getBuildToFixPlan(gaps: ResumeGap[]) {
       plan.push({
         title: "Add backend performance proof",
         action:
-          "Add Redis caching, PostgreSQL indexing, pagination, or response-time measurement to CareerCopilot or Logsmith.",
+          "Add Redis caching, PostgreSQL indexing, pagination, or response-time measurement to CareerPilot or Logsmith.",
         outcome:
           "This gives you a truthful bullet for caching, performance optimization, and backend scalability.",
       });
@@ -832,8 +832,8 @@ export default function AnalysisPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const latestResumeId = localStorage.getItem("careercopilot_latest_resume_id");
-    const latestJobId = localStorage.getItem("careercopilot_latest_job_id");
+    const latestResumeId = localStorage.getItem("careerpilot_latest_resume_id");
+    const latestJobId = localStorage.getItem("careerpilot_latest_job_id");
 
     if (latestResumeId) {
       setResumeId(latestResumeId);
@@ -1023,7 +1023,7 @@ return (
                   </Button>
                 </div>
                       <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                        Upload a PDF resume and CareerCopilot will prepare it for analysis.
+                        Upload a PDF resume and CareerPilot will prepare it for analysis.
                       </p>
                     </div>
                   </div>

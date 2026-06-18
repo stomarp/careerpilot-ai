@@ -221,7 +221,7 @@ export default function ReportsPage() {
           {
             section: "Projects",
             feedback:
-              "CareerCopilot should be presented as a full-stack career platform, not only a resume builder.",
+              "CareerPilot should be presented as a full-stack career platform, not only a resume builder.",
           },
           {
             section: "Skills",
@@ -233,12 +233,12 @@ export default function ReportsPage() {
           {
             before: "Built a resume app using FastAPI and Next.js.",
             after:
-              "Built CareerCopilot AI, a full-stack career platform using FastAPI, PostgreSQL, Docker, Next.js, and TypeScript to parse resumes and job descriptions, generate ATS-style fit analysis, and track applications through a Kanban pipeline.",
+              "Built CareerPilot AI, a full-stack career platform using FastAPI, PostgreSQL, Docker, Next.js, and TypeScript to parse resumes and job descriptions, generate ATS-style fit analysis, and track applications through a Kanban pipeline.",
           },
         ],
         project_enhancements: [
           {
-            project: "CareerCopilot AI",
+            project: "CareerPilot AI",
             suggestion:
               "Add deployed frontend/backend URLs, GitHub Actions CI, and backend test coverage badge.",
           },

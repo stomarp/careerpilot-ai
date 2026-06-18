@@ -592,10 +592,10 @@ export default function JobWorkspacePage() {
     setError("");
 
     try {
-      const latestJobId = localStorage.getItem("careercopilot_latest_job_id") ?? "";
+      const latestJobId = localStorage.getItem("careerpilot_latest_job_id") ?? "";
       const latestResumeId =
-        localStorage.getItem("careercopilot_latest_resume_id") ??
-        localStorage.getItem("careercopilot_resume_id") ??
+        localStorage.getItem("careerpilot_latest_resume_id") ??
+        localStorage.getItem("careerpilot_resume_id") ??
         "";
 
       const [jobsResponse, resumesResponse] = await Promise.all([
@@ -620,14 +620,14 @@ export default function JobWorkspacePage() {
 
         if (selectedJob) {
           setJob(selectedJob);
-          localStorage.setItem("careercopilot_latest_job_id", selectedJobId);
-          localStorage.setItem("careercopilot_export_job", JSON.stringify(selectedJob));
+          localStorage.setItem("careerpilot_latest_job_id", selectedJobId);
+          localStorage.setItem("careerpilot_export_job", JSON.stringify(selectedJob));
         }
       }
 
       if (selectedResumeId) {
         setResumeId(selectedResumeId);
-        localStorage.setItem("careercopilot_latest_resume_id", selectedResumeId);
+        localStorage.setItem("careerpilot_latest_resume_id", selectedResumeId);
       }
 
       if (!jobs.length || !resumes.length) {
@@ -645,18 +645,18 @@ export default function JobWorkspacePage() {
 
   function handleJobSelection(value: string) {
     setJobId(value);
-    localStorage.setItem("careercopilot_latest_job_id", value);
+    localStorage.setItem("careerpilot_latest_job_id", value);
 
     const selectedJob = savedJobs.find((item) => String(item.job_id) === value);
     if (selectedJob) {
       setJob(selectedJob);
-      localStorage.setItem("careercopilot_export_job", JSON.stringify(selectedJob));
+      localStorage.setItem("careerpilot_export_job", JSON.stringify(selectedJob));
     }
   }
 
   function handleResumeSelection(value: string) {
     setResumeId(value);
-    localStorage.setItem("careercopilot_latest_resume_id", value);
+    localStorage.setItem("careerpilot_latest_resume_id", value);
   }
 
   async function createDemoWorkspace() {
@@ -692,12 +692,12 @@ export default function JobWorkspacePage() {
       setJobId(String(demoJob.job_id));
       setResumeId(String(selectedResume.resume_id));
 
-      localStorage.setItem("careercopilot_latest_job_id", String(demoJob.job_id));
+      localStorage.setItem("careerpilot_latest_job_id", String(demoJob.job_id));
       localStorage.setItem(
-        "careercopilot_latest_resume_id",
+        "careerpilot_latest_resume_id",
         String(selectedResume.resume_id)
       );
-      localStorage.setItem("careercopilot_export_job", JSON.stringify(demoJob));
+      localStorage.setItem("careerpilot_export_job", JSON.stringify(demoJob));
     } catch (err) {
       console.error(err);
       setError("Could not create demo workspace. Make sure backend is running and you are logged in.");
@@ -718,7 +718,7 @@ export default function JobWorkspacePage() {
     try {
       const response = await api.get<JobDetail>(`/jobs/${jobId.trim()}`);
       setJob(response.data);
-      localStorage.setItem("careercopilot_latest_job_id", String(response.data.job_id));
+      localStorage.setItem("careerpilot_latest_job_id", String(response.data.job_id));
       return response.data;
     } catch (err) {
       console.error(err);
@@ -745,7 +745,7 @@ export default function JobWorkspacePage() {
     setError("");
 
     try {
-      localStorage.setItem("careercopilot_latest_resume_id", resumeId.trim());
+      localStorage.setItem("careerpilot_latest_resume_id", resumeId.trim());
 
       const response = await api.post<ATSScoreResponse>("/analysis/ats-score", {
         resume_id: Number(resumeId),
@@ -1000,7 +1000,7 @@ export default function JobWorkspacePage() {
               <SectionHeader
                 icon={<BriefcaseBusiness className="h-5 w-5" />}
                 title="Run job workspace"
-                description="Choose one saved job and one resume. CareerCopilot handles the IDs in the background."
+                description="Choose one saved job and one resume. CareerPilot handles the IDs in the background."
               />
             </CardHeader>
 
@@ -1879,7 +1879,7 @@ export default function JobWorkspacePage() {
                     Hi, I’m interested in the {job?.title ?? "role"}
                     {job?.company ? ` at ${job.company}` : ""}. My background includes
                     backend development with FastAPI, PostgreSQL, Docker, REST APIs,
-                    and AI-powered workflow projects. I recently built CareerCopilot AI,
+                    and AI-powered workflow projects. I recently built CareerPilot AI,
                     a full-stack job-search platform with resume analysis, job parsing,
                     AI interview preparation, and learning roadmap generation. I’d love
                     to be considered for this opportunity.

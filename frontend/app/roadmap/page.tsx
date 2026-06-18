@@ -197,7 +197,7 @@ const systemTopics = [
 
 const previewMiniProjects = [
   {
-    title: "CareerCopilot AI roadmap generator",
+    title: "CareerPilot AI roadmap generator",
     difficulty: "medium",
     description:
       "Connect roadmap inputs to AI output and turn missing skills into weekly, daily, and project-based study plans.",
@@ -240,7 +240,7 @@ function buildLocalWeeklyPlan(roleType: TrackKey, weeks: number, focusAreas: str
       focusAreas.includes("DSA") ? `Practice ${dsa}` : null,
       focusAreas.includes("System Design") ? `Study ${system}` : null,
       focusAreas.includes("AI/LLM") ? `Build notes for ${domain}` : null,
-      focusAreas.includes("Projects") ? "Add one visible CareerCopilot project improvement" : null,
+      focusAreas.includes("Projects") ? "Add one visible CareerPilot project improvement" : null,
       focusAreas.includes("Testing") ? "Add or improve backend/frontend tests" : null,
       focusAreas.includes("Deployment") ? "Document deployment-readiness proof" : null,
     ].filter(Boolean) as string[];
@@ -280,7 +280,7 @@ export default function RoadmapPage() {
     "AI/LLM",
   ]);
   const [goalNotes, setGoalNotes] = useState(
-    "I want to become job-ready for AI Software Engineer and backend-focused roles using CareerCopilot AI as my flagship project."
+    "I want to become job-ready for AI Software Engineer and backend-focused roles using CareerPilot AI as my flagship project."
   );
   const [missingItemsText, setMissingItemsText] = useState(
     "RAG, vector databases, system design, backend testing, deployment, GitHub Actions CI"
@@ -314,13 +314,13 @@ export default function RoadmapPage() {
         "Add measurable project bullets to your resume.",
         "Highlight backend, AI, database, testing, and deployment proof.",
         "Update GitHub README screenshots and feature summary.",
-        "Prepare a truthful CareerCopilot AI resume bullet.",
+        "Prepare a truthful CareerPilot AI resume bullet.",
       ];
 
   const interviewActions = roadmap?.interview_prep_actions?.length
     ? roadmap.interview_prep_actions
     : [
-        "Practice explaining the user problem CareerCopilot AI solves.",
+        "Practice explaining the user problem CareerPilot AI solves.",
         "Prepare one backend API design story.",
         "Prepare one debugging and testing story.",
         "Practice answering why you chose FastAPI, PostgreSQL, Docker, and Next.js.",
@@ -1090,7 +1090,7 @@ export default function RoadmapPage() {
               <CardTitle>Finish checklist</CardTitle>
             </div>
             <CardDescription>
-              Use this before adding CareerCopilot AI to applications.
+              Use this before adding CareerPilot AI to applications.
             </CardDescription>
           </CardHeader>
 

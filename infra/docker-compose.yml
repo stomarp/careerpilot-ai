@@ -1,15 +1,15 @@
 services:
   postgres:
     image: postgres:16
-    container_name: careercopilot_postgres
+    container_name: careerpilot_postgres
     environment:
-      POSTGRES_USER: careercopilot_user
-      POSTGRES_PASSWORD: careercopilot_password
-      POSTGRES_DB: careercopilot_db
+      POSTGRES_USER: careerpilot_user
+      POSTGRES_PASSWORD: careerpilot_password
+      POSTGRES_DB: careerpilot_db
     ports:
       - "5433:5432"
     volumes:
-      - careercopilot_postgres_data:/var/lib/postgresql/data
+      - careerpilot_postgres_data:/var/lib/postgresql/data
 
 volumes:
-  careercopilot_postgres_data:
+  careerpilot_postgres_data:

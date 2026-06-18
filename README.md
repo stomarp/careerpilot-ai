@@ -1,6 +1,6 @@
-# CareerCopilot AI
+# CareerPilot AI
 
-CareerCopilot AI is a full-stack AI-powered job-search command center that helps candidates move from resume and job description to a complete application strategy.
+CareerPilot AI is a full-stack AI-powered job-search command center that helps candidates move from resume and job description to a complete application strategy.
 
 It combines resume upload, job intake, ATS analysis, AI resume optimization, interview preparation, learning roadmaps, exports, saved application packs, and application tracking into one workflow.
 
@@ -194,7 +194,7 @@ See:
 
 ## Why This Project Matters
 
-CareerCopilot AI demonstrates end-to-end software engineering and product thinking:
+CareerPilot AI demonstrates end-to-end software engineering and product thinking:
 
 - Backend API design
 - Database modeling
@@ -208,12 +208,12 @@ CareerCopilot AI demonstrates end-to-end software engineering and product thinki
 
 ## Resume-Ready Project Summary
 
-Built CareerCopilot AI, a full-stack AI job-search command center using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and AI APIs. The platform parses resumes and job descriptions, generates ATS match analysis, provides AI resume optimization, creates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline.
+Built CareerPilot AI, a full-stack AI job-search command center using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and AI APIs. The platform parses resumes and job descriptions, generates ATS match analysis, provides AI resume optimization, creates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline.
 
 <!-- DEPLOYMENT_START -->
 ## Deployment
 
-CareerCopilot AI is deployment-ready as a production-style full-stack app.
+CareerPilot AI is deployment-ready as a production-style full-stack app.
 
 Production stack:
 
@@ -263,7 +263,7 @@ Set Vercel root directory:
 Required Vercel environment variables:
 
     NEXT_PUBLIC_API_BASE_URL=https://your-render-api.onrender.com
-    NEXT_PUBLIC_APP_NAME=CareerCopilot AI
+    NEXT_PUBLIC_APP_NAME=CareerPilot AI
     NEXT_PUBLIC_APP_ENV=production
 
 Production smoke test:

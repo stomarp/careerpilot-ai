@@ -185,7 +185,7 @@ export default function DashboardPage() {
           <Card className="rounded-[2rem] border-white/70 bg-white/90 shadow-xl shadow-slate-950/5 backdrop-blur">
             <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <CardTitle className="text-2xl">CareerCopilot workflow</CardTitle>
+                <CardTitle className="text-2xl">CareerPilot workflow</CardTitle>
                 <CardDescription>
                   A simple step-by-step system to improve every application.
                 </CardDescription>

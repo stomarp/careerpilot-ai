@@ -1,6 +1,6 @@
-# CareerCopilot AI - Project Plan
+# CareerPilot AI - Project Plan
 
-CareerCopilot AI is a full-stack AI-powered career platform designed to help candidates manage the complete job-search workflow.
+CareerPilot AI is a full-stack AI-powered career platform designed to help candidates manage the complete job-search workflow.
 
 The product helps users build or upload resumes, save job descriptions, analyze resume-job fit, identify ATS gaps, and track applications through a structured pipeline.
 
@@ -8,7 +8,7 @@ The product helps users build or upload resumes, save job descriptions, analyze 
 
 ## Product Vision
 
-CareerCopilot AI is designed as a job-search operating system for candidates.
+CareerPilot AI is designed as a job-search operating system for candidates.
 
 Instead of acting as only a resume builder or only an application tracker, it connects the full workflow:
 
@@ -223,7 +223,7 @@ Infrastructure:
 
 ## Current Status
 
-CareerCopilot AI currently includes:
+CareerPilot AI currently includes:
 
 - Dashboard
 - Resume Builder
@@ -271,5 +271,5 @@ Before using heavily in applications:
 
 ## Resume Bullet
 
-Built CareerCopilot AI, a full-stack AI career platform using FastAPI, PostgreSQL, Docker, Next.js, and TypeScript that parses resumes and job descriptions, generates ATS-style match analysis, identifies resume gaps, and tracks job applications through a Kanban-style pipeline.
+Built CareerPilot AI, a full-stack AI career platform using FastAPI, PostgreSQL, Docker, Next.js, and TypeScript that parses resumes and job descriptions, generates ATS-style match analysis, identifies resume gaps, and tracks job applications through a Kanban-style pipeline.
 
