@@ -14,6 +14,7 @@ export default function RoadmapPage() {
   const [role, setRole] = useState("Software Engineer");
   const [company, setCompany] = useState("Visa");
   const [timeline, setTimeline] = useState("4 weeks");
+  const [level, setLevel] = useState("Entry Level");
   const [gaps, setGaps] = useState("System design, SQL, caching, LeetCode, backend deployment");
 
   const plan = useMemo(
@@ -54,8 +55,52 @@ export default function RoadmapPage() {
           "Do 2 mock interviews and revise weak answers.",
         ],
       },
+      ...(timeline === "6 weeks" || timeline === "8 weeks" || timeline === "3 months" || timeline === "6 months"
+        ? [{
+            week: "Weeks 5-6",
+            title: "Company-specific practice",
+            tasks: [
+              "Practice company-style LeetCode patterns and SQL questions.",
+              "Write 3 STAR stories for project ownership, debugging, and learning quickly.",
+              "Improve CareerPilot AI README with screenshots, architecture, and demo link.",
+            ],
+          }]
+        : []),
+      ...(timeline === "8 weeks" || timeline === "3 months" || timeline === "6 months"
+        ? [{
+            week: "Weeks 7-8",
+            title: "Advanced backend readiness",
+            tasks: [
+              "Practice caching, queues, rate limiting, and API scalability.",
+              "Prepare one system design story based on CareerPilot AI.",
+              "Complete 10 targeted LeetCode problems and review mistakes.",
+            ],
+          }]
+        : []),
+      ...(timeline === "3 months" || timeline === "6 months"
+        ? [{
+            week: "Month 3",
+            title: "Interview loop preparation",
+            tasks: [
+              "Do weekly mock interviews for coding, system design, and behavioral rounds.",
+              "Apply to 30-40 targeted roles with tailored resume bullets.",
+              "Track responses and follow-ups in the application tracker.",
+            ],
+          }]
+        : []),
+      ...(timeline === "6 months"
+        ? [{
+            week: "Months 4-6",
+            title: "Portfolio and market strength",
+            tasks: [
+              "Build 1-2 smaller end-to-end projects with real users/use cases.",
+              "Add deeper AI features, file limits, and job-link extraction to CareerPilot AI.",
+              "Prepare for mid-level style backend/system design interviews.",
+            ],
+          }]
+        : []),
     ],
-    [role, company]
+    [role, company, timeline]
   );
 
   return (
@@ -92,9 +137,35 @@ export default function RoadmapPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Timeline</Label>
-                <Input value={timeline} onChange={(e) => setTimeline(e.target.value)} placeholder="2 weeks, 4 weeks, 3 months" />
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Experience level</Label>
+                  <select
+                    value={level}
+                    onChange={(e) => setLevel(e.target.value)}
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    <option>New Grad</option>
+                    <option>Entry Level</option>
+                    <option>Mid Level</option>
+                    <option>Senior</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Timeline</Label>
+                  <select
+                    value={timeline}
+                    onChange={(e) => setTimeline(e.target.value)}
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  >
+                    <option>4 weeks</option>
+                    <option>6 weeks</option>
+                    <option>8 weeks</option>
+                    <option>3 months</option>
+                    <option>6 months</option>
+                  </select>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -117,7 +188,7 @@ export default function RoadmapPage() {
                   Generated roadmap
                 </CardTitle>
                 <CardDescription>
-                  {role} • {company} • {timeline}
+                  {role} • {company} • {level} • {timeline}
                 </CardDescription>
               </CardHeader>
               <CardContent>

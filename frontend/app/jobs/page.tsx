@@ -72,7 +72,7 @@ function CareerWorkflowBar({ activeStep }: { activeStep: "jobs" | "analysis" | "
 
 
 import { FormEvent, useMemo, useState } from "react";
-import { BriefcaseBusiness, CheckCircle2, Layers3, Loader2, Save } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, LinkIcon, Loader2, Save } from "lucide-react";
 
 import { api } from "@/lib/api";
 import { AppShell } from "@/components/layout/AppShell";
@@ -263,24 +263,6 @@ export default function JobsPage() {
           </Badge>
           <CareerWorkflowBar activeStep="jobs" />
 
-        <div className="mb-8 rounded-3xl border bg-muted/20 p-5">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="font-semibold">Next step after saving a job</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Open the Job Workspace to run ATS match, AI resume optimizer, interview prep, roadmap, and pipeline strategy from one place.
-              </p>
-            </div>
-
-            <Button asChild>
-              <Link href="/jobs/workspace">
-                <Layers3 className="mr-2 h-4 w-4" />
-                Open Job Workspace
-              </Link>
-            </Button>
-          </div>
-        </div>
-
 <h1 className="cc-gradient-title text-3xl font-black tracking-tight sm:text-4xl">
             Smart Job Intake
           </h1>
@@ -297,10 +279,10 @@ export default function JobsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BriefcaseBusiness className="h-5 w-5" />
-              Job post
+              Job post or job link
             </CardTitle>
             <CardDescription>
-              Paste the full job post. CareerPilot will read it like a recruiter and prepare it for fit analysis.
+              Paste a job description manually, or paste a job link from LinkedIn, Indeed, Google Careers, or a company careers page.
             </CardDescription>
           </CardHeader>
 
@@ -329,13 +311,26 @@ export default function JobsPage() {
                 </div>
               </div>
 
+              <div className="rounded-2xl border bg-blue-50/60 p-4">
+                <div className="flex items-start gap-3">
+                  <LinkIcon className="mt-1 h-5 w-5 text-blue-700" />
+                  <div>
+                    <p className="font-semibold text-blue-950">Job link supported</p>
+                    <p className="mt-1 text-sm leading-6 text-blue-800">
+                      Paste a LinkedIn, Indeed, Google Careers, or company careers link below. If the site blocks reading,
+                      paste the full job description manually in the same box.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label htmlFor="description">Job description</Label>
+                <Label htmlFor="description">Job description or job link</Label>
                 <Textarea
                   id="description"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Paste the full job description or job URL here..."
+                  placeholder="Paste the job link or full job description here..."
                   className="min-h-72"
                   required
                 />
