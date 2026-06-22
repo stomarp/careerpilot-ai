@@ -1,5 +1,9 @@
 # CareerPilot AI
 
+Live Demo: https://careerpilot-live.vercel.app
+GitHub: https://github.com/stomarp/careerpilot-ai
+
+
 CareerPilot AI is a full-stack AI-powered job-search command center that helps candidates move from resume and job description to a complete application strategy.
 
 It combines resume upload, job intake, ATS analysis, AI resume optimization, interview preparation, learning roadmaps, exports, saved application packs, and application tracking into one workflow.
@@ -211,6 +215,12 @@ CareerPilot AI demonstrates end-to-end software engineering and product thinking
 Built CareerPilot AI, a full-stack AI job-search command center using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and AI APIs. The platform parses resumes and job descriptions, generates ATS match analysis, provides AI resume optimization, creates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline.
 
 <!-- DEPLOYMENT_START -->
+## Live Project
+
+- Live App: https://careerpilot-live.vercel.app
+- GitHub Repo: https://github.com/stomarp/careerpilot-ai
+- Backend API: https://careercopilot-api.onrender.com
+
 ## Deployment
 
 CareerPilot AI is deployment-ready as a production-style full-stack app.
@@ -246,8 +256,8 @@ Required Render environment variables:
     ENVIRONMENT=production
     APP_ENV=production
     LOG_LEVEL=info
-    FRONTEND_URL=https://your-vercel-app.vercel.app
-    BACKEND_CORS_ORIGINS=https://your-vercel-app.vercel.app,http://localhost:3000
+    FRONTEND_URL=https://careerpilot-live.vercel.app
+    BACKEND_CORS_ORIGINS=https://careerpilot-live.vercel.app,http://localhost:3000
 
 Render injects:
 
@@ -262,13 +272,13 @@ Set Vercel root directory:
 
 Required Vercel environment variables:
 
-    NEXT_PUBLIC_API_BASE_URL=https://your-render-api.onrender.com
+    NEXT_PUBLIC_API_BASE_URL=https://careercopilot-api.onrender.com
     NEXT_PUBLIC_APP_NAME=CareerPilot AI
     NEXT_PUBLIC_APP_ENV=production
 
 Production smoke test:
 
-    API_URL=https://your-render-api.onrender.com WEB_URL=https://your-vercel-app.vercel.app ./scripts/smoke_production.sh
+    API_URL=https://careercopilot-api.onrender.com WEB_URL=https://careerpilot-live.vercel.app ./scripts/smoke_production.sh
 
 Expected result:
 
