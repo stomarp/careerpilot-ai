@@ -8,6 +8,29 @@ CareerPilot AI is a full-stack AI-powered job-search command center that helps c
 
 It combines resume upload, job intake, ATS analysis, AI resume optimization, interview preparation, learning roadmaps, exports, saved application packs, and application tracking into one workflow.
 
+## Screenshots
+
+### Landing Page
+![CareerPilot AI Landing Page](docs/screenshots/landing.png)
+
+### Dashboard
+![CareerPilot AI Dashboard](docs/screenshots/dashboard.png)
+
+### Smart Job Intake
+![CareerPilot AI Smart Job Intake](docs/screenshots/jobs.png)
+
+### Interview Prep Generator
+![CareerPilot AI Interview Prep Generator](docs/screenshots/interview-prep.png)
+
+### Roadmap Generator
+![CareerPilot AI Roadmap Generator](docs/screenshots/roadmap.png)
+
+### Export Center
+![CareerPilot AI Export Center](docs/screenshots/export-center.png)
+
+### Resume Templates
+![CareerPilot AI Resume Templates](docs/screenshots/resume-templates.png)
+
 ## Product Flow
 
 Dashboard  
