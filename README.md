@@ -8,6 +8,12 @@ CareerPilot AI is a full-stack AI-powered job-search command center that helps c
 
 It combines resume upload, job intake, ATS analysis, AI resume optimization, interview preparation, learning roadmaps, exports, saved application packs, and application tracking into one workflow.
 
+## Quick Links
+
+- Live Demo: https://careerpilot-live.vercel.app
+- GitHub Repo: https://github.com/stomarp/careerpilot-ai
+- Backend API Health: https://careercopilot-api.onrender.com/health
+
 ## Screenshots
 
 ### Landing Page
@@ -30,6 +36,12 @@ It combines resume upload, job intake, ATS analysis, AI resume optimization, int
 
 ### Resume Templates
 ![CareerPilot AI Resume Templates](docs/screenshots/resume-templates.png)
+
+## AI Implementation Note
+
+CareerPilot AI is an AI-assisted career workflow platform. It combines resume/job data, ATS-style scoring, generated preparation content, and backend-ready AI integration points.
+
+Interview Prep and Roadmap currently generate company-aware guidance from role, company, experience level, and timeline inputs. These pages are structured so live LLM-backed generation can be added through backend endpoints later.
 
 ## Product Flow
 
@@ -169,6 +181,7 @@ Dashboard
 
 ### Backend
 
+~~~bash
 cd backend
 cp .env.example .env
 python -m venv .venv
@@ -176,21 +189,28 @@ source .venv/bin/activate
 pip install -r requirements.txt
 alembic upgrade head
 uvicorn app.main:app --reload
+~~~
 
-Backend:
+Backend runs at:
 
+~~~text
 http://127.0.0.1:8000
+~~~
 
 ### Frontend
 
+~~~bash
 cd frontend
 cp .env.local.example .env.local
 npm install
 npm run dev
+~~~
 
-Frontend:
+Frontend runs at:
 
+~~~text
 http://localhost:3000
+~~~
 
 ## Useful Commands
 
@@ -219,6 +239,15 @@ See:
 - docs/DEPLOYMENT.md
 - docs/PRODUCTION_READINESS.md
 
+## Recruiter Scan
+
+CareerPilot AI demonstrates:
+
+- Full-stack product development with Next.js, FastAPI, PostgreSQL, SQLAlchemy, and Alembic
+- Production deployment using Vercel, Render, Docker, and environment-based configuration
+- Resume parsing, job intake, ATS-style analysis, interview prep, roadmap generation, export center, saved packs, and application tracking
+- Product thinking across the full job-search workflow, not just a single feature demo
+
 ## Why This Project Matters
 
 CareerPilot AI demonstrates end-to-end software engineering and product thinking:
@@ -243,6 +272,7 @@ Built CareerPilot AI, a full-stack AI job-search command center using FastAPI, P
 - Live App: https://careerpilot-live.vercel.app
 - GitHub Repo: https://github.com/stomarp/careerpilot-ai
 - Backend API: https://careercopilot-api.onrender.com
+  - Internal production API used by the Vercel frontend.
 
 ## Deployment
 
