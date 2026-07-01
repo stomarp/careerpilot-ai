@@ -13,6 +13,10 @@ It combines resume upload, job intake, ATS analysis, AI resume optimization, int
 - Live Demo: https://careerpilot-live.vercel.app
 - GitHub Repo: https://github.com/stomarp/careerpilot-ai
 - Backend API Health: https://careercopilot-api.onrender.com/health
+- Backend Readiness: https://careercopilot-api.onrender.com/ready
+- CI Workflow: GitHub Actions backend/frontend validation
+
+[![CI](https://github.com/stomarp/careerpilot-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/stomarp/careerpilot-ai/actions/workflows/ci.yml)
 
 ## Screenshots
 
@@ -39,9 +43,48 @@ It combines resume upload, job intake, ATS analysis, AI resume optimization, int
 
 ## AI Implementation Note
 
-CareerPilot AI is an AI-assisted career workflow platform. It combines resume/job data, ATS-style scoring, generated preparation content, and backend-ready AI integration points.
+CareerPilot AI includes backend AI generation services for interview preparation and learning roadmaps.
 
-Interview Prep and Roadmap currently generate company-aware guidance from role, company, experience level, and timeline inputs. These pages are structured so live LLM-backed generation can be added through backend endpoints later.
+The backend supports Gemini-backed generation through production API routes and returns provider metadata such as `provider_used` and `fallback_used`. If `GEMINI_API_KEY` is unavailable or the AI provider fails, the services automatically return structured rule-based fallback output so the product remains usable.
+
+Current AI-backed backend routes:
+
+~~~text
+POST /interview/generate
+POST /interview/questions
+
+POST /learning-roadmap/generate
+POST /learning-roadmap
+~~~
+
+Accuracy note:
+
+- Interview Prep and Learning Roadmap generation are Gemini-backed when the backend has `GEMINI_API_KEY` configured.
+- ATS scoring is ATS-style rule-based career matching, not a certified ATS score.
+- Fallback behavior is intentional for production resilience.
+
+## Architecture Diagram
+
+~~~mermaid
+flowchart LR
+    User["User / Job Seeker"] --> Frontend["Vercel Frontend<br/>Next.js + React + TypeScript"]
+
+    Frontend --> API["Render Backend API<br/>FastAPI + Python"]
+    Frontend --> Auth["JWT Auth<br/>Login / Register"]
+
+    API --> DB[("PostgreSQL<br/>Users, Resumes, Jobs,<br/>Reports, Packs, Applications")]
+    API --> Gemini["Gemini API<br/>Interview Prep + Roadmaps"]
+    API --> Parser["Resume / Job Parsers<br/>PDF, DOCX, Text"]
+    API --> Scoring["ATS-Style Scoring<br/>Skill Match + Gap Analysis"]
+    API --> Export["Export Engine<br/>Markdown, Print/PDF, Saved Packs"]
+
+    GitHub["GitHub"] --> CI["GitHub Actions CI<br/>Backend Compile + Frontend Build"]
+    GitHub --> Vercel["Vercel Auto Deploy"]
+    GitHub --> Render["Render Auto Deploy"]
+
+    Vercel --> Frontend
+    Render --> API
+~~~
 
 ## Product Flow
 
@@ -243,9 +286,11 @@ See:
 
 CareerPilot AI demonstrates:
 
-- Full-stack product development with Next.js, FastAPI, PostgreSQL, SQLAlchemy, and Alembic
-- Production deployment using Vercel, Render, Docker, and environment-based configuration
-- Resume parsing, job intake, ATS-style analysis, interview prep, roadmap generation, export center, saved packs, and application tracking
+- Full-stack product development with Next.js, TypeScript, FastAPI, PostgreSQL, SQLAlchemy, and Alembic
+- Gemini-backed backend generation services for interview preparation and learning roadmaps
+- ATS-style resume/job matching, resume parsing, job intake, exportable application packs, and application tracking
+- Production deployment using Vercel, Render, PostgreSQL, environment variables, and CORS configuration
+- GitHub Actions CI for backend and frontend validation
 - Product thinking across the full job-search workflow, not just a single feature demo
 
 ## Why This Project Matters
@@ -264,9 +309,19 @@ CareerPilot AI demonstrates end-to-end software engineering and product thinking
 
 ## Resume-Ready Project Summary
 
-Built CareerPilot AI, a full-stack AI job-search command center using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and AI APIs. The platform parses resumes and job descriptions, generates ATS match analysis, provides AI resume optimization, creates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline.
+Built and deployed CareerPilot AI, a full-stack AI-assisted job-search platform using FastAPI, PostgreSQL, SQLAlchemy, Alembic, Next.js, TypeScript, and Gemini-backed backend generation services. The platform parses resumes and job descriptions, performs ATS-style match analysis, generates interview prep and learning roadmaps, exports application packs, saves generated artifacts, and tracks job applications through a candidate pipeline with GitHub Actions CI and Vercel/Render deployment.
 
-<!-- DEPLOYMENT_START -->
+## Limitations / Future Work
+
+CareerPilot AI is an actively evolving portfolio product.
+
+Current limitations and planned improvements:
+
+- ATS scoring is rule-based and should be described as ATS-style matching, not a certified ATS score.
+- Gemini-backed generation requires `GEMINI_API_KEY` in the backend production environment.
+- AI provider failures intentionally fall back to structured rule-based output for reliability.
+- Future improvements may include deeper resume optimization, richer analytics, stronger automated tests, advanced prompt evaluation, and more detailed observability.
+
 ## Live Project
 
 - Live App: https://careerpilot-live.vercel.app
@@ -276,73 +331,105 @@ Built CareerPilot AI, a full-stack AI job-search command center using FastAPI, P
 
 ## Deployment
 
-CareerPilot AI is deployment-ready as a production-style full-stack app.
+CareerPilot AI uses GitHub Actions for CI and Vercel/Render for deployment.
+
+### CI
+
+GitHub Actions runs on pull requests and pushes to `main`.
+
+The CI workflow checks:
+
+- Backend dependency installation
+- Backend Python compilation
+- Frontend dependency installation
+- Next.js production build
+
+Workflow file:
+
+~~~text
+.github/workflows/ci.yml
+~~~
+
+### Production Deployment
 
 Production stack:
 
 - Frontend: Vercel Next.js app
 - Backend: Render FastAPI web service
-- Database: Render PostgreSQL
-- Migrations: Alembic runs automatically during backend startup
+- Database: PostgreSQL
+- Migrations: Alembic
+- AI provider: Gemini API through backend environment variables
 
-Production files:
+Required Render environment variables include:
 
-- render.yaml
-- frontend/vercel.json
-- backend/.env.production.example
-- frontend/.env.production.example
-- scripts/smoke_production.sh
-- docs/LAUNCH_RUNBOOK.md
+~~~text
+ENVIRONMENT=production
+APP_ENV=production
+FRONTEND_URL=https://careerpilot-live.vercel.app
+BACKEND_CORS_ORIGINS=https://careerpilot-live.vercel.app,http://localhost:3000
+GEMINI_API_KEY=<backend-only-secret>
+~~~
 
-Backend deployment on Render:
+Required Vercel environment variables include:
 
-Build command:
+~~~text
+NEXT_PUBLIC_API_BASE_URL=https://careercopilot-api.onrender.com
+NEXT_PUBLIC_APP_NAME=CareerPilot AI
+NEXT_PUBLIC_APP_ENV=production
+~~~
 
-    cd backend && pip install --upgrade pip && pip install -r requirements.txt
+## CI/CD & Deployment
 
-Start command:
+CareerPilot AI uses GitHub Actions for CI and Vercel/Render for deployment.
 
-    cd backend && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+### CI
 
-Required Render environment variables:
+GitHub Actions runs on pull requests and pushes to `main`.
 
-    ENVIRONMENT=production
-    APP_ENV=production
-    LOG_LEVEL=info
-    FRONTEND_URL=https://careerpilot-live.vercel.app
-    BACKEND_CORS_ORIGINS=https://careerpilot-live.vercel.app,http://localhost:3000
+The CI workflow checks:
 
-Render injects:
+- Backend dependency installation
+- Backend Python compilation
+- Frontend dependency installation
+- Next.js production build
 
-    DATABASE_URL
-    SECRET_KEY
+Workflow file:
 
-Frontend deployment on Vercel:
+~~~text
+.github/workflows/ci.yml
+~~~
 
-Set Vercel root directory:
+### Production Deployment
 
-    frontend
+Production stack:
 
-Required Vercel environment variables:
+- Frontend: Vercel Next.js app
+- Backend: Render FastAPI web service
+- Database: PostgreSQL
+- Migrations: Alembic
+- AI provider: Gemini API through backend environment variables
 
-    NEXT_PUBLIC_API_BASE_URL=https://careercopilot-api.onrender.com
-    NEXT_PUBLIC_APP_NAME=CareerPilot AI
-    NEXT_PUBLIC_APP_ENV=production
+Required Render environment variables include:
 
-Production smoke test:
+~~~text
+ENVIRONMENT=production
+APP_ENV=production
+FRONTEND_URL=https://careerpilot-live.vercel.app
+BACKEND_CORS_ORIGINS=https://careerpilot-live.vercel.app,http://localhost:3000
+GEMINI_API_KEY=<backend-only-secret>
+~~~
 
-    API_URL=https://careercopilot-api.onrender.com WEB_URL=https://careerpilot-live.vercel.app ./scripts/smoke_production.sh
+Required Vercel environment variables include:
 
-Expected result:
+~~~text
+NEXT_PUBLIC_API_BASE_URL=https://careercopilot-api.onrender.com
+NEXT_PUBLIC_APP_NAME=CareerPilot AI
+NEXT_PUBLIC_APP_ENV=production
+~~~
 
-    Production smoke test passed
+## License
 
-Deployment docs:
+This project is licensed under the MIT License.
 
-    docs/DEPLOYMENT_GUIDE.md
-    docs/LAUNCH_RUNBOOK.md
+See the `LICENSE` file for details.
 
-Full launch checklist:
-
-    docs/LAUNCH_RUNBOOK.md
-<!-- DEPLOYMENT_END -->
