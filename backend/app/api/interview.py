@@ -23,6 +23,7 @@ router = APIRouter(
 )
 
 
+@router.post("/generate", response_model=InterviewQuestionResponse)
 @router.post("/questions", response_model=InterviewQuestionResponse)
 def generate_interview_questions(
     request: InterviewQuestionRequest,

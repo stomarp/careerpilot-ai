@@ -23,6 +23,7 @@ router = APIRouter(
 )
 
 
+@router.post("/generate", response_model=LearningRoadmapResponse)
 @router.post("", response_model=LearningRoadmapResponse)
 def generate_learning_roadmap(
     request: LearningRoadmapRequest,
