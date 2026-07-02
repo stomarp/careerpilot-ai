@@ -4,7 +4,7 @@ Live Demo: https://careerpilot-live.vercel.app
 GitHub: https://github.com/stomarp/careerpilot-ai
 
 
-CareerPilot AI is a full-stack AI-powered job-search command center that helps candidates move from resume and job description to a complete application strategy.
+CareerPilot AI is a full-stack AI-assisted job-search command center that helps candidates move from resume and job description to a complete application strategy.
 
 It combines resume upload, job intake, ATS analysis, AI resume optimization, interview preparation, learning roadmaps, exports, saved application packs, and application tracking into one workflow.
 
@@ -328,55 +328,6 @@ Current limitations and planned improvements:
 - GitHub Repo: https://github.com/stomarp/careerpilot-ai
 - Backend API: https://careercopilot-api.onrender.com
   - Internal production API used by the Vercel frontend.
-
-## Deployment
-
-CareerPilot AI uses GitHub Actions for CI and Vercel/Render for deployment.
-
-### CI
-
-GitHub Actions runs on pull requests and pushes to `main`.
-
-The CI workflow checks:
-
-- Backend dependency installation
-- Backend Python compilation
-- Frontend dependency installation
-- Next.js production build
-
-Workflow file:
-
-~~~text
-.github/workflows/ci.yml
-~~~
-
-### Production Deployment
-
-Production stack:
-
-- Frontend: Vercel Next.js app
-- Backend: Render FastAPI web service
-- Database: PostgreSQL
-- Migrations: Alembic
-- AI provider: Gemini API through backend environment variables
-
-Required Render environment variables include:
-
-~~~text
-ENVIRONMENT=production
-APP_ENV=production
-FRONTEND_URL=https://careerpilot-live.vercel.app
-BACKEND_CORS_ORIGINS=https://careerpilot-live.vercel.app,http://localhost:3000
-GEMINI_API_KEY=<backend-only-secret>
-~~~
-
-Required Vercel environment variables include:
-
-~~~text
-NEXT_PUBLIC_API_BASE_URL=https://careercopilot-api.onrender.com
-NEXT_PUBLIC_APP_NAME=CareerPilot AI
-NEXT_PUBLIC_APP_ENV=production
-~~~
 
 ## CI/CD & Deployment
 
